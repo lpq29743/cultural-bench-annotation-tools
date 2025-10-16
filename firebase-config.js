@@ -235,7 +235,8 @@ const FirebaseService = {
                 users.push({
                     userId: data.userId,
                     role: data.role,
-                    accessibleCsvs: data.accessibleCsvs || ['all']
+                    accessibleCsvs: data.accessibleCsvs || ['all'],
+                    canModifyData: data.canModifyData || false // Include data modification permission
                 });
             });
             
@@ -248,12 +249,13 @@ const FirebaseService = {
     },
 
     // Add allowed user to Firestore
-    async addAllowedUser(userId, role, accessibleCsvs = ['all']) {
+    async addAllowedUser(userId, role, accessibleCsvs = ['all'], canModifyData = false) {
         try {
             const userDoc = {
                 userId: userId,
                 role: role,
                 accessibleCsvs: accessibleCsvs,
+                canModifyData: canModifyData, // New field to control data modification permissions
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 isActive: true
             };
@@ -500,5 +502,122 @@ const FirebaseService = {
     // Get database reference
     getDatabase() {
         return db;
+    },
+
+    // Batch add multiple allowed users
+    async batchAddAllowedUsers(usersData) {
+        try {
+            const batch = db.batch();
+            
+            usersData.forEach(userData => {
+                const docRef = db.collection(COLLECTIONS.ALLOWED_USERS).doc();
+                batch.set(docRef, {
+                    userId: userData.userId.trim(),
+                    role: userData.role.trim(),
+                    accessibleCsvs: userData.accessibleCsvs || ['all'],
+                    canModifyData: userData.canModifyData || false, // Include data modification permission
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isActive: true
+                });
+            });
+            
+            await batch.commit();
+            return { success: true };
+        } catch (error) {
+            console.error('Error batch adding allowed users:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Validate user with permissions
+    async validateUserWithPermissions(userId, requestedRole = null) {
+        try {
+            const result = await this.loadAllowedUsers();
+            
+            // If no validation file exists, allow all users
+            if (!result.success || result.users.length === 0) {
+                return { 
+                    success: true, 
+                    allowed: true, 
+                    userInfo: {
+                        userId,
+                        role: requestedRole || 'annotator',
+                        accessibleCsvs: ['all'],
+                        canModifyData: false // Default to no modification permission
+                    },
+                    message: 'No validation file found, allowing all users' 
+                };
+            }
+            
+            // Find user in the allowed list
+            const userInfo = result.users.find(user => user.userId === userId);
+            
+            if (!userInfo) {
+                return { 
+                    success: true, 
+                    allowed: false, 
+                    message: 'User ID not found in allowed list'
+                };
+            }
+            
+            // Check role compatibility if requested
+            if (requestedRole && userInfo.role !== requestedRole) {
+                return {
+                    success: true,
+                    allowed: false,
+                    message: `User role mismatch. Expected: ${userInfo.role}, Requested: ${requestedRole}`
+                };
+            }
+            
+            return { 
+                success: true, 
+                allowed: true, 
+                userInfo,
+                message: 'User validated successfully'
+            };
+        } catch (error) {
+            console.error('Error validating user:', error);
+            return { success: false, allowed: false, error: error.message };
+        }
+    },
+
+    // Get user by userId with validation
+    async getUserByUserIdWithValidation(userId, requestedRole = null) {
+        try {
+            // First validate the user with permissions
+            const validation = await this.validateUserWithPermissions(userId, requestedRole);
+            
+            if (!validation.success) {
+                return { success: false, error: validation.error };
+            }
+            
+            if (!validation.allowed) {
+                return { success: false, error: validation.message || 'User ID not authorized. Please contact administrator.' };
+            }
+            
+            // Try to get existing user from database
+            const existingUser = await this.getUserByUserId(userId);
+            
+            if (existingUser.success) {
+                // Update user with validated permissions
+                const updatedUser = {
+                    ...existingUser.user,
+                    role: validation.userInfo.role,
+                    accessibleCsvs: validation.userInfo.accessibleCsvs,
+                    canModifyData: validation.userInfo.canModifyData || false
+                };
+                return { success: true, user: updatedUser };
+            } else {
+                // User doesn't exist in database, return validation info for creation
+                return { 
+                    success: false, 
+                    error: 'User not found in database',
+                    validationInfo: validation.userInfo
+                };
+            }
+        } catch (error) {
+            console.error('Error getting user with validation:', error);
+            return { success: false, error: error.message };
+        }
     }
 };

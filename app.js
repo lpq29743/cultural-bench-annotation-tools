@@ -223,6 +223,7 @@ async function handleUserLogin(event) {
                 userId: userId,
                 role: validation.userInfo.role,
                 accessibleCsvs: validation.userInfo.accessibleCsvs,
+                canModifyData: validation.userInfo.canModifyData || false,
                 name: userId, // Default name to userId
                 email: '', // Can be updated later
                 isActive: true
@@ -236,6 +237,8 @@ async function handleUserLogin(event) {
             currentUser = { id: userResult.id, ...userData };
         } else {
             currentUser = userResult.user;
+            // Update user with latest permissions from validation
+            currentUser.canModifyData = validation.userInfo.canModifyData || false;
         }
         
         // Store user in localStorage
@@ -275,10 +278,56 @@ function updateUserUI() {
         if (userInfoSection) userInfoSection.style.display = 'block';
         if (currentUserName) currentUserName.textContent = currentUser.name || currentUser.userId;
         if (currentUserRole) currentUserRole.textContent = currentUser.role || 'annotator';
+        
+        // Control data modification UI elements based on permissions
+        const dataModificationElements = [
+            elements.saveBtn,
+            elements.updateBtn,
+            elements.deleteBtn,
+            elements.addNewBtn
+        ];
+        
+        dataModificationElements.forEach(element => {
+            if (element) {
+                if (currentUser.canModifyData) {
+                    element.style.display = '';
+                    element.disabled = false;
+                } else {
+                    element.style.display = 'none';
+                }
+            }
+        });
+        
+        // Show permission status in UI
+        const permissionIndicator = document.getElementById('permissionIndicator');
+        if (permissionIndicator) {
+            if (currentUser.canModifyData) {
+                permissionIndicator.textContent = '✓ Data Modification Allowed';
+                permissionIndicator.className = 'permission-allowed';
+            } else {
+                permissionIndicator.textContent = '✗ Read-Only Access';
+                permissionIndicator.className = 'permission-denied';
+            }
+        }
+        
     } else {
         // User is not logged in
         if (userLoginSection) userLoginSection.style.display = 'block';
         if (userInfoSection) userInfoSection.style.display = 'none';
+        
+        // Hide all data modification elements when not logged in
+        const dataModificationElements = [
+            elements.saveBtn,
+            elements.updateBtn,
+            elements.deleteBtn,
+            elements.addNewBtn
+        ];
+        
+        dataModificationElements.forEach(element => {
+            if (element) {
+                element.style.display = 'none';
+            }
+        });
     }
 }
 
@@ -535,6 +584,12 @@ function handleKeyboardShortcuts(e) {
 
 // Annotation management
 function addNewAnnotation() {
+    // Check if user has data modification permissions
+    if (!currentUser || !currentUser.canModifyData) {
+        showToast('You do not have permission to create new data.', 'error');
+        return;
+    }
+    
     const newAnnotation = {
         id: generateId(),
         sourceExcerpt: currentTaskMode === 'modification' ? '' : undefined,
@@ -546,7 +601,8 @@ function addNewAnnotation() {
         annotationStatus: currentTaskMode === 'modification' ? 'pending' : undefined,
         rejectionReason: currentTaskMode === 'modification' ? '' : undefined,
         completed: false,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        annotatorId: currentUser.userId || currentUser.id
     };
     
     annotations.unshift(newAnnotation);
@@ -569,6 +625,12 @@ function addNewAnnotation() {
 
 async function updateCurrentAnnotation() {
     if (filteredAnnotations.length === 0) return;
+    
+    // Check if user has data modification permissions
+    if (!currentUser || !currentUser.canModifyData) {
+        showToast('You do not have permission to modify data.', 'error');
+        return;
+    }
     
     const annotation = filteredAnnotations[currentIndex];
     const formData = getFormData();
@@ -653,6 +715,12 @@ async function updateAssignmentProgress() {
 
 function deleteCurrentAnnotation() {
     if (filteredAnnotations.length === 0) return;
+    
+    // Check if user has data modification permissions
+    if (!currentUser || !currentUser.canModifyData) {
+        showToast('You do not have permission to delete data.', 'error');
+        return;
+    }
     
     if (confirm('Are you sure you want to delete this annotation?')) {
         const annotation = filteredAnnotations[currentIndex];
@@ -775,6 +843,11 @@ function isAnnotationComplete(annotation) {
 function autoSave() {
     if (filteredAnnotations.length === 0 || currentIndex < 0 || currentIndex >= filteredAnnotations.length) {
         return;
+    }
+    
+    // Check if user has data modification permissions
+    if (!currentUser || !currentUser.canModifyData) {
+        return; // Silently skip auto-save if no permissions
     }
     
     try {
@@ -1215,6 +1288,12 @@ async function saveToFirebase() {
         return;
     }
 
+    // Check if user has data modification permissions
+    if (!currentUser.canModifyData) {
+        showToast('You do not have permission to modify data. Please contact your administrator.', 'error');
+        return;
+    }
+
     try {
         showLoading('Saving data to Firebase...');
         
@@ -1323,6 +1402,13 @@ function handleFileImport(event) {
     const files = event.target.files;
     if (!files || files.length === 0) {
         showToast('No files selected', 'error');
+        return;
+    }
+
+    // Check if user has data modification permissions
+    if (!currentUser || !currentUser.canModifyData) {
+        showToast('You do not have permission to import data.', 'error');
+        event.target.value = ''; // Clear the file input
         return;
     }
 
