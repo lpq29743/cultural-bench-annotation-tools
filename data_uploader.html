@@ -649,17 +649,23 @@
 
         function parseXLSX(arrayBuffer, filename) {
             try {
-                // Parse the Excel file using SheetJS
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                // Parse the Excel file using SheetJS with options to preserve formatting
+                const workbook = XLSX.read(arrayBuffer, { 
+                    type: 'array',
+                    cellText: false,  // Don't convert to text automatically
+                    cellDates: true   // Parse dates properly
+                });
                 
                 // Get the first worksheet
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
                 
-                // Convert to JSON with header row as keys
+                // Convert to JSON with header row as keys, preserving cell formatting
                 const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
                     header: 1,  // Use first row as header
-                    defval: ''  // Default value for empty cells
+                    defval: '',  // Default value for empty cells
+                    raw: false,  // Don't use raw values, preserve formatting
+                    dateNF: 'yyyy-mm-dd' // Date format
                 });
                 
                 if (jsonData.length < 2) {
@@ -676,8 +682,21 @@
                         const record = {};
                         
                         headers.forEach((header, index) => {
-                            const cellValue = row[index] || '';
-                            record[String(header).trim()] = String(cellValue).trim();
+                            let cellValue = row[index] || '';
+                            
+                            // Preserve line breaks and special characters
+                            if (typeof cellValue === 'string') {
+                                // Don't trim line breaks, only trim leading/trailing spaces on each line
+                                cellValue = cellValue.split('\n').map(line => line.trim()).join('\n');
+                                // Remove only leading and trailing empty lines
+                                cellValue = cellValue.replace(/^\n+|\n+$/g, '');
+                            } else {
+                                // Convert non-string values to string
+                                cellValue = String(cellValue);
+                            }
+                            
+                            const headerKey = String(header).trim();
+                            record[headerKey] = cellValue;
                         });
                         
                         // Add metadata
@@ -735,7 +754,20 @@
                 if (values.length >= headers.length) {
                     const record = {};
                     headers.forEach((header, index) => {
-                        record[header.trim()] = values[index] || '';
+                        let cellValue = values[index] || '';
+                        
+                        // Preserve line breaks in CSV cell values
+                        // CSV cells with line breaks are typically enclosed in quotes
+                        if (typeof cellValue === 'string') {
+                            // Restore line breaks that might have been escaped as \n
+                            cellValue = cellValue.replace(/\\n/g, '\n');
+                            // Don't trim line breaks, only trim leading/trailing spaces on each line
+                            cellValue = cellValue.split('\n').map(line => line.trim()).join('\n');
+                            // Remove only leading and trailing empty lines
+                            cellValue = cellValue.replace(/^\n+|\n+$/g, '');
+                        }
+                        
+                        record[header.trim()] = cellValue;
                     });
                     
                     // Add metadata
