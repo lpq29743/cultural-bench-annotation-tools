@@ -443,6 +443,23 @@
 
     <script src="app.js"></script>
     <script>
+        // Check if Firebase and FirebaseService are loaded
+        function checkFirebaseService() {
+            if (typeof firebase === 'undefined') {
+                console.error('Firebase SDK not loaded');
+                showError('Firebase service not available. Please refresh the page and try again.');
+                return false;
+            }
+            
+            if (typeof FirebaseService === 'undefined') {
+                console.error('FirebaseService not defined');
+                showError('Firebase service not loaded. Please refresh the page and try again.');
+                return false;
+            }
+            
+            return true;
+        }
+
         // Global variables
         let currentUser = null;
         let annotationData = [];
@@ -451,12 +468,29 @@
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing app...');
+            
+            // Check if Firebase is available
+            if (!checkFirebaseService()) {
+                console.error('Firebase services not available');
+                return;
+            }
+            
             initializeApp();
         });
 
         function initializeApp() {
+            console.log('Initializing application...');
+            
             // Set up event listeners
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+                console.log('Login form event listener added');
+            } else {
+                console.error('Login form not found');
+            }
+            
             document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             document.getElementById('loadDataBtn').addEventListener('click', loadUserData);
             document.getElementById('loadDataBtnEmpty').addEventListener('click', loadUserData);
@@ -481,10 +515,18 @@
             document.getElementById('statusFilter').addEventListener('change', applyFilters);
             document.getElementById('annotationStatusFilter').addEventListener('change', applyFilters);
             document.getElementById('clearFilters').addEventListener('click', clearFilters);
+            
+            console.log('App initialization completed');
         }
 
         async function handleLogin(e) {
             e.preventDefault();
+            console.log('Login form submitted');
+            
+            // Check Firebase service again before proceeding
+            if (!checkFirebaseService()) {
+                return;
+            }
             
             const userId = document.getElementById('userId').value.trim();
             if (!userId) {
@@ -492,28 +534,31 @@
                 return;
             }
             
+            console.log('Attempting login for user:', userId);
             showLoading(true);
             hideMessages();
             
             try {
                 // Validate user permissions
+                console.log('Calling FirebaseService.validateUserWithPermissions...');
                 const userResult = await FirebaseService.validateUserWithPermissions(userId);
+                console.log('User validation result:', userResult);
                 
                 if (!userResult.success) {
-                    showError('User not found or invalid permissions');
-                    return;
+                    throw new Error(userResult.error || 'User validation failed');
                 }
                 
                 const user = userResult.user;
+                console.log('User data:', user);
                 
                 // Check if user has data modification permissions
                 if (!user.canModifyData) {
-                    showError('Access denied: You do not have permission to modify data');
-                    return;
+                    throw new Error('Access denied: You do not have permission to modify data');
                 }
                 
                 // Store current user
                 currentUser = user;
+                console.log('User login successful');
                 
                 // Show success and switch to main app
                 showSuccess('Login successful! Loading application...');
