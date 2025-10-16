@@ -153,7 +153,7 @@ function switchTaskMode(mode) {
         elements.emptyStateText.textContent = 'Import LLM-generated data to start annotation review.';
         
         // Update import button text
-        elements.importBtn.innerHTML = '<i class="fas fa-upload"></i> Import Data';
+        elements.importBtn.innerHTML = '<i class="fas fa-upload"></i> Import Data (Multiple Files)';
         
     } else if (mode === 'creation') {
         // Hide modification-specific elements
@@ -169,7 +169,7 @@ function switchTaskMode(mode) {
         elements.emptyStateText.textContent = 'Create new cultural benchmark data from scratch.';
         
         // Update import button text
-        elements.importBtn.innerHTML = '<i class="fas fa-upload"></i> Import CSV';
+        elements.importBtn.innerHTML = '<i class="fas fa-upload"></i> Import CSV (Multiple Files)';
     }
     
     // Clear current data and reset
@@ -578,56 +578,105 @@ function updateButtons() {
 
 // File operations
 function handleFileImport(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const files = Array.from(event.target.files);
+    if (!files.length) return;
     
-    const isCSV = file.type === 'text/csv' || file.name.endsWith('.csv');
-    const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+    // Validate all files first
+    const invalidFiles = files.filter(file => {
+        const isCSV = file.type === 'text/csv' || file.name.endsWith('.csv');
+        const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+        return !isCSV && !isExcel;
+    });
     
-    if (!isCSV && !isExcel) {
-        showToast('Please select a CSV or Excel file', 'error');
+    if (invalidFiles.length > 0) {
+        showToast(`Invalid file types: ${invalidFiles.map(f => f.name).join(', ')}. Please select only CSV or Excel files.`, 'error');
         return;
     }
     
     showLoading(true);
     
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            let imported;
-            if (isCSV) {
-                imported = parseCSV(e.target.result);
-            } else {
-                // For Excel files, we'll treat them as CSV for now
-                // In a real implementation, you'd use a library like SheetJS
-                showToast('Excel import not fully implemented. Please convert to CSV first.', 'warning');
-                return;
-            }
-            
-            if (imported.length > 0) {
-                annotations = imported;
-                currentIndex = 0;
-                applyFilters();
-                
-                if (filteredAnnotations.length > 0) {
-                    loadAnnotation(currentIndex);
+    let totalImported = 0;
+    let processedFiles = 0;
+    let allImportedData = [];
+    let hasErrors = false;
+    
+    // Process each file
+    files.forEach((file, index) => {
+        const isCSV = file.type === 'text/csv' || file.name.endsWith('.csv');
+        const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let imported;
+                if (isCSV) {
+                    imported = parseCSV(e.target.result);
+                } else {
+                    // For Excel files, we'll treat them as CSV for now
+                    // In a real implementation, you'd use a library like SheetJS
+                    showToast(`Excel import not fully implemented for ${file.name}. Please convert to CSV first.`, 'warning');
+                    hasErrors = true;
+                    imported = [];
                 }
                 
-                updateUI();
-                showToast(`Imported ${imported.length} annotations`, 'success');
-            } else {
-                showToast('No valid data found in file', 'warning');
+                if (imported.length > 0) {
+                    allImportedData = allImportedData.concat(imported);
+                    totalImported += imported.length;
+                }
+                
+            } catch (error) {
+                console.error(`Import error for ${file.name}:`, error);
+                showToast(`Error importing ${file.name}: ${error.message}`, 'error');
+                hasErrors = true;
             }
-        } catch (error) {
-            console.error('Import error:', error);
-            showToast('Error importing file: ' + error.message, 'error');
-        } finally {
-            showLoading(false);
-            event.target.value = ''; // Reset file input
-        }
-    };
-    
-    reader.readAsText(file);
+            
+            processedFiles++;
+            
+            // When all files are processed
+            if (processedFiles === files.length) {
+                try {
+                    if (allImportedData.length > 0) {
+                        // Append to existing annotations instead of replacing
+                        annotations = annotations.concat(allImportedData);
+                        currentIndex = 0;
+                        applyFilters();
+                        
+                        if (filteredAnnotations.length > 0) {
+                            loadAnnotation(currentIndex);
+                        }
+                        
+                        updateUI();
+                        
+                        const successMessage = files.length === 1 
+                            ? `Imported ${totalImported} annotations from ${files[0].name}`
+                            : `Imported ${totalImported} annotations from ${files.length} files`;
+                        showToast(successMessage, 'success');
+                    } else {
+                        showToast('No valid data found in any file', 'warning');
+                    }
+                } catch (error) {
+                    console.error('Final processing error:', error);
+                    showToast('Error processing imported data: ' + error.message, 'error');
+                } finally {
+                    showLoading(false);
+                    event.target.value = ''; // Reset file input
+                }
+            }
+        };
+        
+        reader.onerror = function() {
+            showToast(`Error reading file: ${file.name}`, 'error');
+            hasErrors = true;
+            processedFiles++;
+            
+            if (processedFiles === files.length) {
+                showLoading(false);
+                event.target.value = '';
+            }
+        };
+        
+        reader.readAsText(file);
+    });
 }
 
 function parseCSV(csv) {
