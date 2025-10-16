@@ -143,18 +143,18 @@
             
             <div class="form-group">
                 <label>Batch Add User Data:</label>
-                <div class="example">Format: One user per line, format: userId,role,language_region_code</div>
-user001,annotator,zh_cn
-admin_li,admin,en_us
-annotator_zhang,annotator,ar_sa</div>
+                <div class="example">Format: One user per line, format: userId,role,language_region_code,canModifyData</div>
+user001,annotator,zh_cn,false
+admin_li,admin,en_us,true
+annotator_zhang,annotator,ar_sa,false</div>
             </div>
 
             <div class="form-group">
                 <label for="userDataText">Batch User Data:</label>
-                <textarea id="userDataText" placeholder="Enter user data according to the format above...">user001,annotator,zh_cn
-admin_li,admin,en_us
-annotator_zhang,annotator,ar_sa</textarea>
-            </div>
+                <textarea id="userDataText" placeholder="Enter user data according to the format above...">user001,annotator,zh_cn,false
+admin_li,admin,en_us,true
+annotator_zhang,annotator,ar_sa,false</textarea>
+            </div></div>
 
             <button class="btn btn-success" onclick="batchAddAllowedUsers()">
                 📋 Batch Add to Permission Database
@@ -185,6 +185,13 @@ annotator_zhang,annotator,ar_sa</textarea>
             <div class="form-group">
                 <label for="accessibleCsvs">Language Region Code:</label>
                 <input type="text" id="accessibleCsvs" placeholder="e.g.: zh_cn, en_us, ar_sa">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="canModifyData" style="width: auto; margin-right: 8px;">
+                    Can Modify Data (Allow data creation, editing, and deletion)
+                </label>
             </div>
 
             <button class="btn" onclick="addSingleAllowedUser()">
@@ -237,13 +244,24 @@ annotator_zhang,annotator,ar_sa</textarea>
                 for (const line of lines) {
                     const parts = line.trim().split(',');
                     
-                    if (parts.length === 3) {
+                    if (parts.length === 4) {
+                        const [userId, role, languageRegionCode, canModifyData] = parts;
+                        
+                        usersData.push({
+                            userId: userId.trim(),
+                            role: role.trim(),
+                            accessibleCsvs: [languageRegionCode.trim()],
+                            canModifyData: canModifyData.trim().toLowerCase() === 'true'
+                        });
+                    } else if (parts.length === 3) {
+                        // Backward compatibility for old format
                         const [userId, role, languageRegionCode] = parts;
                         
                         usersData.push({
                             userId: userId.trim(),
                             role: role.trim(),
-                            languageRegionCode: languageRegionCode.trim()
+                            accessibleCsvs: [languageRegionCode.trim()],
+                            canModifyData: false // Default to false for backward compatibility
                         });
                     }
                 }
@@ -276,6 +294,7 @@ annotator_zhang,annotator,ar_sa</textarea>
             const userId = document.getElementById('userId').value.trim();
             const userRole = document.getElementById('userRole').value;
             const accessibleCsvs = document.getElementById('accessibleCsvs').value.trim();
+            const canModifyData = document.getElementById('canModifyData').checked;
 
             if (!userId) {
                 showStatus('Please enter User ID', 'error');
@@ -285,13 +304,14 @@ annotator_zhang,annotator,ar_sa</textarea>
             try {
                 showStatus('Adding user permissions to Firestore...', 'success');
 
-                const result = await FirebaseService.addAllowedUser(userId, userRole, accessibleCsvs);
+                const result = await FirebaseService.addAllowedUser(userId, userRole, accessibleCsvs, canModifyData);
                 
                 if (result.success) {
                     showStatus('✅ User permissions added successfully!', 'success');
                     // Clear form
                     document.getElementById('userId').value = '';
                     document.getElementById('accessibleCsvs').value = '';
+                    document.getElementById('canModifyData').checked = false;
                 } else {
                     throw new Error(result.error);
                 }
@@ -322,7 +342,8 @@ annotator_zhang,annotator,ar_sa</textarea>
                     } else {
                         users.forEach((user, index) => {
                             const languageCode = user.languageRegionCode || user.accessibleCsvs || 'N/A';
-                            displayText += `${index + 1}. ${user.userId} | ${user.role} | ${languageCode}\n`;
+                            const canModify = user.canModifyData ? 'Yes' : 'No';
+                            displayText += `${index + 1}. ${user.userId} | ${user.role} | ${languageCode} | Can Modify: ${canModify}\n`;
                         });
                     }
                     
