@@ -210,7 +210,7 @@
         <div class="upload-options">
             <div class="option-card" data-method="file">
                 <h3>📁 File Upload</h3>
-                <p>Upload CSV, JSON, or TXT files</p>
+                <p>Upload CSV, JSON, XLSX, or TXT files</p>
             </div>
             <div class="option-card" data-method="text">
                 <h3>📝 Text Input</h3>
@@ -225,7 +225,7 @@
         <!-- File Upload Section -->
         <div class="upload-section" id="fileUploadSection" style="display: none;">
             <h3>Drag & Drop Files or Click to Select</h3>
-            <input type="file" id="fileInput" multiple accept=".csv,.json,.txt" style="display: none;">
+            <input type="file" id="fileInput" multiple accept=".csv,.json,.txt,.xlsx,.xls" style="display: none;">
             <button class="btn" onclick="document.getElementById('fileInput').click()">
                 📁 Select Files
             </button>
@@ -313,6 +313,8 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- SheetJS for XLSX support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="firebase-config.js"></script>
 
     <script>
@@ -455,8 +457,17 @@
             const allData = [];
             
             for (const file of files) {
-                const text = await readFileAsText(file);
-                const fileData = parseFileContent(text, file.name);
+                const extension = file.name.split('.').pop().toLowerCase();
+                let fileData;
+                
+                if (extension === 'xlsx' || extension === 'xls') {
+                    const arrayBuffer = await readFileAsArrayBuffer(file);
+                    fileData = parseXLSX(arrayBuffer, file.name);
+                } else {
+                    const text = await readFileAsText(file);
+                    fileData = parseFileContent(text, file.name);
+                }
+                
                 allData.push(...fileData);
             }
             
@@ -483,6 +494,65 @@
             });
         }
 
+        function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = e => reject(new Error('Failed to read file'));
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function parseXLSX(arrayBuffer, filename) {
+            try {
+                // Parse the Excel file using SheetJS
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                // Get the first worksheet
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Convert to JSON with header row as keys
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+                    header: 1,  // Use first row as header
+                    defval: ''  // Default value for empty cells
+                });
+                
+                if (jsonData.length < 2) {
+                    return []; // No data rows
+                }
+                
+                // Extract headers and data
+                const headers = jsonData[0];
+                const data = [];
+                
+                for (let i = 1; i < jsonData.length; i++) {
+                    const row = jsonData[i];
+                    if (row.some(cell => cell !== '')) { // Skip empty rows
+                        const record = {};
+                        
+                        headers.forEach((header, index) => {
+                            const cellValue = row[index] || '';
+                            record[String(header).trim()] = String(cellValue).trim();
+                        });
+                        
+                        // Add metadata
+                        if (document.getElementById('addTimestamp').checked) {
+                            record.uploadedAt = new Date().toISOString();
+                        }
+                        
+                        data.push(record);
+                    }
+                }
+                
+                return data;
+                
+            } catch (error) {
+                console.error('Error parsing XLSX file:', error);
+                throw new Error('Failed to parse XLSX file: ' + error.message);
+            }
+        }
+
         function parseFileContent(content, filename) {
             const extension = filename.split('.').pop().toLowerCase();
             
@@ -490,6 +560,8 @@
                 return JSON.parse(content);
             } else if (extension === 'csv' || extension === 'txt') {
                 return parseCSV(content);
+            } else if (extension === 'xlsx' || extension === 'xls') {
+                return parseXLSX(content);
             } else {
                 throw new Error('Unsupported file format: ' + extension);
             }
