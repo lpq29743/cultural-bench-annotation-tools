@@ -256,7 +256,14 @@ const FirebaseService = {
             if (!result.success || result.users.length === 0) {
                 return { 
                     success: true, 
+                    allowed: true,
                     user: {
+                        userId,
+                        role: 'annotator',
+                        accessibleCsvs: ['all'],
+                        canModifyData: false
+                    },
+                    userInfo: {
                         userId,
                         role: 'annotator',
                         accessibleCsvs: ['all'],
@@ -271,17 +278,21 @@ const FirebaseService = {
             if (!userInfo) {
                 return { 
                     success: false, 
-                    error: 'User ID not found in allowed list'
+                    allowed: false,
+                    error: 'User ID not found in allowed list',
+                    message: 'Access denied: User ID not authorized for this system'
                 };
             }
             
             return { 
                 success: true, 
-                user: userInfo
+                allowed: true,
+                user: userInfo,
+                userInfo: userInfo // For backward compatibility
             };
         } catch (error) {
             console.error('Error validating user:', error);
-            return { success: false, error: error.message };
+            return { success: false, allowed: false, error: error.message };
         }
     },
 
@@ -575,7 +586,14 @@ const FirebaseService = {
             if (!result.success || result.users.length === 0) {
                 return { 
                     success: true, 
+                    allowed: true,
                     user: {
+                        userId,
+                        role: 'annotator',
+                        accessibleCsvs: ['all'],
+                        canModifyData: false
+                    },
+                    userInfo: {
                         userId,
                         role: 'annotator',
                         accessibleCsvs: ['all'],
@@ -590,17 +608,21 @@ const FirebaseService = {
             if (!userInfo) {
                 return { 
                     success: false, 
-                    error: 'User ID not found in allowed list'
+                    allowed: false,
+                    error: 'User ID not found in allowed list',
+                    message: 'Access denied: User ID not authorized for this system'
                 };
             }
             
             return { 
                 success: true, 
-                user: userInfo
+                allowed: true,
+                user: userInfo,
+                userInfo: userInfo // For backward compatibility
             };
         } catch (error) {
             console.error('Error validating user:', error);
-            return { success: false, error: error.message };
+            return { success: false, allowed: false, error: error.message };
         }
     },
 
