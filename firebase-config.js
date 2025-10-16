@@ -250,59 +250,38 @@ const FirebaseService = {
 
     async validateUserWithPermissions(userId) {
         try {
-            const allowedUsersResult = await this.loadAllowedUsers();
+            const result = await this.loadAllowedUsers();
             
-            if (!allowedUsersResult.success) {
-                // If we can't load allowed users, allow all users (backward compatibility)
-                return {
-                    success: true,
-                    allowed: true,
-                    userInfo: {
+            // If no validation file exists, create a basic user
+            if (!result.success || result.users.length === 0) {
+                return { 
+                    success: true, 
+                    user: {
+                        userId,
                         role: 'annotator',
                         accessibleCsvs: ['all'],
-                        canModifyData: true
+                        canModifyData: false
                     }
                 };
             }
             
-            const allowedUsers = allowedUsersResult.users;
-            
-            // If no users are configured, allow all users
-            if (allowedUsers.length === 0) {
-                return {
-                    success: true,
-                    allowed: true,
-                    userInfo: {
-                        role: 'annotator',
-                        accessibleCsvs: ['all'],
-                        canModifyData: true
-                    }
-                };
-            }
-            
-            // Check if user is in allowed list
-            const userInfo = allowedUsers.find(user => user.userId === userId);
+            // Find user in the allowed list
+            const userInfo = result.users.find(user => user.userId === userId);
             
             if (!userInfo) {
-                return {
-                    success: true,
-                    allowed: false,
-                    message: 'User not authorized to access this system'
+                return { 
+                    success: false, 
+                    error: 'User ID not found in allowed list'
                 };
             }
             
-            return {
-                success: true,
-                allowed: true,
-                userInfo: userInfo
+            return { 
+                success: true, 
+                user: userInfo
             };
-            
         } catch (error) {
-            console.error('Error validating user permissions:', error);
-            return {
-                success: false,
-                error: error.message
-            };
+            console.error('Error validating user:', error);
+            return { success: false, error: error.message };
         }
     },
 
@@ -587,23 +566,21 @@ const FirebaseService = {
         }
     },
 
-    // Validate user with permissions
-    async validateUserWithPermissions(userId, requestedRole = null) {
+    // Enhanced validateUserWithPermissions method that returns user object
+    async validateUserWithPermissions(userId) {
         try {
             const result = await this.loadAllowedUsers();
             
-            // If no validation file exists, allow all users
+            // If no validation file exists, create a basic user
             if (!result.success || result.users.length === 0) {
                 return { 
                     success: true, 
-                    allowed: true, 
-                    userInfo: {
+                    user: {
                         userId,
-                        role: requestedRole || 'annotator',
+                        role: 'annotator',
                         accessibleCsvs: ['all'],
-                        canModifyData: false // Default to no modification permission
-                    },
-                    message: 'No validation file found, allowing all users' 
+                        canModifyData: false
+                    }
                 };
             }
             
@@ -612,30 +589,18 @@ const FirebaseService = {
             
             if (!userInfo) {
                 return { 
-                    success: true, 
-                    allowed: false, 
-                    message: 'User ID not found in allowed list'
-                };
-            }
-            
-            // Check role compatibility if requested
-            if (requestedRole && userInfo.role !== requestedRole) {
-                return {
-                    success: true,
-                    allowed: false,
-                    message: `User role mismatch. Expected: ${userInfo.role}, Requested: ${requestedRole}`
+                    success: false, 
+                    error: 'User ID not found in allowed list'
                 };
             }
             
             return { 
                 success: true, 
-                allowed: true, 
-                userInfo,
-                message: 'User validated successfully'
+                user: userInfo
             };
         } catch (error) {
             console.error('Error validating user:', error);
-            return { success: false, allowed: false, error: error.message };
+            return { success: false, error: error.message };
         }
     },
 
@@ -650,32 +615,220 @@ const FirebaseService = {
             }
             
             if (!validation.allowed) {
-                return { success: false, error: validation.message || 'User ID not authorized. Please contact administrator.' };
+                return { success: false, error: validation.message };
             }
             
-            // Try to get existing user from database
-            const existingUser = await this.getUserByUserId(userId);
-            
-            if (existingUser.success) {
-                // Update user with validated permissions
-                const updatedUser = {
-                    ...existingUser.user,
-                    role: validation.userInfo.role,
-                    accessibleCsvs: validation.userInfo.accessibleCsvs,
-                    canModifyData: validation.userInfo.canModifyData || false
-                };
-                return { success: true, user: updatedUser };
-            } else {
-                // User doesn't exist in database, return validation info for creation
-                return { 
-                    success: false, 
-                    error: 'User not found in database',
-                    validationInfo: validation.userInfo
-                };
-            }
+            return { 
+                success: true, 
+                user: validation.userInfo
+            };
         } catch (error) {
-            console.error('Error getting user with validation:', error);
+            console.error('Error getting user by userId with validation:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Data Modification Methods - Load user's annotation data based on accessible CSVs
+    async loadUserAnnotationData(userId, accessibleCsvs = ['all']) {
+        try {
+            let query = db.collection(COLLECTIONS.MODIFICATION);
+            
+            // If user has specific CSV access restrictions, filter by those
+            if (accessibleCsvs && !accessibleCsvs.includes('all')) {
+                query = query.where('language_region', 'in', accessibleCsvs);
+            }
+            
+            // Also filter by assigned user if needed
+            // query = query.where('assignedTo', '==', userId);
+            
+            const snapshot = await query.orderBy('timestamp', 'desc').get();
+            
+            const annotations = [];
+            snapshot.forEach(doc => {
+                annotations.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return { success: true, data: annotations };
+        } catch (error) {
+            console.error('Error loading user annotation data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Save user's modified annotation data
+    async saveUserAnnotationData(userId, annotationData, mode = 'modification') {
+        try {
+            const collectionName = mode === 'modification' ? COLLECTIONS.MODIFICATION : COLLECTIONS.CREATION;
+            const batch = db.batch();
+            
+            annotationData.forEach(item => {
+                if (item.id && item.id.startsWith('firebase_')) {
+                    // Update existing document
+                    const docRef = db.collection(collectionName).doc(item.id.replace('firebase_', ''));
+                    batch.update(docRef, {
+                        ...item,
+                        modifiedBy: userId,
+                        lastModified: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    // Create new document
+                    const docRef = db.collection(collectionName).doc();
+                    batch.set(docRef, {
+                        ...item,
+                        createdBy: userId,
+                        modifiedBy: userId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastModified: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            });
+            
+            await batch.commit();
+            return { success: true };
+        } catch (error) {
+            console.error('Error saving user annotation data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Data Creation Methods - Load user's created data
+    async loadUserCreatedData(userId) {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.CREATION)
+                .where('createdBy', '==', userId)
+                .orderBy('createdAt', 'desc')
+                .get();
+            
+            const annotations = [];
+            snapshot.forEach(doc => {
+                annotations.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return { success: true, data: annotations };
+        } catch (error) {
+            console.error('Error loading user created data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Save user's created data
+    async saveUserCreatedData(userId, annotationData) {
+        try {
+            const batch = db.batch();
+            
+            annotationData.forEach(item => {
+                if (item.firebaseId) {
+                    // Update existing document
+                    const docRef = db.collection(COLLECTIONS.CREATION).doc(item.firebaseId);
+                    batch.update(docRef, {
+                        ...item,
+                        lastModified: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    // Create new document
+                    const docRef = db.collection(COLLECTIONS.CREATION).doc();
+                    batch.set(docRef, {
+                        ...item,
+                        createdBy: userId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastModified: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            });
+            
+            await batch.commit();
+            return { success: true };
+        } catch (error) {
+            console.error('Error saving user created data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Search user data by userId (for admin purposes)
+    async searchUserData(searchUserId, requestingUserId) {
+        try {
+            // First validate the requesting user has admin permissions
+            const validation = await this.validateUserWithPermissions(requestingUserId);
+            
+            if (!validation.success || validation.user.role !== 'admin') {
+                return { success: false, error: 'Insufficient permissions to search user data' };
+            }
+            
+            // Search in both modification and creation collections
+            const [modificationResult, creationResult] = await Promise.all([
+                this.loadUserAnnotationData(searchUserId, ['all']),
+                this.loadUserCreatedData(searchUserId)
+            ]);
+            
+            return {
+                success: true,
+                data: {
+                    modification: modificationResult.success ? modificationResult.data : [],
+                    creation: creationResult.success ? creationResult.data : []
+                }
+            };
+        } catch (error) {
+            console.error('Error searching user data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Get user statistics
+    async getUserStats(userId) {
+        try {
+            const [modificationData, creationData] = await Promise.all([
+                this.loadUserAnnotationData(userId, ['all']),
+                this.loadUserCreatedData(userId)
+            ]);
+            
+            const modificationStats = {
+                total: 0,
+                accepted: 0,
+                revised: 0,
+                rejected: 0,
+                pending: 0
+            };
+            
+            if (modificationData.success) {
+                modificationData.data.forEach(item => {
+                    modificationStats.total++;
+                    const status = item.annotation_status || 'pending';
+                    modificationStats[status] = (modificationStats[status] || 0) + 1;
+                });
+            }
+            
+            const creationStats = {
+                total: creationData.success ? creationData.data.length : 0,
+                completed: 0
+            };
+            
+            if (creationData.success) {
+                creationStats.completed = creationData.data.filter(item => 
+                    item.topic && item.scenario && item.question && item.answer && item.explanation
+                ).length;
+            }
+            
+            return {
+                success: true,
+                stats: {
+                    modification: modificationStats,
+                    creation: creationStats
+                }
+            };
+        } catch (error) {
+            console.error('Error getting user stats:', error);
             return { success: false, error: error.message };
         }
     }
 };
+
+// Export for use in other files
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { FirebaseService, COLLECTIONS };
+}

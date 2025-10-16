@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cultural Benchmark Annotation Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .tool-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .modification .tool-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .creation .tool-icon {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        
+        .management .tool-icon {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+        
+        .legacy .tool-icon {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+        
+        .tool-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .tool-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .tool-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 25px;
+        }
+        
+        .tool-features li {
+            color: #555;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .tool-features li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8, #6f42c1);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 40px;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+        }
+        
+        .footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .tool-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-globe"></i> Cultural Benchmark Annotation Tools</h1>
+            <p>Professional tools for creating and modifying cultural benchmark datasets. Choose the appropriate tool based on your role and task requirements.</p>
+        </div>
+        
+        <div class="tools-grid">
+            <!-- Data Modification Tool -->
+            <a href="data_modification.html" class="tool-card modification">
+                <div class="tool-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <h3>Data Modification</h3>
+                <p>Annotate and modify existing cultural benchmark data with permission-based access control.</p>
+                <ul class="tool-features">
+                    <li>User permission validation</li>
+                    <li>Region-specific data access</li>
+                    <li>Accept/Revise/Reject workflow</li>
+                    <li>Progress tracking</li>
+                    <li>Auto-save functionality</li>
+                </ul>
+                <span class="btn">Start Modifying Data</span>
+            </a>
+            
+            <!-- Data Creation Tool -->
+            <a href="data_creation.html" class="tool-card creation">
+                <div class="tool-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h3>Data Creation</h3>
+                <p>Create new cultural benchmark annotation items from scratch with guided workflows.</p>
+                <ul class="tool-features">
+                    <li>Topic-based creation</li>
+                    <li>Built-in guidelines</li>
+                    <li>Form validation</li>
+                    <li>Export capabilities</li>
+                    <li>Template examples</li>
+                </ul>
+                <span class="btn btn-success">Create New Data</span>
+            </a>
+            
+            <!-- User Management Tool -->
+            <a href="user_management.html" class="tool-card management">
+                <div class="tool-icon">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h3>User Management</h3>
+                <p>Manage user permissions, roles, and access rights for the annotation system.</p>
+                <ul class="tool-features">
+                    <li>User permission management</li>
+                    <li>Role assignment</li>
+                    <li>Access control</li>
+                    <li>Batch user operations</li>
+                    <li>Firebase integration</li>
+                </ul>
+                <span class="btn btn-info">Manage Users</span>
+            </a>
+            
+            <!-- Legacy Tool -->
+            <a href="index.html" class="tool-card legacy">
+                <div class="tool-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h3>Legacy Tool</h3>
+                <p>Access the original comprehensive annotation tool with all features in one interface.</p>
+                <ul class="tool-features">
+                    <li>All-in-one interface</li>
+                    <li>Multiple task modes</li>
+                    <li>File import/export</li>
+                    <li>Advanced filtering</li>
+                    <li>Statistics dashboard</li>
+                </ul>
+                <span class="btn btn-secondary">Use Legacy Tool</span>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>Cultural Benchmark Annotation Tools v2.0</p>
+            <p>
+                <a href="data_uploader.html"><i class="fas fa-upload"></i> Data Uploader</a>
+                <a href="user_management.html"><i class="fas fa-cog"></i> Settings</a>
+                <a href="index.html"><i class="fas fa-question-circle"></i> Help</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
