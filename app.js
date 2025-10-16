@@ -419,6 +419,29 @@ function initializeEventListeners() {
     elements.exportBtn.addEventListener('click', exportToCSV);
     elements.csvFileInput.addEventListener('change', handleFileImport);
     
+    // User management buttons
+    if (elements.loginBtn) {
+        elements.loginBtn.addEventListener('click', () => {
+            elements.loginModal.style.display = 'block';
+        });
+    }
+    
+    if (elements.loginModalClose) {
+        elements.loginModalClose.addEventListener('click', () => {
+            elements.loginModal.style.display = 'none';
+        });
+    }
+    
+    if (elements.loginCancel) {
+        elements.loginCancel.addEventListener('click', () => {
+            elements.loginModal.style.display = 'none';
+        });
+    }
+    
+    if (elements.logoutBtn) {
+        elements.logoutBtn.addEventListener('click', handleUserLogout);
+    }
+    
     // User data operations
     const searchUserBtn = document.getElementById('searchUserBtn');
     const loadMyDataBtn = document.getElementById('loadMyDataBtn');
