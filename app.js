@@ -282,6 +282,51 @@ function updateUserUI() {
     }
 }
 
+function checkLoginStatus() {
+    // Check if user is already logged in from localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    
+    if (storedUser) {
+        try {
+            currentUser = JSON.parse(storedUser);
+            
+            // Validate that the stored user data is complete
+            if (currentUser && currentUser.userId) {
+                // Update UI to show logged in state
+                updateUserUI();
+                
+                // Optionally validate user with Firebase (silent check)
+                FirebaseService.validateUserWithPermissions(currentUser.userId)
+                    .then(validation => {
+                        if (!validation.success || !validation.allowed) {
+                            // User is no longer valid, log them out
+                            console.warn('Stored user is no longer valid, logging out');
+                            handleUserLogout();
+                        }
+                    })
+                    .catch(error => {
+                        console.warn('Could not validate stored user:', error);
+                        // Don't log out on validation error, might be network issue
+                    });
+            } else {
+                // Invalid stored user data, clear it
+                localStorage.removeItem('currentUser');
+                currentUser = null;
+                updateUserUI();
+            }
+        } catch (error) {
+            console.error('Error parsing stored user data:', error);
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            updateUserUI();
+        }
+    } else {
+        // No stored user, ensure UI shows login form
+        currentUser = null;
+        updateUserUI();
+    }
+}
+
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
