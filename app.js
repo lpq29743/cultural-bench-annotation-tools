@@ -227,7 +227,7 @@ async function handleUserLogin(event) {
             const userData = {
                 userId: userId,
                 role: validation.userInfo.role,
-                language_code: validation.userInfo.language_code,
+                language_region: validation.userInfo.language_region,
                 canModifyData: validation.userInfo.canModifyData || false,
                 name: userId, // Default name to userId
                 email: '', // Can be updated later

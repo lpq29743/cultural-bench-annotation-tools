@@ -13,25 +13,25 @@ const setupUsers = async () => {
             {
                 userId: 'admin001',
                 role: 'admin',
-                language_code: ['all'],
+                language_region: ['all'],
                 canModifyData: true
             },
             {
                 userId: 'annotator001',
                 role: 'annotator', 
-                language_code: ['zh_cn', 'en_us'],
+                language_region: ['zh_cn', 'en_us'],
                 canModifyData: true
             },
             {
                 userId: 'annotator002',
                 role: 'annotator',
-                language_code: ['ja_jp', 'ko_kr'],
+                language_region: ['ja_jp', 'ko_kr'],
                 canModifyData: false
             },
             {
                 userId: 'reviewer001',
                 role: 'reviewer',
-                language_code: ['all'],
+                language_region: ['all'],
                 canModifyData: true
             }
         ];
@@ -41,7 +41,7 @@ const setupUsers = async () => {
             const result = await FirebaseService.addAllowedUser(
                 userData.userId,
                 userData.role,
-                userData.language_code,
+                userData.language_region,
                 userData.canModifyData
             );
             

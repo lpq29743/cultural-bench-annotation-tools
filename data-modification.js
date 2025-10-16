@@ -177,7 +177,7 @@ async function handleLogin(event) {
         currentUser = {
             userId: validation.userInfo.userId,
             role: validation.userInfo.role,
-            language_code: validation.userInfo.language_code,
+            language_region: validation.userInfo.language_region,
             canModifyData: validation.userInfo.canModifyData
         };
         
@@ -207,21 +207,21 @@ function updateUIAfterLogin() {
     elements.userDisplayName.textContent = `Welcome, ${currentUser.userId}`;
     elements.userIdDisplay.textContent = currentUser.userId;
     
-    // Fix language_code display - handle both array and string cases properly
-    let languageCodeDisplay = '';
-    if (Array.isArray(currentUser.language_code)) {
+    // Fix language_region display - handle both array and string cases properly
+    let languageRegionDisplay = '';
+    if (Array.isArray(currentUser.language_region)) {
         // If it's an array, join with comma, but filter out 'all' if there are specific codes
-        const codes = currentUser.language_code.filter(code => code !== 'all');
+        const codes = currentUser.language_region.filter(code => code !== 'all');
         if (codes.length > 0) {
-            languageCodeDisplay = codes.join(', ');
+            languageRegionDisplay = codes.join(', ');
         } else {
-            languageCodeDisplay = 'all';
+            languageRegionDisplay = 'all';
         }
     } else {
         // If it's a string, use it directly
-        languageCodeDisplay = currentUser.language_code || 'all';
+        languageRegionDisplay = currentUser.language_region || 'all';
     }
-    elements.userLanguageCode.textContent = languageCodeDisplay;
+    elements.userLanguageCode.textContent = languageRegionDisplay;
     
     elements.userPermission.textContent = currentUser.canModifyData ? 'Can Modify Data' : 'Read Only';
 }
@@ -230,26 +230,26 @@ async function loadAnnotationData() {
     try {
         showLoading('Loading annotation data...');
         
-        // Step 5: Read cultural_annotations_modified, return all the data with operation is empty and language_code matches user's language_code
+        // Step 5: Read cultural_annotations_modified, return all the data with operation is empty and language_region matches user's language_region
         const result = await FirebaseService.loadFromCollection('cultural_annotations_modified');
         
         if (!result.success) {
             throw new Error(result.error || 'Failed to load annotation data');
         }
         
-        // Filter data based on user's language_code and empty operation
+        // Filter data based on user's language_region and empty operation
         annotationData = result.data.filter(item => {
             // Check if operation is empty (null, undefined, or empty string)
             const hasEmptyOperation = !item.operation || item.operation === '';
             
-            // Check if language_code matches
+            // Check if language_region matches
             let languageMatches = false;
-            if (Array.isArray(currentUser.language_code)) {
-                languageMatches = currentUser.language_code.includes('all') || 
-                                currentUser.language_code.includes(item.language_code);
+            if (Array.isArray(currentUser.language_region)) {
+                languageMatches = currentUser.language_region.includes('all') || 
+                                currentUser.language_region.includes(item.language_region);
             } else {
-                languageMatches = currentUser.language_code === 'all' || 
-                                currentUser.language_code === item.language_code;
+                languageMatches = currentUser.language_region === 'all' || 
+                                currentUser.language_region === item.language_region;
             }
             
             return hasEmptyOperation && languageMatches;
@@ -258,7 +258,7 @@ async function loadAnnotationData() {
         hideLoading();
         
         if (annotationData.length === 0) {
-            showEmptyState('No annotation items found for your language code.');
+            showEmptyState('No annotation items found for your language region.');
             return;
         }
         

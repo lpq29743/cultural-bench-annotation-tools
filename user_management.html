@@ -178,8 +178,8 @@ annotator_zhang,annotator,ar_sa,false</div>
             </div>
 
             <div class="form-group">
-                <label for="language_code">Language Region Code:</label>
-                <input type="text" id="language_code" placeholder="e.g.: zh_cn, en_us, ar_sa">
+                <label for="language_region">Language Region Code:</label>
+                <input type="text" id="language_region" placeholder="e.g.: zh_cn, en_us, ar_sa">
             </div>
 
             <div class="form-group">
@@ -241,7 +241,7 @@ annotator_zhang,annotator,ar_sa,false</div>
                         usersData.push({
                             userId: userId.trim(),
                             role: role.trim(),
-                            language_code: [languageRegionCode.trim()],
+                            language_region: [languageRegionCode.trim()],
                             canModifyData: canModifyData.trim().toLowerCase() === 'true'
                         });
                     } else if (parts.length === 3) {
@@ -251,7 +251,7 @@ annotator_zhang,annotator,ar_sa,false</div>
                         usersData.push({
                             userId: userId.trim(),
                             role: role.trim(),
-                            language_code: [languageRegionCode.trim()],
+                            language_region: [languageRegionCode.trim()],
                             canModifyData: false // Default to false for backward compatibility
                         });
                     }
@@ -284,7 +284,7 @@ annotator_zhang,annotator,ar_sa,false</div>
 
             const userId = document.getElementById('userId').value.trim();
             const userRole = document.getElementById('userRole').value;
-            const language_code = document.getElementById('language_code').value.trim();
+            const language_region = document.getElementById('language_region').value.trim();
             const canModifyData = document.getElementById('canModifyData').checked;
 
             if (!userId) {
@@ -295,13 +295,13 @@ annotator_zhang,annotator,ar_sa,false</div>
             try {
                 showStatus('Adding user permissions to Firestore...', 'success');
 
-                const result = await FirebaseService.addAllowedUser(userId, userRole, language_code, canModifyData);
+                const result = await FirebaseService.addAllowedUser(userId, userRole, language_region, canModifyData);
                 
                 if (result.success) {
                     showStatus('✅ User permissions added successfully!', 'success');
                     // Clear form
                     document.getElementById('userId').value = '';
-                    document.getElementById('language_code').value = '';
+                    document.getElementById('language_region').value = '';
                     document.getElementById('canModifyData').checked = false;
                 } else {
                     throw new Error(result.error);
@@ -332,9 +332,9 @@ annotator_zhang,annotator,ar_sa,false</div>
                         displayText += 'No user permission data available';
                     } else {
                         users.forEach((user, index) => {
-                            const languageCode = user.languageRegionCode || user.language_code || 'N/A';
+                            const languageRegion = user.languageRegionCode || user.language_region || 'N/A';
                             const canModify = user.canModifyData ? 'Yes' : 'No';
-                            displayText += `${index + 1}. ${user.userId} | ${user.role} | ${languageCode} | Can Modify: ${canModify}\n`;
+                            displayText += `${index + 1}. ${user.userId} | ${user.role} | ${languageRegion} | Can Modify: ${canModify}\n`;
                         });
                     }
                     
