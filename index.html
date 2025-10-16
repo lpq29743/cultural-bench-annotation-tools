@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cultural Benchmark Annotation Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-tags"></i> Cultural Benchmark Annotation Tool</h1>
+                <div class="task-mode-selector">
+                    <label for="taskMode">Task Mode:</label>
+                    <select id="taskMode" class="task-mode-select">
+                        <option value="modification">Data Modification</option>
+                        <option value="creation">Data Creation</option>
+                    </select>
+                </div>
+                <div class="header-actions">
+                    <button id="importBtn" class="btn btn-secondary">
+                        <i class="fas fa-upload"></i> Import Data
+                    </button>
+                    <button id="exportBtn" class="btn btn-secondary">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                    <button id="saveBtn" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save to Firebase
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="sidebar">
+                <div class="stats-panel">
+                    <h3>Statistics</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Items:</span>
+                        <span id="totalCount" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Completed:</span>
+                        <span id="completedCount" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item" id="acceptedStat">
+                        <span class="stat-label">Accepted:</span>
+                        <span id="acceptedCount" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item" id="revisedStat">
+                        <span class="stat-label">Revised:</span>
+                        <span id="revisedCount" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item" id="rejectedStat">
+                        <span class="stat-label">Rejected:</span>
+                        <span id="rejectedCount" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Progress:</span>
+                        <span id="progressPercent" class="stat-value">0%</span>
+                    </div>
+                </div>
+
+                <div class="filter-panel">
+                    <h3>Filters</h3>
+                    <div class="filter-group">
+                        <label for="topicFilter">Topic:</label>
+                        <select id="topicFilter" class="filter-select">
+                            <option value="">All Topics</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="statusFilter">Status:</label>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="completed">Completed</option>
+                            <option value="incomplete">Incomplete</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" id="annotationFilter">
+                        <label for="annotationStatusFilter">Annotation:</label>
+                        <select id="annotationStatusFilter" class="filter-select">
+                            <option value="">All</option>
+                            <option value="accept">Accepted</option>
+                            <option value="revise">Revised</option>
+                            <option value="reject">Rejected</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <button id="clearFilters" class="btn btn-outline">Clear Filters</button>
+                </div>
+
+                <div class="navigation-panel">
+                    <h3>Navigation</h3>
+                    <div class="nav-controls">
+                        <button id="prevBtn" class="btn btn-outline">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span id="itemCounter" class="item-counter">0 / 0</span>
+                        <button id="nextBtn" class="btn btn-outline">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="annotation-area">
+                <div class="annotation-form" id="annotationForm">
+                    <!-- Source Excerpt Field (only for modification mode) -->
+                    <div class="form-group" id="sourceExcerptGroup">
+                        <label for="sourceExcerpt">Source Excerpt:</label>
+                        <textarea id="sourceExcerpt" class="form-textarea" rows="3" placeholder="Original source excerpt" readonly></textarea>
+                    </div>
+
+                    <!-- Annotation Decision (only for modification mode) -->
+                    <div class="form-group" id="annotationDecisionGroup">
+                        <label for="annotationDecision">Annotation Decision:</label>
+                        <div class="annotation-decision-buttons">
+                            <button id="acceptBtn" class="btn btn-decision btn-accept">
+                                <i class="fas fa-check"></i> Accept
+                            </button>
+                            <button id="reviseBtn" class="btn btn-decision btn-revise">
+                                <i class="fas fa-edit"></i> Revise
+                            </button>
+                            <button id="rejectBtn" class="btn btn-decision btn-reject">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                        <input type="hidden" id="annotationStatus" value="">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="topic">Topic:</label>
+                        <select id="topic" class="form-select">
+                            <option value="">Select a topic</option>
+                            <option value="Belief">Belief</option>
+                            <option value="Commerce">Commerce</option>
+                            <option value="Education">Education</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Food">Food</option>
+                            <option value="Government">Government</option>
+                            <option value="Habitat">Habitat</option>
+                            <option value="Health">Health</option>
+                            <option value="Heritage">Heritage</option>
+                            <option value="Language">Language</option>
+                            <option value="Pets">Pets</option>
+                            <option value="Science">Science</option>
+                            <option value="Social">Social</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Work">Work</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scenario">Scenario:</label>
+                        <textarea id="scenario" class="form-textarea" rows="3" placeholder="Describe the scenario"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="question">Question:</label>
+                        <textarea id="question" class="form-textarea" rows="3" placeholder="Enter the question"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="answer">Answer:</label>
+                        <textarea id="answer" class="form-textarea" rows="4" placeholder="Provide the answer"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="explanation">Explanation:</label>
+                        <textarea id="explanation" class="form-textarea" rows="4" placeholder="Explain the reasoning"></textarea>
+                    </div>
+
+                    <!-- Rejection Reason (only shown when reject is selected) -->
+                    <div class="form-group" id="rejectionReasonGroup" style="display: none;">
+                        <label for="rejectionReason">Rejection Reason:</label>
+                        <select id="rejectionReason" class="form-select">
+                            <option value="">Select reason</option>
+                            <option value="incorrect_source">Source excerpt contains incorrect information</option>
+                            <option value="subjective_source">Source excerpt is subjective, not objective</option>
+                            <option value="cannot_revise">Generated sample cannot be reasonably revised</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="addNewBtn" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add New Item
+                        </button>
+                        <button id="updateBtn" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Update Item
+                        </button>
+                        <button id="deleteBtn" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Delete Item
+                        </button>
+                        <button id="clearFormBtn" class="btn btn-outline">
+                            <i class="fas fa-eraser"></i> Clear Form
+                        </button>
+                    </div>
+                </div>
+
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-content">
+                        <i class="fas fa-file-csv empty-state-icon"></i>
+                        <h3>No Data Available</h3>
+                        <p id="emptyStateText">Import data or add new items to get started with annotation.</p>
+                        <button id="startBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add First Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- File input for data import -->
+    <input type="file" id="csvFileInput" accept=".csv,.xlsx" style="display: none;">
+
+    <!-- Loading overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Application scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
