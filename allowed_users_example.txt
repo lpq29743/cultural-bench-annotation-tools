@@ -1,0 +1,10 @@
+user001
+user002
+annotator_zhang
+annotator_wang
+admin_li
+researcher_chen
+student_liu
+expert_zhao
+reviewer_sun
+manager_wu

@@ -1250,14 +1250,30 @@ async function handleLogin(e) {
             delete elements.loginForm.dataset.editingUserId;
             
         } else {
-            // Check if user exists for login/creation
-            const userResult = await FirebaseService.getUserByUserId(userId);
+            // Check if user exists for login/creation with validation
+            const userResult = await FirebaseService.getUserByUserIdWithValidation(userId);
             
             if (userResult.success) {
-                // User exists, log them in
+                // User exists and is validated, log them in
                 currentUser = userResult.user;
             } else {
-                // Create new user with simplified structure
+                // Check if it's a validation error or user doesn't exist
+                if (userResult.error && userResult.error.includes('not authorized')) {
+                    throw new Error(userResult.error);
+                }
+                
+                // User doesn't exist, validate first then create
+                const validation = await FirebaseService.validateUserId(userId);
+                
+                if (!validation.success) {
+                    throw new Error('Unable to validate user ID: ' + validation.error);
+                }
+                
+                if (!validation.allowed) {
+                    throw new Error('User ID not authorized. Please contact administrator.');
+                }
+                
+                // Validation passed, create new user
                 const createResult = await FirebaseService.createUser({
                     userId,
                     name: userId, // Use userId as display name

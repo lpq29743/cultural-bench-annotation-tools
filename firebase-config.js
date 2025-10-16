@@ -14,6 +14,9 @@ firebase.initializeApp(firebaseConfig);
 // Initialize Firestore
 const db = firebase.firestore();
 
+// Initialize Firebase Storage
+const storage = firebase.storage();
+
 // Collection names for different task modes and user management
 const COLLECTIONS = {
     MODIFICATION: 'cultural_annotations_modified',
@@ -216,6 +219,72 @@ const FirebaseService = {
             };
         } catch (error) {
             console.error('Error getting user by id:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // User ID validation using Firebase Storage file
+    async loadAllowedUserIds() {
+        try {
+            const storageRef = storage.ref('config/allowed_users.txt');
+            const downloadURL = await storageRef.getDownloadURL();
+            
+            const response = await fetch(downloadURL);
+            const text = await response.text();
+            
+            // Parse the file content - support both line-separated and comma-separated formats
+            const userIds = text.split(/[\n,]/)
+                .map(id => id.trim())
+                .filter(id => id.length > 0);
+            
+            return { success: true, userIds };
+        } catch (error) {
+            console.error('Error loading allowed user IDs:', error);
+            // If file doesn't exist or error occurs, return empty array (allow all users)
+            return { success: false, error: error.message, userIds: [] };
+        }
+    },
+
+    async validateUserId(userId) {
+        try {
+            const result = await this.loadAllowedUserIds();
+            
+            // If no validation file exists, allow all users
+            if (!result.success || result.userIds.length === 0) {
+                return { success: true, allowed: true, message: 'No validation file found, allowing all users' };
+            }
+            
+            // Check if userId is in the allowed list
+            const isAllowed = result.userIds.includes(userId);
+            
+            return { 
+                success: true, 
+                allowed: isAllowed, 
+                message: isAllowed ? 'User ID is allowed' : 'User ID not found in allowed list'
+            };
+        } catch (error) {
+            console.error('Error validating user ID:', error);
+            return { success: false, allowed: false, error: error.message };
+        }
+    },
+
+    async getUserByUserIdWithValidation(userId) {
+        try {
+            // First validate the user ID
+            const validation = await this.validateUserId(userId);
+            
+            if (!validation.success) {
+                return { success: false, error: validation.error };
+            }
+            
+            if (!validation.allowed) {
+                return { success: false, error: 'User ID not authorized. Please contact administrator.' };
+            }
+            
+            // If validation passes, proceed with normal user lookup
+            return await this.getUserByUserId(userId);
+        } catch (error) {
+            console.error('Error getting user with validation:', error);
             return { success: false, error: error.message };
         }
     },
