@@ -779,13 +779,12 @@
             for (const line of lines) {
                 const parts = line.trim().split(',');
                 if (parts.length === 3) {
-                    const [userId, role, csvAccess] = parts;
-                    const accessibleCsvs = csvAccess === 'all' ? ['all'] : csvAccess.split(';').map(csv => csv.trim());
+                    const [userId, role, languageRegionCode] = parts;
                     
                     data.push({
                         userId: userId.trim(),
                         role: role.trim(),
-                        accessibleCsvs: accessibleCsvs,
+                        languageRegionCode: languageRegionCode.trim(),
                         createdAt: new Date().toISOString(),
                         isActive: true
                     });

@@ -143,17 +143,17 @@
             
             <div class="form-group">
                 <label>批量添加用户数据：</label>
-                <div class="example">格式：每行一个用户，格式为 userId,role,csvAccess
-user001,annotator,dataset1.csv;dataset2.csv
-admin_li,admin,all
-annotator_zhang,annotator,dataset3.csv;dataset4.csv</div>
+                <div class="example">格式：每行一个用户，格式为 userId,role,language_region_code
+user001,annotator,zh_cn
+admin_li,admin,en_us
+annotator_zhang,annotator,ar_sa</div>
             </div>
 
             <div class="form-group">
                 <label for="userDataText">批量用户数据：</label>
-                <textarea id="userDataText" placeholder="按照上面的格式输入用户数据...">user001,annotator,dataset1.csv;dataset2.csv
-admin_li,admin,all
-annotator_zhang,annotator,dataset3.csv;dataset4.csv</textarea>
+                <textarea id="userDataText" placeholder="按照上面的格式输入用户数据...">user001,annotator,zh_cn
+admin_li,admin,en_us
+annotator_zhang,annotator,ar_sa</textarea>
             </div>
 
             <button class="btn btn-success" onclick="batchAddAllowedUsers()">
@@ -183,8 +183,8 @@ annotator_zhang,annotator,dataset3.csv;dataset4.csv</textarea>
             </div>
 
             <div class="form-group">
-                <label for="accessibleCsvs">可访问的CSV文件：</label>
-                <input type="text" id="accessibleCsvs" placeholder="例如：dataset1.csv;dataset2.csv 或者 all">
+                <label for="accessibleCsvs">语言区域代码：</label>
+                <input type="text" id="accessibleCsvs" placeholder="例如：zh_cn, en_us, ar_sa">
             </div>
 
             <button class="btn" onclick="addSingleAllowedUser()">
@@ -238,13 +238,12 @@ annotator_zhang,annotator,dataset3.csv;dataset4.csv</textarea>
                     const parts = line.trim().split(',');
                     
                     if (parts.length === 3) {
-                        const [userId, role, csvAccess] = parts;
-                        const accessibleCsvs = csvAccess === 'all' ? ['all'] : csvAccess.split(';').map(csv => csv.trim());
+                        const [userId, role, languageRegionCode] = parts;
                         
                         usersData.push({
                             userId: userId.trim(),
                             role: role.trim(),
-                            accessibleCsvs: accessibleCsvs
+                            languageRegionCode: languageRegionCode.trim()
                         });
                     }
                 }
@@ -286,9 +285,7 @@ annotator_zhang,annotator,dataset3.csv;dataset4.csv</textarea>
             try {
                 showStatus('正在添加用户权限到Firestore...', 'success');
 
-                const csvList = accessibleCsvs === 'all' ? ['all'] : accessibleCsvs.split(';').map(csv => csv.trim());
-                
-                const result = await FirebaseService.addAllowedUser(userId, userRole, csvList);
+                const result = await FirebaseService.addAllowedUser(userId, userRole, accessibleCsvs);
                 
                 if (result.success) {
                     showStatus('✅ 用户权限添加成功！', 'success');
@@ -324,8 +321,8 @@ annotator_zhang,annotator,dataset3.csv;dataset4.csv</textarea>
                         displayText += '暂无用户权限数据';
                     } else {
                         users.forEach((user, index) => {
-                            const csvAccess = Array.isArray(user.accessibleCsvs) ? user.accessibleCsvs.join(';') : user.accessibleCsvs;
-                            displayText += `${index + 1}. ${user.userId} | ${user.role} | ${csvAccess}\n`;
+                            const languageCode = user.languageRegionCode || user.accessibleCsvs || 'N/A';
+                            displayText += `${index + 1}. ${user.userId} | ${user.role} | ${languageCode}\n`;
                         });
                     }
                     
