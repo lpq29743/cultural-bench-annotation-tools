@@ -14,8 +14,8 @@ firebase.initializeApp(firebaseConfig);
 // Initialize Firestore
 const db = firebase.firestore();
 
-// Initialize Firebase Storage
-const storage = firebase.storage();
+// Initialize Firebase Storage (commented out - not used in this project)
+// const storage = firebase.storage();
 
 // Collection names for different task modes and user management
 const COLLECTIONS = {
