@@ -51,6 +51,10 @@ const elements = {
     currentItemIndex: document.getElementById('currentItemIndex'),
     totalItems: document.getElementById('totalItems'),
     
+    // New elements for the updated layout
+    currentItemIndexTop: document.getElementById('currentItemIndexTop'),
+    totalItemsTop: document.getElementById('totalItemsTop'),
+    
     // Loading and messages
     loadingMessage: document.getElementById('loadingMessage'),
     emptyStateMessage: document.getElementById('emptyStateMessage'),
@@ -202,9 +206,23 @@ function updateUIAfterLogin() {
     // Update user info display
     elements.userDisplayName.textContent = `Welcome, ${currentUser.userId}`;
     elements.userIdDisplay.textContent = currentUser.userId;
-    elements.userLanguageCode.textContent = Array.isArray(currentUser.language_code) 
-        ? currentUser.language_code.join(', ') 
-        : currentUser.language_code;
+    
+    // Fix language_code display - handle both array and string cases properly
+    let languageCodeDisplay = '';
+    if (Array.isArray(currentUser.language_code)) {
+        // If it's an array, join with comma, but filter out 'all' if there are specific codes
+        const codes = currentUser.language_code.filter(code => code !== 'all');
+        if (codes.length > 0) {
+            languageCodeDisplay = codes.join(', ');
+        } else {
+            languageCodeDisplay = 'all';
+        }
+    } else {
+        // If it's a string, use it directly
+        languageCodeDisplay = currentUser.language_code || 'all';
+    }
+    elements.userLanguageCode.textContent = languageCodeDisplay;
+    
     elements.userPermission.textContent = currentUser.canModifyData ? 'Can Modify Data' : 'Read Only';
 }
 
@@ -399,6 +417,13 @@ function updateItemCounter() {
     }
     if (elements.totalItems) {
         elements.totalItems.textContent = annotationData.length;
+    }
+    // Update top counter as well
+    if (elements.currentItemIndexTop) {
+        elements.currentItemIndexTop.textContent = currentIndex + 1;
+    }
+    if (elements.totalItemsTop) {
+        elements.totalItemsTop.textContent = annotationData.length;
     }
 }
 

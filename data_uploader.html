@@ -686,10 +686,8 @@
                             
                             // Preserve line breaks and special characters
                             if (typeof cellValue === 'string') {
-                                // Don't trim line breaks, only trim leading/trailing spaces on each line
-                                cellValue = cellValue.split('\n').map(line => line.trim()).join('\n');
-                                // Remove only leading and trailing empty lines
-                                cellValue = cellValue.replace(/^\n+|\n+$/g, '');
+                                // Keep original line breaks intact - don't modify them
+                                cellValue = cellValue;
                             } else {
                                 // Convert non-string values to string
                                 cellValue = String(cellValue);
@@ -761,10 +759,8 @@
                         if (typeof cellValue === 'string') {
                             // Restore line breaks that might have been escaped as \n
                             cellValue = cellValue.replace(/\\n/g, '\n');
-                            // Don't trim line breaks, only trim leading/trailing spaces on each line
-                            cellValue = cellValue.split('\n').map(line => line.trim()).join('\n');
-                            // Remove only leading and trailing empty lines
-                            cellValue = cellValue.replace(/^\n+|\n+$/g, '');
+                            // Keep original line breaks intact - don't modify them
+                            cellValue = cellValue;
                         }
                         
                         record[header.trim()] = cellValue;

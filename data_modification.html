@@ -100,6 +100,72 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
+        .meta-info-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .meta-field {
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-weight: 500;
+        }
+        
+        .item-counter-top {
+            font-weight: 600;
+            color: #374151;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+        }
+        
+        .main-content-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .left-column {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .source-excerpt-content {
+            background: white;
+            border: 1px solid #d1d5db;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+        }
+        
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .decision-buttons-top {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+        
         .decision-buttons {
             display: flex;
             gap: 1rem;
@@ -344,64 +410,79 @@
             
             <!-- Annotation Section (Hidden initially) -->
             <div id="annotationSection" class="hidden">
-                <!-- Current Item Display -->
-                <div id="annotationItem" class="annotation-item">
-                    <div class="field-group">
-                        <label class="field-label">Source Excerpt</label>
-                        <div id="sourceExcerpt" class="field-content"></div>
-                    </div>
-                    
+                <!-- Meta Information at the top -->
+                <div class="meta-info-section">
                     <div class="field-group">
                         <label class="field-label">Topic</label>
-                        <div id="topic" class="field-content"></div>
+                        <div id="topic" class="field-content meta-field"></div>
+                    </div>
+                    <div class="item-counter-top">
+                        Item <span id="currentItemIndexTop">1</span> of <span id="totalItemsTop">0</span>
+                    </div>
+                </div>
+                
+                <!-- Main Content Area with Two Columns -->
+                <div class="main-content-area">
+                    <!-- Left Column: Source Excerpt -->
+                    <div class="left-column">
+                        <div class="field-group">
+                            <label class="field-label">Source Excerpt</label>
+                            <div id="sourceExcerpt" class="field-content source-excerpt-content"></div>
+                        </div>
                     </div>
                     
-                    <div class="field-group">
-                        <label class="field-label">Scenario</label>
-                        <textarea id="scenario" class="field-content editable-field" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="field-group">
-                        <label class="field-label">Question</label>
-                        <textarea id="question" class="field-content editable-field" rows="2"></textarea>
-                    </div>
-                    
-                    <div class="field-group">
-                        <label class="field-label">Answer</label>
-                        <textarea id="answer" class="field-content editable-field" rows="2"></textarea>
-                    </div>
-                    
-                    <div class="field-group">
-                        <label class="field-label">Explanation</label>
-                        <textarea id="explanation" class="field-content editable-field" rows="3"></textarea>
-                    </div>
-                    
-                    <!-- Decision Buttons -->
-                    <div class="decision-buttons">
-                        <button id="acceptBtn" class="btn-decision btn-accept">
-                            <i class="fas fa-check"></i>
-                            Accept
-                        </button>
-                        <button id="reviseBtn" class="btn-decision btn-revise">
-                            <i class="fas fa-edit"></i>
-                            Revise
-                        </button>
-                        <button id="rejectBtn" class="btn-decision btn-reject">
-                            <i class="fas fa-times"></i>
-                            Reject
-                        </button>
-                    </div>
-                    
-                    <!-- Rejection Reason (Hidden initially) -->
-                    <div id="rejectionReason" class="rejection-reason">
-                        <label class="field-label">Rejection Reason</label>
-                        <select id="rejectionSelect" class="form-select">
-                            <option value="">Select a reason...</option>
-                            <option value="incorrect_information">Source excerpt contains incorrect information</option>
-                            <option value="subjective_content">Source excerpt is subjective and not objective</option>
-                            <option value="cannot_revise">Generated sample cannot be reasonably revised</option>
-                            <option value="other">Other reason</option>
-                        </select>
+                    <!-- Right Column: Decision Buttons and Form Fields -->
+                    <div class="right-column">
+                        <!-- Decision Buttons at the top right -->
+                        <div class="decision-buttons-top">
+                            <button id="acceptBtn" class="btn-decision btn-accept">
+                                <i class="fas fa-check"></i>
+                                Accept
+                            </button>
+                            <button id="reviseBtn" class="btn-decision btn-revise">
+                                <i class="fas fa-edit"></i>
+                                Revise
+                            </button>
+                            <button id="rejectBtn" class="btn-decision btn-reject">
+                                <i class="fas fa-times"></i>
+                                Reject
+                            </button>
+                        </div>
+                        
+                        <!-- Rejection Reason (Hidden initially) -->
+                        <div id="rejectionReason" class="rejection-reason">
+                            <label class="field-label">Rejection Reason</label>
+                            <select id="rejectionSelect" class="form-select">
+                                <option value="">Select a reason...</option>
+                                <option value="incorrect_information">Source excerpt contains incorrect information</option>
+                                <option value="subjective_content">Source excerpt is subjective and not objective</option>
+                                <option value="cannot_revise">Generated sample cannot be reasonably revised</option>
+                                <option value="other">Other reason</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Form Fields -->
+                        <div class="form-fields">
+                            <div class="field-group">
+                                <label class="field-label">Scenario</label>
+                                <textarea id="scenario" class="field-content editable-field" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="field-group">
+                                <label class="field-label">Question</label>
+                                <textarea id="question" class="field-content editable-field" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="field-group">
+                                <label class="field-label">Answer</label>
+                                <textarea id="answer" class="field-content editable-field" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="field-group">
+                                <label class="field-label">Explanation</label>
+                                <textarea id="explanation" class="field-content editable-field" rows="3"></textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
