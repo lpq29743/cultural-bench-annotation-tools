@@ -248,6 +248,64 @@ const FirebaseService = {
         }
     },
 
+    async validateUserWithPermissions(userId) {
+        try {
+            const allowedUsersResult = await this.loadAllowedUsers();
+            
+            if (!allowedUsersResult.success) {
+                // If we can't load allowed users, allow all users (backward compatibility)
+                return {
+                    success: true,
+                    allowed: true,
+                    userInfo: {
+                        role: 'annotator',
+                        accessibleCsvs: ['all'],
+                        canModifyData: true
+                    }
+                };
+            }
+            
+            const allowedUsers = allowedUsersResult.users;
+            
+            // If no users are configured, allow all users
+            if (allowedUsers.length === 0) {
+                return {
+                    success: true,
+                    allowed: true,
+                    userInfo: {
+                        role: 'annotator',
+                        accessibleCsvs: ['all'],
+                        canModifyData: true
+                    }
+                };
+            }
+            
+            // Check if user is in allowed list
+            const userInfo = allowedUsers.find(user => user.userId === userId);
+            
+            if (!userInfo) {
+                return {
+                    success: true,
+                    allowed: false,
+                    message: 'User not authorized to access this system'
+                };
+            }
+            
+            return {
+                success: true,
+                allowed: true,
+                userInfo: userInfo
+            };
+            
+        } catch (error) {
+            console.error('Error validating user permissions:', error);
+            return {
+                success: false,
+                error: error.message
+            };
+        }
+    },
+
     // Add allowed user to Firestore
     async addAllowedUser(userId, role, accessibleCsvs = ['all'], canModifyData = false) {
         try {

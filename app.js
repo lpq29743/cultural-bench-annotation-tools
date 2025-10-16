@@ -248,9 +248,11 @@ async function handleUserLogin(event) {
         
         // Store user in localStorage
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        isLoggedIn = true;
         
         // Update UI
         updateUserUI();
+        elements.loginModal.style.display = 'none';
         showToast(`Welcome, ${currentUser.name || currentUser.userId}!`, 'success');
         
         // Clear form
@@ -266,23 +268,27 @@ async function handleUserLogin(event) {
 
 function handleUserLogout() {
     currentUser = null;
+    isLoggedIn = false;
     localStorage.removeItem('currentUser');
     updateUserUI();
     showToast('Logged out successfully', 'success');
 }
 
 function updateUserUI() {
-    const userLoginSection = document.getElementById('userLoginSection');
-    const userInfoSection = document.getElementById('userInfoSection');
-    const currentUserName = document.getElementById('currentUserName');
-    const currentUserRole = document.getElementById('currentUserRole');
-    
     if (currentUser) {
-        // User is logged in
-        if (userLoginSection) userLoginSection.style.display = 'none';
-        if (userInfoSection) userInfoSection.style.display = 'block';
-        if (currentUserName) currentUserName.textContent = currentUser.name || currentUser.userId;
-        if (currentUserRole) currentUserRole.textContent = currentUser.role || 'annotator';
+        // User is logged in - show user info and hide login button
+        elements.loginBtn.style.display = 'none';
+        elements.userInfo.style.display = 'flex';
+        elements.dataActions.style.display = 'flex';
+        
+        // Update user display info
+        elements.userName.textContent = currentUser.name || currentUser.userId;
+        elements.userRole.textContent = currentUser.role || 'annotator';
+        
+        // Show manage button for admins
+        if (elements.manageBtn) {
+            elements.manageBtn.style.display = currentUser.role === 'admin' ? 'block' : 'none';
+        }
         
         // Control data modification UI elements based on permissions
         const dataModificationElements = [
@@ -316,9 +322,10 @@ function updateUserUI() {
         }
         
     } else {
-        // User is not logged in
-        if (userLoginSection) userLoginSection.style.display = 'block';
-        if (userInfoSection) userInfoSection.style.display = 'none';
+        // User is not logged in - show login button and hide user info
+        elements.loginBtn.style.display = 'block';
+        elements.userInfo.style.display = 'none';
+        elements.dataActions.style.display = 'none';
         
         // Hide all data modification elements when not logged in
         const dataModificationElements = [
@@ -346,6 +353,7 @@ function checkLoginStatus() {
             
             // Validate that the stored user data is complete
             if (currentUser && currentUser.userId) {
+                isLoggedIn = true;
                 // Update UI to show logged in state
                 updateUserUI();
                 
@@ -366,6 +374,7 @@ function checkLoginStatus() {
                 // Invalid stored user data, clear it
                 localStorage.removeItem('currentUser');
                 currentUser = null;
+                isLoggedIn = false;
                 updateUserUI();
             }
         } catch (error) {
@@ -377,6 +386,7 @@ function checkLoginStatus() {
     } else {
         // No stored user, ensure UI shows login form
         currentUser = null;
+        isLoggedIn = false;
         updateUserUI();
     }
 }
@@ -612,11 +622,8 @@ function handleKeyboardShortcuts(e) {
 
 // Annotation management
 function addNewAnnotation() {
-    // Check if user has data modification permissions
-    if (!currentUser || !currentUser.canModifyData) {
-        showToast('You do not have permission to create new data.', 'error');
-        return;
-    }
+    // Allow creating new annotations even without login for local editing
+    // Only check permissions when saving to Firebase
     
     const newAnnotation = {
         id: generateId(),
@@ -630,7 +637,7 @@ function addNewAnnotation() {
         rejectionReason: currentTaskMode === 'modification' ? '' : undefined,
         completed: false,
         createdAt: new Date().toISOString(),
-        annotatorId: currentUser.userId || currentUser.id
+        annotatorId: currentUser ? (currentUser.userId || currentUser.id) : 'local_user'
     };
     
     annotations.unshift(newAnnotation);
@@ -649,16 +656,15 @@ function addNewAnnotation() {
     }
     
     showToast('New annotation created', 'success');
+    
+    showToast('New annotation created', 'success');
 }
 
 async function updateCurrentAnnotation() {
     if (filteredAnnotations.length === 0) return;
     
-    // Check if user has data modification permissions
-    if (!currentUser || !currentUser.canModifyData) {
-        showToast('You do not have permission to modify data.', 'error');
-        return;
-    }
+    // Allow local editing even without login
+    // Only check permissions when saving to Firebase
     
     const annotation = filteredAnnotations[currentIndex];
     const formData = getFormData();
@@ -744,11 +750,8 @@ async function updateAssignmentProgress() {
 function deleteCurrentAnnotation() {
     if (filteredAnnotations.length === 0) return;
     
-    // Check if user has data modification permissions
-    if (!currentUser || !currentUser.canModifyData) {
-        showToast('You do not have permission to delete data.', 'error');
-        return;
-    }
+    // Allow local deletion even without login
+    // Only check permissions when saving to Firebase
     
     if (confirm('Are you sure you want to delete this annotation?')) {
         const annotation = filteredAnnotations[currentIndex];
@@ -873,10 +876,7 @@ function autoSave() {
         return;
     }
     
-    // Check if user has data modification permissions
-    if (!currentUser || !currentUser.canModifyData) {
-        return; // Silently skip auto-save if no permissions
-    }
+    // Allow auto-save for local editing even without login
     
     try {
         // Get current form data
