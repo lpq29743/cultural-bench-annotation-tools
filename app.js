@@ -1,3 +1,13 @@
+// Helper function to check if FirebaseService is available
+function checkFirebaseService() {
+    if (typeof FirebaseService === 'undefined') {
+        console.error('FirebaseService is not defined. Please check firebase-config.js');
+        showToast('Firebase服务未加载，请刷新页面重试', 'error');
+        return false;
+    }
+    return true;
+}
+
 // Application state
 let annotations = [];
 let currentIndex = 0;
@@ -410,6 +420,11 @@ async function updateCurrentAnnotation() {
 
 async function updateAssignmentProgress() {
     try {
+        // Check if FirebaseService is available first
+        if (!checkFirebaseService()) {
+            return;
+        }
+
         // Get user's current assignment
         const assignmentsResult = await FirebaseService.getAssignmentsByUser(currentUser.id);
         
@@ -963,6 +978,11 @@ async function saveToFirebase() {
         return;
     }
     
+    // Check if FirebaseService is available first
+    if (!checkFirebaseService()) {
+        return;
+    }
+    
     if (annotations.length === 0) {
         showToast('No data to save', 'warning');
         return;
@@ -1008,6 +1028,11 @@ async function saveToFirebase() {
 }
 
 async function loadFromFirebase() {
+    // Check if FirebaseService is available first
+    if (!checkFirebaseService()) {
+        return;
+    }
+
     showLoading(true);
     
     try {
@@ -1204,6 +1229,11 @@ function hideLoginModal() {
 
 async function handleLogin(e) {
     e.preventDefault();
+    
+    // Check if FirebaseService is available first
+    if (!checkFirebaseService()) {
+        return;
+    }
     
     const userId = elements.loginUserId.value.trim();
     const role = elements.loginRole.value;
