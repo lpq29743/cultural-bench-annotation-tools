@@ -1,21 +1,11 @@
 // Firebase configuration
 const firebaseConfig = {
-    // 请替换为您的实际Firebase项目配置
-    // 从Firebase Console -> Project Settings -> General -> Your apps -> Web app config获取
-    apiKey: "your-actual-api-key-here",
-    authDomain: "your-project-id.firebaseapp.com", 
-    projectId: "your-actual-project-id",
-    storageBucket: "your-project-id.appspot.com",
-    messagingSenderId: "your-actual-sender-id",
-    appId: "your-actual-app-id"
-    
-    // 示例配置（请勿直接使用）：
-    // apiKey: "AIzaSyC...",
-    // authDomain: "cultural-annotation-tool.firebaseapp.com",
-    // projectId: "cultural-annotation-tool", 
-    // storageBucket: "cultural-annotation-tool.appspot.com",
-    // messagingSenderId: "123456789",
-    // appId: "1:123456789:web:abcdef123456"
+    apiKey: "AIzaSyCNZVb7brU6PTPk_Y-RgIuOmXoxYNKWchY",
+    authDomain: "culturalbench.firebaseapp.com",
+    projectId: "culturalbench",
+    storageBucket: "culturalbench.firebasestorage.app",
+    messagingSenderId: "84353630871",
+    appId: "1:84353630871:web:d92c7c6a25d239f548dfd2"
 };
 
 // Initialize Firebase
