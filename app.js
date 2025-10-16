@@ -2,7 +2,7 @@
 function checkFirebaseService() {
     if (typeof FirebaseService === 'undefined') {
         console.error('FirebaseService is not defined. Please check firebase-config.js');
-        showToast('Firebase服务未加载，请刷新页面重试', 'error');
+        showToast('Firebase service not loaded, please refresh the page and try again', 'error');
         return false;
     }
     return true;
