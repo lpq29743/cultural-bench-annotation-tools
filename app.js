@@ -969,3 +969,81 @@ async function saveToFirebase() {
         hideLoading();
     }
 }
+
+// Export annotations to CSV file
+function exportToCSV() {
+    try {
+        if (!filteredAnnotations || filteredAnnotations.length === 0) {
+            showToast('No data to export. Please load or create some annotations first.', 'error');
+            return;
+        }
+
+        // Create CSV headers
+        const headers = [
+            'ID',
+            'Topic',
+            'Scenario', 
+            'Question',
+            'Answer',
+            'Explanation',
+            'Language Region',
+            'Annotation Status',
+            'Completed',
+            'Annotator ID',
+            'Created At',
+            'Last Modified'
+        ];
+
+        // Convert annotations to CSV rows
+        const csvRows = [headers.join(',')];
+        
+        filteredAnnotations.forEach((annotation, index) => {
+            const row = [
+                annotation.id || index + 1,
+                `"${(annotation.topic || '').replace(/"/g, '""')}"`,
+                `"${(annotation.scenario || '').replace(/"/g, '""')}"`,
+                `"${(annotation.question || '').replace(/"/g, '""')}"`,
+                `"${(annotation.answer || '').replace(/"/g, '""')}"`,
+                `"${(annotation.explanation || '').replace(/"/g, '""')}"`,
+                annotation.languageRegion || '',
+                annotation.annotationStatus || 'pending',
+                annotation.completed ? 'Yes' : 'No',
+                annotation.annotatorId || currentUser?.userId || '',
+                annotation.createdAt || new Date().toISOString(),
+                annotation.lastModified || new Date().toISOString()
+            ];
+            csvRows.push(row.join(','));
+        });
+
+        // Create CSV content
+        const csvContent = csvRows.join('\n');
+        
+        // Create and download file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            
+            // Generate filename with timestamp
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const mode = currentTaskMode || 'annotations';
+            const filename = `cultural_${mode}_${timestamp}.csv`;
+            
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast(`Successfully exported ${filteredAnnotations.length} annotations to ${filename}`, 'success');
+            console.log(`Exported ${filteredAnnotations.length} annotations to CSV`);
+        } else {
+            throw new Error('CSV download not supported in this browser');
+        }
+    } catch (error) {
+        console.error('Error exporting to CSV:', error);
+        showToast(`Failed to export CSV: ${error.message}`, 'error');
+    }
+}
