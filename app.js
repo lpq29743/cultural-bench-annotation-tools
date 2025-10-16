@@ -30,10 +30,24 @@ const elements = {
     loginModal: document.getElementById('loginModal'),
     loginModalClose: document.getElementById('loginModalClose'),
     loginForm: document.getElementById('loginForm'),
-    loginEmail: document.getElementById('loginEmail'),
-    loginName: document.getElementById('loginName'),
+    loginUserId: document.getElementById('loginUserId'),
     loginRole: document.getElementById('loginRole'),
     loginCancel: document.getElementById('loginCancel'),
+    
+    // CSV Upload Modal elements
+    csvUploadModal: document.getElementById('csvUploadModal'),
+    csvUploadModalClose: document.getElementById('csvUploadModalClose'),
+    csvUploadInput: document.getElementById('csvUploadInput'),
+    csvDropArea: document.getElementById('csvDropArea'),
+    uploadCollection: document.getElementById('uploadCollection'),
+    clearBeforeUpload: document.getElementById('clearBeforeUpload'),
+    uploadProgress: document.getElementById('uploadProgress'),
+    uploadProgressBar: document.getElementById('uploadProgressBar'),
+    uploadStatus: document.getElementById('uploadStatus'),
+    selectedFiles: document.getElementById('selectedFiles'),
+    filesList: document.getElementById('filesList'),
+    uploadCsvBtn: document.getElementById('uploadCsvBtn'),
+    csvUploadCancel: document.getElementById('csvUploadCancel'),
     
     manageModal: document.getElementById('manageModal'),
     manageModalClose: document.getElementById('manageModalClose'),
@@ -1177,7 +1191,7 @@ function updateUserInterface() {
 function showLoginModal() {
     if (elements.loginModal) {
         elements.loginModal.classList.add('active');
-        if (elements.loginEmail) elements.loginEmail.focus();
+        if (elements.loginUserId) elements.loginUserId.focus();
     }
 }
 
@@ -1191,12 +1205,11 @@ function hideLoginModal() {
 async function handleLogin(e) {
     e.preventDefault();
     
-    const email = elements.loginEmail.value.trim();
-    const name = elements.loginName.value.trim();
+    const userId = elements.loginUserId.value.trim();
     const role = elements.loginRole.value;
     const editingUserId = elements.loginForm.dataset.editingUserId;
     
-    if (!email || !name || !role) {
+    if (!userId || !role) {
         showToast('Please fill in all fields', 'error');
         return;
     }
@@ -1207,9 +1220,9 @@ async function handleLogin(e) {
         if (editingUserId) {
             // Update existing user
             const updateResult = await FirebaseService.updateUser(editingUserId, {
-                email,
-                name,
-                role
+                userId,
+                role,
+                name: userId // Use userId as name for simplified login
             });
             
             if (!updateResult.success) {
@@ -1219,12 +1232,12 @@ async function handleLogin(e) {
             // Update local data
             const userIndex = allUsers.findIndex(u => u.id === editingUserId);
             if (userIndex !== -1) {
-                allUsers[userIndex] = { ...allUsers[userIndex], email, name, role };
+                allUsers[userIndex] = { ...allUsers[userIndex], userId, role, name: userId };
             }
             
             // If editing current user, update current user data
             if (currentUser && currentUser.id === editingUserId) {
-                currentUser = { ...currentUser, email, name, role };
+                currentUser = { ...currentUser, userId, role, name: userId };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 updateUserInterface();
             }
@@ -1238,24 +1251,32 @@ async function handleLogin(e) {
             
         } else {
             // Check if user exists for login/creation
-            const userResult = await FirebaseService.getUserByEmail(email);
+            const userResult = await FirebaseService.getUserByUserId(userId);
             
             if (userResult.success) {
                 // User exists, log them in
                 currentUser = userResult.user;
             } else {
-                // Create new user
+                // Create new user with simplified structure
                 const createResult = await FirebaseService.createUser({
-                    email,
-                    name,
-                    role
+                    userId,
+                    name: userId, // Use userId as display name
+                    role,
+                    email: '', // Empty email for simplified login
+                    createdAt: new Date().toISOString()
                 });
                 
                 if (!createResult.success) {
                     throw new Error(createResult.error);
                 }
                 
-                currentUser = { id: createResult.id, email, name, role };
+                currentUser = { 
+                    id: createResult.id, 
+                    userId, 
+                    name: userId,
+                    role,
+                    email: ''
+                };
             }
             
             // Update activity
@@ -1427,12 +1448,12 @@ function loadAnnotatorsData() {
     
     allUsers.forEach(user => {
         const row = document.createElement('tr');
-        const userAssignments = allUsers.filter(a => a.annotatorId === user.id);
+        const userAssignments = allAssignments.filter(a => a.annotatorId === user.id);
         const completedAssignments = userAssignments.filter(a => a.status === 'completed');
         
         row.innerHTML = `
-            <td>${user.name}</td>
-            <td>${user.email}</td>
+            <td>${user.name || user.userId}</td>
+            <td>${user.userId}</td>
             <td><span class="status-badge ${user.role}">${user.role}</span></td>
             <td>${userAssignments.length}</td>
             <td>${completedAssignments.length}</td>
@@ -2030,3 +2051,243 @@ function showToast(message, type = 'success') {
         }
     }, 5000);
 }
+
+// CSV Upload to Firebase Functions
+function initializeCsvUpload() {
+    // Add event listeners for CSV upload modal
+    if (elements.csvUploadModalClose) {
+        elements.csvUploadModalClose.addEventListener('click', hideCsvUploadModal);
+    }
+    
+    if (elements.csvUploadCancel) {
+        elements.csvUploadCancel.addEventListener('click', hideCsvUploadModal);
+    }
+    
+    if (elements.csvUploadInput) {
+        elements.csvUploadInput.addEventListener('change', handleCsvFileSelection);
+    }
+    
+    if (elements.csvDropArea) {
+        elements.csvDropArea.addEventListener('dragover', handleDragOver);
+        elements.csvDropArea.addEventListener('drop', handleDrop);
+        elements.csvDropArea.addEventListener('click', () => elements.csvUploadInput.click());
+    }
+    
+    if (elements.uploadCsvBtn) {
+        elements.uploadCsvBtn.addEventListener('click', uploadCsvToFirebase);
+    }
+    
+    // Add CSV upload button to header
+    const csvUploadBtn = document.createElement('button');
+    csvUploadBtn.className = 'btn btn-secondary';
+    csvUploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload CSV to Firebase';
+    csvUploadBtn.addEventListener('click', showCsvUploadModal);
+    
+    // Insert after the existing import button
+    if (elements.importBtn && elements.importBtn.parentNode) {
+        elements.importBtn.parentNode.insertBefore(csvUploadBtn, elements.importBtn.nextSibling);
+    }
+}
+
+function showCsvUploadModal() {
+    if (elements.csvUploadModal) {
+        elements.csvUploadModal.classList.add('active');
+        resetCsvUploadForm();
+    }
+}
+
+function hideCsvUploadModal() {
+    if (elements.csvUploadModal) {
+        elements.csvUploadModal.classList.remove('active');
+        resetCsvUploadForm();
+    }
+}
+
+function resetCsvUploadForm() {
+    if (elements.csvUploadInput) elements.csvUploadInput.value = '';
+    if (elements.selectedFiles) elements.selectedFiles.style.display = 'none';
+    if (elements.filesList) elements.filesList.innerHTML = '';
+    if (elements.uploadProgress) elements.uploadProgress.style.display = 'none';
+    if (elements.uploadCsvBtn) elements.uploadCsvBtn.disabled = true;
+    selectedCsvFiles = [];
+}
+
+let selectedCsvFiles = [];
+
+function handleCsvFileSelection(event) {
+    const files = Array.from(event.target.files);
+    processCsvFiles(files);
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    elements.csvDropArea.classList.add('drag-over');
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    elements.csvDropArea.classList.remove('drag-over');
+    
+    const files = Array.from(event.dataTransfer.files);
+    const csvFiles = files.filter(file => file.name.endsWith('.csv'));
+    
+    if (csvFiles.length !== files.length) {
+        showToast('Only CSV files are allowed', 'warning');
+    }
+    
+    if (csvFiles.length > 0) {
+        processCsvFiles(csvFiles);
+    }
+}
+
+function processCsvFiles(files) {
+    selectedCsvFiles = files;
+    
+    if (files.length > 0) {
+        elements.selectedFiles.style.display = 'block';
+        elements.filesList.innerHTML = '';
+        
+        files.forEach(file => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <i class="fas fa-file-csv"></i>
+                <span>${file.name}</span>
+                <span class="file-size">(${formatFileSize(file.size)})</span>
+            `;
+            elements.filesList.appendChild(li);
+        });
+        
+        elements.uploadCsvBtn.disabled = false;
+    } else {
+        elements.selectedFiles.style.display = 'none';
+        elements.uploadCsvBtn.disabled = true;
+    }
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+async function uploadCsvToFirebase() {
+    if (selectedCsvFiles.length === 0) {
+        showToast('Please select CSV files to upload', 'warning');
+        return;
+    }
+    
+    if (!isLoggedIn || !currentUser) {
+        showToast('Please log in to upload files', 'warning');
+        showLoginModal();
+        return;
+    }
+    
+    const collectionName = elements.uploadCollection.value;
+    const clearBefore = elements.clearBeforeUpload.checked;
+    
+    elements.uploadProgress.style.display = 'block';
+    elements.uploadCsvBtn.disabled = true;
+    
+    try {
+        let totalProcessed = 0;
+        let totalFiles = selectedCsvFiles.length;
+        let allAnnotations = [];
+        
+        // Clear existing data if requested
+        if (clearBefore) {
+            elements.uploadStatus.textContent = 'Clearing existing data...';
+            const clearResult = await FirebaseService.clearCollection(collectionName);
+            if (!clearResult.success) {
+                throw new Error('Failed to clear existing data: ' + clearResult.error);
+            }
+        }
+        
+        // Process each CSV file
+        for (let i = 0; i < selectedCsvFiles.length; i++) {
+            const file = selectedCsvFiles[i];
+            elements.uploadStatus.textContent = `Processing ${file.name}...`;
+            
+            try {
+                const csvContent = await readFileAsText(file);
+                const parsedData = parseCSV(csvContent);
+                
+                // Add user tracking to each annotation
+                const annotationsWithUser = parsedData.map(annotation => ({
+                    ...annotation,
+                    annotatorId: currentUser.id,
+                    uploadedBy: currentUser.userId || currentUser.id,
+                    uploadedAt: new Date().toISOString(),
+                    sourceFile: file.name
+                }));
+                
+                allAnnotations = allAnnotations.concat(annotationsWithUser);
+                totalProcessed++;
+                
+                // Update progress
+                const progress = Math.round((totalProcessed / totalFiles) * 100);
+                elements.uploadProgressBar.style.width = progress + '%';
+                
+            } catch (error) {
+                console.error(`Error processing ${file.name}:`, error);
+                showToast(`Error processing ${file.name}: ${error.message}`, 'error');
+            }
+        }
+        
+        // Upload all annotations to Firebase
+        if (allAnnotations.length > 0) {
+            elements.uploadStatus.textContent = 'Uploading to Firebase...';
+            
+            const uploadResult = await FirebaseService.saveAllToCollection(collectionName, allAnnotations);
+            
+            if (uploadResult.success) {
+                elements.uploadProgressBar.style.width = '100%';
+                elements.uploadStatus.textContent = 'Upload completed successfully!';
+                
+                showToast(`Successfully uploaded ${allAnnotations.length} annotations from ${totalFiles} files`, 'success');
+                
+                // Refresh local data if uploading to current collection
+                const currentCollection = currentTaskMode === 'modification' 
+                    ? COLLECTIONS.MODIFICATION 
+                    : COLLECTIONS.CREATION;
+                    
+                if (collectionName === currentCollection) {
+                    await loadFromFirebase();
+                }
+                
+                setTimeout(() => {
+                    hideCsvUploadModal();
+                }, 2000);
+                
+            } else {
+                throw new Error(uploadResult.error);
+            }
+        } else {
+            throw new Error('No valid data found in any CSV file');
+        }
+        
+    } catch (error) {
+        console.error('Upload error:', error);
+        elements.uploadStatus.textContent = 'Upload failed';
+        showToast('Upload failed: ' + error.message, 'error');
+    } finally {
+        elements.uploadCsvBtn.disabled = false;
+    }
+}
+
+function readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = (e) => reject(new Error('Failed to read file'));
+        reader.readAsText(file);
+    });
+}
+
+// Initialize CSV upload when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing initialization code ...
+    initializeCsvUpload();
+});

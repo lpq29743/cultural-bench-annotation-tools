@@ -265,12 +265,8 @@
             <div class="modal-body">
                 <form id="loginForm">
                     <div class="form-group">
-                        <label for="loginEmail">Email:</label>
-                        <input type="email" id="loginEmail" class="form-input" placeholder="Enter your email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginName">Full Name:</label>
-                        <input type="text" id="loginName" class="form-input" placeholder="Enter your full name" required>
+                        <label for="loginUserId">User ID:</label>
+                        <input type="text" id="loginUserId" class="form-input" placeholder="Enter your user ID" required>
                     </div>
                     <div class="form-group">
                         <label for="loginRole">Role:</label>
@@ -287,7 +283,60 @@
                         <button type="button" class="btn btn-outline" id="loginCancel">Cancel</button>
                     </div>
                 </form>
+            </div></div>
+
+    <!-- CSV Upload Modal for Firebase -->
+    <div id="csvUploadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-upload"></i> Upload CSV Files to Firebase</h2>
+                <button class="modal-close" id="csvUploadModalClose">&times;</button>
             </div>
+            <div class="modal-body">
+                <div class="upload-section">
+                    <div class="upload-area" id="csvDropArea">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3>Drop CSV files here or click to browse</h3>
+                        <p>You can upload multiple CSV files at once</p>
+                        <input type="file" id="csvUploadInput" accept=".csv" multiple style="display: none;">
+                        <button class="btn btn-secondary" onclick="document.getElementById('csvUploadInput').click()">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                    </div>
+                    <div class="upload-options">
+                        <div class="form-group">
+                            <label for="uploadCollection">Upload to Collection:</label>
+                            <select id="uploadCollection" class="form-select">
+                                <option value="cultural_annotations_created">Data Creation Collection</option>
+                                <option value="cultural_annotations_modified">Data Modification Collection</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-option">
+                                <input type="checkbox" id="clearBeforeUpload">
+                                <span>Clear existing data before upload</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="upload-progress" id="uploadProgress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="uploadProgressBar"></div>
+                        </div>
+                        <p id="uploadStatus">Uploading files...</p>
+                    </div>
+                    <div class="selected-files" id="selectedFiles" style="display: none;">
+                        <h4>Selected Files:</h4>
+                        <ul id="filesList"></ul>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" id="uploadCsvBtn" disabled>
+                        <i class="fas fa-upload"></i> Upload to Firebase
+                    </button>
+                    <button type="button" class="btn btn-outline" id="csvUploadCancel">Cancel</button>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
@@ -322,16 +371,16 @@
                     <div class="annotators-list">
                         <table class="data-table">
                             <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Assigned Tasks</th>
-                                    <th>Completed</th>
-                                    <th>Last Active</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>User ID</th>
+                                        <th>Role</th>
+                                        <th>Assignments</th>
+                                        <th>Completed</th>
+                                        <th>Last Active</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
                             <tbody id="annotatorsTableBody">
                                 <!-- Annotators will be populated here -->
                             </tbody>

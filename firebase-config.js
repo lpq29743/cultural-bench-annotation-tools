@@ -180,6 +180,46 @@ const FirebaseService = {
         }
     },
 
+    async getUserByUserId(userId) {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.USERS)
+                .where('userId', '==', userId)
+                .limit(1)
+                .get();
+            
+            if (snapshot.empty) {
+                return { success: false, error: 'User not found' };
+            }
+            
+            const doc = snapshot.docs[0];
+            return { 
+                success: true, 
+                user: { id: doc.id, ...doc.data() }
+            };
+        } catch (error) {
+            console.error('Error getting user by userId:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async getUserById(id) {
+        try {
+            const doc = await db.collection(COLLECTIONS.USERS).doc(id).get();
+            
+            if (!doc.exists) {
+                return { success: false, error: 'User not found' };
+            }
+            
+            return { 
+                success: true, 
+                user: { id: doc.id, ...doc.data() }
+            };
+        } catch (error) {
+            console.error('Error getting user by id:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
     async updateUserActivity(userId) {
         try {
             await db.collection(COLLECTIONS.USERS).doc(userId).update({
