@@ -9,11 +9,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-    <!-- Firebase Configuration -->
-    <script src="firebase-config.js"></script>
-    
     <!-- SheetJS for Excel file support -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Firebase Configuration - Load after Firebase SDK -->
+    <script src="firebase-config.js"></script>
     
     <!-- Ensure Firebase is loaded before using FirebaseService -->
     <script>
@@ -22,6 +22,7 @@
             // Check if FirebaseService is available
             if (typeof FirebaseService === 'undefined') {
                 console.error('FirebaseService is not defined. Please check firebase-config.js');
+                showToast('Firebase Error', 'FirebaseService未定义，请检查网络连接并刷新页面', 'error', 10000);
             } else {
                 console.log('FirebaseService loaded successfully');
             }
@@ -440,12 +441,7 @@
     <!-- Toast Notification Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <!-- SheetJS for XLSX support -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="firebase-config.js"></script>
+    <!-- Scripts already loaded in head section -->
 
     <script>
         let selectedCollection = 'cultural_annotations_created';
