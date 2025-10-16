@@ -192,7 +192,7 @@ function initializeUserManagement() {
 async function handleUserLogin(event) {
     event.preventDefault();
     
-    const userIdInput = document.getElementById('userIdInput');
+    const userIdInput = document.getElementById('loginUserId');
     const userId = userIdInput?.value?.trim();
     
     if (!userId) {
