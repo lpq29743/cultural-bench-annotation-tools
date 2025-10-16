@@ -223,8 +223,8 @@ const FirebaseService = {
         }
     },
 
-    // User ID validation using Firebase Storage file
-    async loadAllowedUserIds() {
+    // User validation using Firebase Storage file with enhanced format
+    async loadAllowedUsers() {
         try {
             const storageRef = storage.ref('config/allowed_users.txt');
             const downloadURL = await storageRef.getDownloadURL();
@@ -232,57 +232,141 @@ const FirebaseService = {
             const response = await fetch(downloadURL);
             const text = await response.text();
             
-            // Parse the file content - support both line-separated and comma-separated formats
-            const userIds = text.split(/[\n,]/)
-                .map(id => id.trim())
-                .filter(id => id.length > 0);
+            const users = [];
+            const lines = text.split('\n').filter(line => line.trim().length > 0);
             
-            return { success: true, userIds };
+            for (const line of lines) {
+                const parts = line.trim().split(',');
+                
+                if (parts.length === 3) {
+                    // New format: userId,role,csvAccess
+                    const [userId, role, csvAccess] = parts;
+                    const accessibleCsvs = csvAccess === 'all' ? ['all'] : csvAccess.split(';');
+                    
+                    users.push({
+                        userId: userId.trim(),
+                        role: role.trim(),
+                        accessibleCsvs: accessibleCsvs.map(csv => csv.trim())
+                    });
+                } else if (parts.length === 1) {
+                    // Legacy format: just userId (backward compatibility)
+                    users.push({
+                        userId: parts[0].trim(),
+                        role: 'annotator', // default role
+                        accessibleCsvs: ['all'] // default access
+                    });
+                }
+            }
+            
+            return { success: true, users };
         } catch (error) {
-            console.error('Error loading allowed user IDs:', error);
+            console.error('Error loading allowed users:', error);
             // If file doesn't exist or error occurs, return empty array (allow all users)
-            return { success: false, error: error.message, userIds: [] };
+            return { success: false, error: error.message, users: [] };
         }
     },
 
-    async validateUserId(userId) {
+    async validateUserWithPermissions(userId, requestedRole = null) {
         try {
-            const result = await this.loadAllowedUserIds();
+            const result = await this.loadAllowedUsers();
             
             // If no validation file exists, allow all users
-            if (!result.success || result.userIds.length === 0) {
-                return { success: true, allowed: true, message: 'No validation file found, allowing all users' };
+            if (!result.success || result.users.length === 0) {
+                return { 
+                    success: true, 
+                    allowed: true, 
+                    userInfo: {
+                        userId,
+                        role: requestedRole || 'annotator',
+                        accessibleCsvs: ['all']
+                    },
+                    message: 'No validation file found, allowing all users' 
+                };
             }
             
-            // Check if userId is in the allowed list
-            const isAllowed = result.userIds.includes(userId);
+            // Find user in the allowed list
+            const userInfo = result.users.find(user => user.userId === userId);
+            
+            if (!userInfo) {
+                return { 
+                    success: true, 
+                    allowed: false, 
+                    message: 'User ID not found in allowed list'
+                };
+            }
+            
+            // Check role compatibility if requested
+            if (requestedRole && userInfo.role !== requestedRole) {
+                return {
+                    success: true,
+                    allowed: false,
+                    message: `User role mismatch. Expected: ${userInfo.role}, Requested: ${requestedRole}`
+                };
+            }
             
             return { 
                 success: true, 
-                allowed: isAllowed, 
-                message: isAllowed ? 'User ID is allowed' : 'User ID not found in allowed list'
+                allowed: true, 
+                userInfo,
+                message: 'User validated successfully'
             };
         } catch (error) {
-            console.error('Error validating user ID:', error);
+            console.error('Error validating user:', error);
             return { success: false, allowed: false, error: error.message };
         }
     },
 
-    async getUserByUserIdWithValidation(userId) {
+    async getUserAccessibleCsvs(userId) {
         try {
-            // First validate the user ID
-            const validation = await this.validateUserId(userId);
+            const validation = await this.validateUserWithPermissions(userId);
+            
+            if (!validation.success || !validation.allowed) {
+                return { success: false, error: 'User not authorized' };
+            }
+            
+            return { 
+                success: true, 
+                csvs: validation.userInfo.accessibleCsvs,
+                hasFullAccess: validation.userInfo.accessibleCsvs.includes('all')
+            };
+        } catch (error) {
+            console.error('Error getting user CSV access:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async getUserByUserIdWithValidation(userId, requestedRole = null) {
+        try {
+            // First validate the user with permissions
+            const validation = await this.validateUserWithPermissions(userId, requestedRole);
             
             if (!validation.success) {
                 return { success: false, error: validation.error };
             }
             
             if (!validation.allowed) {
-                return { success: false, error: 'User ID not authorized. Please contact administrator.' };
+                return { success: false, error: validation.message || 'User ID not authorized. Please contact administrator.' };
             }
             
-            // If validation passes, proceed with normal user lookup
-            return await this.getUserByUserId(userId);
+            // Try to get existing user from database
+            const existingUser = await this.getUserByUserId(userId);
+            
+            if (existingUser.success) {
+                // Update user with validated permissions
+                const updatedUser = {
+                    ...existingUser.user,
+                    role: validation.userInfo.role,
+                    accessibleCsvs: validation.userInfo.accessibleCsvs
+                };
+                return { success: true, user: updatedUser };
+            } else {
+                // User doesn't exist in database, return validation info for creation
+                return { 
+                    success: false, 
+                    error: 'User not found in database',
+                    validationInfo: validation.userInfo
+                };
+            }
         } catch (error) {
             console.error('Error getting user with validation:', error);
             return { success: false, error: error.message };

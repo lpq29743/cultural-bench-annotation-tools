@@ -1251,48 +1251,45 @@ async function handleLogin(e) {
             
         } else {
             // Check if user exists for login/creation with validation
-            const userResult = await FirebaseService.getUserByUserIdWithValidation(userId);
+            const userResult = await FirebaseService.getUserByUserIdWithValidation(userId, role);
             
             if (userResult.success) {
                 // User exists and is validated, log them in
                 currentUser = userResult.user;
             } else {
                 // Check if it's a validation error or user doesn't exist
-                if (userResult.error && userResult.error.includes('not authorized')) {
+                if (userResult.error && (userResult.error.includes('not authorized') || userResult.error.includes('role mismatch'))) {
                     throw new Error(userResult.error);
                 }
                 
-                // User doesn't exist, validate first then create
-                const validation = await FirebaseService.validateUserId(userId);
-                
-                if (!validation.success) {
-                    throw new Error('Unable to validate user ID: ' + validation.error);
-                }
-                
-                if (!validation.allowed) {
+                // User doesn't exist in database but might be in validation file
+                if (userResult.validationInfo) {
+                    // User is validated but doesn't exist in database, create new user
+                    const createResult = await FirebaseService.createUser({
+                        userId,
+                        name: userId, // Use userId as display name
+                        role: userResult.validationInfo.role, // Use role from validation file
+                        email: '', // Empty email for simplified login
+                        accessibleCsvs: userResult.validationInfo.accessibleCsvs,
+                        createdAt: new Date().toISOString()
+                    });
+                    
+                    if (!createResult.success) {
+                        throw new Error(createResult.error);
+                    }
+                    
+                    currentUser = { 
+                        id: createResult.id, 
+                        userId, 
+                        name: userId,
+                        role: userResult.validationInfo.role,
+                        email: '',
+                        accessibleCsvs: userResult.validationInfo.accessibleCsvs
+                    };
+                } else {
+                    // User validation failed completely
                     throw new Error('User ID not authorized. Please contact administrator.');
                 }
-                
-                // Validation passed, create new user
-                const createResult = await FirebaseService.createUser({
-                    userId,
-                    name: userId, // Use userId as display name
-                    role,
-                    email: '', // Empty email for simplified login
-                    createdAt: new Date().toISOString()
-                });
-                
-                if (!createResult.success) {
-                    throw new Error(createResult.error);
-                }
-                
-                currentUser = { 
-                    id: createResult.id, 
-                    userId, 
-                    name: userId,
-                    role,
-                    email: ''
-                };
             }
             
             // Update activity
