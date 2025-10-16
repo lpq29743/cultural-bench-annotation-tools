@@ -21,15 +21,40 @@
                     </select>
                 </div>
                 <div class="header-actions">
-                    <button id="importBtn" class="btn btn-secondary">
-                        <i class="fas fa-upload"></i> Import Data
+                    <!-- User info and management (shown when logged in) -->
+                    <div id="userInfo" class="user-info" style="display: none;">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="user-details">
+                            <span id="userName" class="user-name">User Name</span>
+                            <span id="userRole" class="user-role">Annotator</span>
+                        </div>
+                        <button id="manageBtn" class="btn btn-secondary" style="display: none;">
+                            <i class="fas fa-users-cog"></i> Manage
+                        </button>
+                        <button id="logoutBtn" class="btn btn-outline">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                    
+                    <!-- Login button (shown when not logged in) -->
+                    <button id="loginBtn" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login
                     </button>
-                    <button id="exportBtn" class="btn btn-secondary">
-                        <i class="fas fa-download"></i> Export Data
-                    </button>
-                    <button id="saveBtn" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save to Firebase
-                    </button>
+                    
+                    <!-- Data management buttons (shown when logged in) -->
+                    <div id="dataActions" class="data-actions" style="display: none;">
+                        <button id="importBtn" class="btn btn-secondary">
+                            <i class="fas fa-upload"></i> Import Data (Multiple Files)
+                        </button>
+                        <button id="exportBtn" class="btn btn-secondary">
+                            <i class="fas fa-download"></i> Export Data
+                        </button>
+                        <button id="saveBtn" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save to Firebase
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -229,6 +254,239 @@
 
     <!-- Toast notifications -->
     <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-sign-in-alt"></i> Login to Annotation Tool</h2>
+                <button class="modal-close" id="loginModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email:</label>
+                        <input type="email" id="loginEmail" class="form-input" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginName">Full Name:</label>
+                        <input type="text" id="loginName" class="form-input" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginRole">Role:</label>
+                        <select id="loginRole" class="form-select" required>
+                            <option value="">Select your role</option>
+                            <option value="annotator">Annotator</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <button type="button" class="btn btn-outline" id="loginCancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Annotator Management Modal -->
+    <div id="manageModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2><i class="fas fa-users-cog"></i> Annotator Management</h2>
+                <button class="modal-close" id="manageModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="management-tabs">
+                    <button class="tab-btn active" data-tab="annotators">
+                        <i class="fas fa-users"></i> Annotators
+                    </button>
+                    <button class="tab-btn" data-tab="assignments">
+                        <i class="fas fa-tasks"></i> Task Assignments
+                    </button>
+                    <button class="tab-btn" data-tab="progress">
+                        <i class="fas fa-chart-bar"></i> Progress Reports
+                    </button>
+                </div>
+
+                <!-- Annotators Tab -->
+                <div id="annotatorsTab" class="tab-content active">
+                    <div class="tab-header">
+                        <h3>Registered Annotators</h3>
+                        <button id="addAnnotatorBtn" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Add Annotator
+                        </button>
+                    </div>
+                    <div class="annotators-list">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Assigned Tasks</th>
+                                    <th>Completed</th>
+                                    <th>Last Active</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="annotatorsTableBody">
+                                <!-- Annotators will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Task Assignments Tab -->
+                <div id="assignmentsTab" class="tab-content">
+                    <div class="tab-header">
+                        <h3>Task Assignments</h3>
+                        <button id="createAssignmentBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create Assignment
+                        </button>
+                    </div>
+                    <div class="assignments-list">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Assignment ID</th>
+                                    <th>Annotator</th>
+                                    <th>Items Count</th>
+                                    <th>Progress</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignmentsTableBody">
+                                <!-- Assignments will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Progress Reports Tab -->
+                <div id="progressTab" class="tab-content">
+                    <div class="tab-header">
+                        <h3>Progress Reports</h3>
+                        <div class="report-filters">
+                            <select id="reportAnnotatorFilter" class="form-select">
+                                <option value="">All Annotators</option>
+                            </select>
+                            <select id="reportPeriodFilter" class="form-select">
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="all">All Time</option>
+                            </select>
+                            <button id="generateReportBtn" class="btn btn-secondary">
+                                <i class="fas fa-chart-line"></i> Generate Report
+                            </button>
+                        </div>
+                    </div>
+                    <div class="progress-summary">
+                        <div class="summary-cards">
+                            <div class="summary-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h4 id="totalAnnotators">0</h4>
+                                    <p>Total Annotators</p>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-tasks"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h4 id="totalAssignments">0</h4>
+                                    <p>Active Assignments</p>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h4 id="totalCompleted">0</h4>
+                                    <p>Completed Items</p>
+                                </div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="card-icon">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <div class="card-content">
+                                    <h4 id="overallProgress">0%</h4>
+                                    <p>Overall Progress</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-details">
+                        <div id="progressChart" class="chart-container">
+                            <!-- Progress chart will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Creation Modal -->
+    <div id="assignmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> Create Task Assignment</h2>
+                <button class="modal-close" id="assignmentModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="assignmentForm">
+                    <div class="form-group">
+                        <label for="assignmentAnnotator">Assign to:</label>
+                        <select id="assignmentAnnotator" class="form-select" required>
+                            <option value="">Select annotator</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignmentItems">Items to assign:</label>
+                        <div class="assignment-options">
+                            <label class="radio-option">
+                                <input type="radio" name="assignmentType" value="count" checked>
+                                <span>Assign specific number of items</span>
+                            </label>
+                            <input type="number" id="assignmentCount" class="form-input" min="1" value="10" placeholder="Number of items">
+                        </div>
+                        <div class="assignment-options">
+                            <label class="radio-option">
+                                <input type="radio" name="assignmentType" value="filter">
+                                <span>Assign by filter criteria</span>
+                            </label>
+                            <select id="assignmentTopicFilter" class="form-select">
+                                <option value="">All topics</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignmentDueDate">Due Date:</label>
+                        <input type="date" id="assignmentDueDate" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignmentNotes">Notes (optional):</label>
+                        <textarea id="assignmentNotes" class="form-textarea" rows="3" placeholder="Additional instructions or notes"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Create Assignment
+                        </button>
+                        <button type="button" class="btn btn-outline" id="assignmentCancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>

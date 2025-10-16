@@ -5,10 +5,72 @@ let filteredAnnotations = [];
 let isEditing = false;
 let currentTaskMode = 'modification'; // 'modification' or 'creation'
 
+// User management state
+let currentUser = null;
+let currentSession = null;
+let allUsers = [];
+let allAssignments = [];
+let isLoggedIn = false;
+
 // DOM elements
 const elements = {
     // Task mode
     taskMode: document.getElementById('taskMode'),
+    
+    // User management elements
+    loginBtn: document.getElementById('loginBtn'),
+    logoutBtn: document.getElementById('logoutBtn'),
+    manageBtn: document.getElementById('manageBtn'),
+    userInfo: document.getElementById('userInfo'),
+    userName: document.getElementById('userName'),
+    userRole: document.getElementById('userRole'),
+    dataActions: document.getElementById('dataActions'),
+    
+    // Modal elements
+    loginModal: document.getElementById('loginModal'),
+    loginModalClose: document.getElementById('loginModalClose'),
+    loginForm: document.getElementById('loginForm'),
+    loginEmail: document.getElementById('loginEmail'),
+    loginName: document.getElementById('loginName'),
+    loginRole: document.getElementById('loginRole'),
+    loginCancel: document.getElementById('loginCancel'),
+    
+    manageModal: document.getElementById('manageModal'),
+    manageModalClose: document.getElementById('manageModalClose'),
+    
+    assignmentModal: document.getElementById('assignmentModal'),
+    assignmentModalClose: document.getElementById('assignmentModalClose'),
+    assignmentForm: document.getElementById('assignmentForm'),
+    assignmentAnnotator: document.getElementById('assignmentAnnotator'),
+    assignmentCount: document.getElementById('assignmentCount'),
+    assignmentTopicFilter: document.getElementById('assignmentTopicFilter'),
+    assignmentDueDate: document.getElementById('assignmentDueDate'),
+    assignmentNotes: document.getElementById('assignmentNotes'),
+    assignmentCancel: document.getElementById('assignmentCancel'),
+    
+    // Tab elements
+    annotatorsTab: document.getElementById('annotatorsTab'),
+    assignmentsTab: document.getElementById('assignmentsTab'),
+    progressTab: document.getElementById('progressTab'),
+    
+    // Table elements
+    annotatorsTableBody: document.getElementById('annotatorsTableBody'),
+    assignmentsTableBody: document.getElementById('assignmentsTableBody'),
+    
+    // Statistics elements
+    totalAnnotators: document.getElementById('totalAnnotators'),
+    totalAssignments: document.getElementById('totalAssignments'),
+    totalCompleted: document.getElementById('totalCompleted'),
+    overallProgress: document.getElementById('overallProgress'),
+    
+    // Filter elements
+    reportAnnotatorFilter: document.getElementById('reportAnnotatorFilter'),
+    reportPeriodFilter: document.getElementById('reportPeriodFilter'),
+    generateReportBtn: document.getElementById('generateReportBtn'),
+    
+    // Action buttons
+    addAnnotatorBtn: document.getElementById('addAnnotatorBtn'),
+    createAssignmentBtn: document.getElementById('createAssignmentBtn'),
     
     // Form elements
     sourceExcerpt: document.getElementById('sourceExcerpt'),
@@ -75,8 +137,9 @@ const elements = {
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
+    initializeUserManagement();
     switchTaskMode(currentTaskMode);
-    loadFromFirebase();
+    checkLoginStatus();
     updateUI();
 });
 
@@ -299,16 +362,22 @@ function addNewAnnotation() {
     showToast('New annotation created', 'success');
 }
 
-function updateCurrentAnnotation() {
+async function updateCurrentAnnotation() {
     if (filteredAnnotations.length === 0) return;
     
     const annotation = filteredAnnotations[currentIndex];
     const formData = getFormData();
+    const wasCompleted = annotation.completed;
     
     // Update the annotation
     Object.assign(annotation, formData);
     annotation.completed = isAnnotationComplete(annotation);
     annotation.lastModified = new Date().toISOString();
+    
+    // Add user tracking if logged in
+    if (isLoggedIn && currentUser) {
+        annotation.lastModifiedBy = currentUser.id;
+    }
     
     // Update in main array
     const mainIndex = annotations.findIndex(a => a.id === annotation.id);
@@ -316,8 +385,60 @@ function updateCurrentAnnotation() {
         annotations[mainIndex] = annotation;
     }
     
+    // Update assignment progress if annotation was just completed
+    if (!wasCompleted && annotation.completed && isLoggedIn && currentUser) {
+        await updateAssignmentProgress();
+    }
+    
     updateUI();
     showToast('Annotation updated', 'success');
+}
+
+async function updateAssignmentProgress() {
+    try {
+        // Get user's current assignment
+        const assignmentsResult = await FirebaseService.getAssignmentsByUser(currentUser.id);
+        
+        if (assignmentsResult.success && assignmentsResult.assignments.length > 0) {
+            const activeAssignment = assignmentsResult.assignments.find(a => a.status === 'active');
+            
+            if (activeAssignment) {
+                // Calculate progress based on completed annotations
+                const completedCount = annotations.filter(a => a.completed && a.annotatorId === currentUser.id).length;
+                const totalCount = activeAssignment.itemCount || annotations.length;
+                const progress = Math.min(100, Math.round((completedCount / totalCount) * 100));
+                
+                // Update assignment progress
+                const updateResult = await FirebaseService.updateAssignmentProgress(activeAssignment.id, {
+                    progress,
+                    completedItems: completedCount,
+                    lastActivity: new Date().toISOString(),
+                    status: progress >= 100 ? 'completed' : 'active'
+                });
+                
+                if (updateResult.success) {
+                    // Update local assignment data
+                    const assignmentIndex = allAssignments.findIndex(a => a.id === activeAssignment.id);
+                    if (assignmentIndex !== -1) {
+                        allAssignments[assignmentIndex] = {
+                            ...allAssignments[assignmentIndex],
+                            progress,
+                            completedItems: completedCount,
+                            lastActivity: new Date().toISOString(),
+                            status: progress >= 100 ? 'completed' : 'active'
+                        };
+                    }
+                    
+                    if (progress >= 100) {
+                        showToast('Congratulations! Assignment completed!', 'success');
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error updating assignment progress:', error);
+        // Don't show error to user as this is background operation
+    }
 }
 
 function deleteCurrentAnnotation() {
@@ -822,6 +943,12 @@ function exportToCSV() {
 
 // Firebase operations
 async function saveToFirebase() {
+    if (!isLoggedIn || !currentUser) {
+        showToast('Please log in to save data', 'warning');
+        showLoginModal();
+        return;
+    }
+    
     if (annotations.length === 0) {
         showToast('No data to save', 'warning');
         return;
@@ -833,17 +960,29 @@ async function saveToFirebase() {
         const collectionName = currentTaskMode === 'modification' ? 
             'cultural_annotations_modified' : 'cultural_annotations_created';
         
+        // Add user information to each annotation
+        const annotationsWithUser = annotations.map(annotation => ({
+            ...annotation,
+            annotatorId: currentUser.id,
+            annotatorName: currentUser.name,
+            lastModifiedBy: currentUser.id,
+            lastModified: new Date().toISOString()
+        }));
+        
         // Clear existing data first
         const clearResult = await FirebaseService.clearCollection(collectionName);
         if (!clearResult.success) {
             throw new Error(clearResult.error);
         }
         
-        // Save all annotations
-        const saveResult = await FirebaseService.saveAllToCollection(collectionName, annotations);
+        // Save all annotations with user tracking
+        const saveResult = await FirebaseService.saveAllToCollection(collectionName, annotationsWithUser);
         if (!saveResult.success) {
             throw new Error(saveResult.error);
         }
+        
+        // Update user activity
+        await FirebaseService.updateUserActivity(currentUser.id);
         
         showToast('Data saved to Firebase successfully', 'success');
     } catch (error) {
@@ -911,6 +1050,946 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// User Management Functions
+function initializeUserManagement() {
+    // Add user management event listeners
+    if (elements.loginBtn) {
+        elements.loginBtn.addEventListener('click', showLoginModal);
+    }
+    
+    if (elements.logoutBtn) {
+        elements.logoutBtn.addEventListener('click', handleLogout);
+    }
+    
+    if (elements.manageBtn) {
+        elements.manageBtn.addEventListener('click', showManageModal);
+    }
+    
+    // Modal close events
+    if (elements.loginModalClose) {
+        elements.loginModalClose.addEventListener('click', hideLoginModal);
+    }
+    
+    if (elements.manageModalClose) {
+        elements.manageModalClose.addEventListener('click', hideManageModal);
+    }
+    
+    if (elements.assignmentModalClose) {
+        elements.assignmentModalClose.addEventListener('click', hideAssignmentModal);
+    }
+    
+    // Form events
+    if (elements.loginForm) {
+        elements.loginForm.addEventListener('submit', handleLogin);
+    }
+    
+    if (elements.loginCancel) {
+        elements.loginCancel.addEventListener('click', hideLoginModal);
+    }
+    
+    if (elements.assignmentForm) {
+        elements.assignmentForm.addEventListener('submit', handleCreateAssignment);
+    }
+    
+    if (elements.assignmentCancel) {
+        elements.assignmentCancel.addEventListener('click', hideAssignmentModal);
+    }
+    
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const tabName = e.target.dataset.tab;
+            switchTab(tabName);
+        });
+    });
+    
+    // Management actions
+    if (elements.addAnnotatorBtn) {
+        elements.addAnnotatorBtn.addEventListener('click', showAddAnnotatorForm);
+    }
+    
+    if (elements.createAssignmentBtn) {
+        elements.createAssignmentBtn.addEventListener('click', showAssignmentModal);
+    }
+    
+    if (elements.generateReportBtn) {
+        elements.generateReportBtn.addEventListener('click', generateProgressReport);
+    }
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            e.target.classList.remove('active');
+        }
+    });
+}
+
+function checkLoginStatus() {
+    // Check if user is stored in localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+        try {
+            currentUser = JSON.parse(storedUser);
+            isLoggedIn = true;
+            updateUserInterface();
+            loadUserData();
+        } catch (error) {
+            console.error('Error parsing stored user:', error);
+            localStorage.removeItem('currentUser');
+        }
+    } else {
+        updateUserInterface();
+    }
+}
+
+function updateUserInterface() {
+    if (isLoggedIn && currentUser) {
+        // Show logged in state
+        if (elements.loginBtn) elements.loginBtn.style.display = 'none';
+        if (elements.userInfo) elements.userInfo.style.display = 'flex';
+        if (elements.dataActions) elements.dataActions.style.display = 'flex';
+        
+        // Update user info
+        if (elements.userName) elements.userName.textContent = currentUser.name;
+        if (elements.userRole) elements.userRole.textContent = currentUser.role;
+        
+        // Show manage button for admins
+        if (elements.manageBtn) {
+            elements.manageBtn.style.display = currentUser.role === 'admin' ? 'inline-flex' : 'none';
+        }
+        
+        // Load user's data
+        loadFromFirebase();
+    } else {
+        // Show logged out state
+        if (elements.loginBtn) elements.loginBtn.style.display = 'inline-flex';
+        if (elements.userInfo) elements.userInfo.style.display = 'none';
+        if (elements.dataActions) elements.dataActions.style.display = 'none';
+        
+        // Clear data
+        annotations = [];
+        updateUI();
+    }
+}
+
+function showLoginModal() {
+    if (elements.loginModal) {
+        elements.loginModal.classList.add('active');
+        if (elements.loginEmail) elements.loginEmail.focus();
+    }
+}
+
+function hideLoginModal() {
+    if (elements.loginModal) {
+        elements.loginModal.classList.remove('active');
+        if (elements.loginForm) elements.loginForm.reset();
+    }
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    
+    const email = elements.loginEmail.value.trim();
+    const name = elements.loginName.value.trim();
+    const role = elements.loginRole.value;
+    const editingUserId = elements.loginForm.dataset.editingUserId;
+    
+    if (!email || !name || !role) {
+        showToast('Please fill in all fields', 'error');
+        return;
+    }
+    
+    showLoading(true);
+    
+    try {
+        if (editingUserId) {
+            // Update existing user
+            const updateResult = await FirebaseService.updateUser(editingUserId, {
+                email,
+                name,
+                role
+            });
+            
+            if (!updateResult.success) {
+                throw new Error(updateResult.error);
+            }
+            
+            // Update local data
+            const userIndex = allUsers.findIndex(u => u.id === editingUserId);
+            if (userIndex !== -1) {
+                allUsers[userIndex] = { ...allUsers[userIndex], email, name, role };
+            }
+            
+            // If editing current user, update current user data
+            if (currentUser && currentUser.id === editingUserId) {
+                currentUser = { ...currentUser, email, name, role };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUserInterface();
+            }
+            
+            hideLoginModal();
+            loadAnnotatorsData();
+            showToast('User updated successfully', 'success');
+            
+            // Clear editing state
+            delete elements.loginForm.dataset.editingUserId;
+            
+        } else {
+            // Check if user exists for login/creation
+            const userResult = await FirebaseService.getUserByEmail(email);
+            
+            if (userResult.success) {
+                // User exists, log them in
+                currentUser = userResult.user;
+            } else {
+                // Create new user
+                const createResult = await FirebaseService.createUser({
+                    email,
+                    name,
+                    role
+                });
+                
+                if (!createResult.success) {
+                    throw new Error(createResult.error);
+                }
+                
+                currentUser = { id: createResult.id, email, name, role };
+            }
+            
+            // Update activity
+            await FirebaseService.updateUserActivity(currentUser.id);
+            
+            // Create session
+            const sessionResult = await FirebaseService.createSession(currentUser.id, {
+                loginTime: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            });
+            
+            if (sessionResult.success) {
+                currentSession = sessionResult.sessionId;
+            }
+            
+            // Store user in localStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            isLoggedIn = true;
+            hideLoginModal();
+            updateUserInterface();
+            showToast(`Welcome, ${currentUser.name}!`, 'success');
+        }
+        
+    } catch (error) {
+        console.error('Login/Update error:', error);
+        showToast('Operation failed: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function handleLogout() {
+    if (currentSession) {
+        await FirebaseService.endSession(currentSession);
+    }
+    
+    currentUser = null;
+    currentSession = null;
+    isLoggedIn = false;
+    
+    localStorage.removeItem('currentUser');
+    updateUserInterface();
+    showToast('Logged out successfully', 'success');
+}
+
+function showManageModal() {
+    if (elements.manageModal) {
+        elements.manageModal.classList.add('active');
+        switchTab('annotators');
+        loadManagementData();
+    }
+}
+
+function hideManageModal() {
+    if (elements.manageModal) {
+        elements.manageModal.classList.remove('active');
+    }
+}
+
+function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active class from all buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab
+    const selectedTab = document.getElementById(tabName + 'Tab');
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+    
+    // Activate button
+    const selectedBtn = document.querySelector(`[data-tab="${tabName}"]`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('active');
+    }
+    
+    // Load tab-specific data
+    switch (tabName) {
+        case 'annotators':
+            loadAnnotatorsData();
+            break;
+        case 'assignments':
+            loadAssignmentsData();
+            break;
+        case 'progress':
+            loadProgressData();
+            break;
+    }
+}
+
+async function loadManagementData() {
+    showLoading(true);
+    
+    try {
+        const [usersResult, assignmentsResult] = await Promise.all([
+            FirebaseService.getAllUsers(),
+            FirebaseService.getAllAssignments()
+        ]);
+        
+        if (usersResult.success) {
+            allUsers = usersResult.users;
+        }
+        
+        if (assignmentsResult.success) {
+            allAssignments = assignmentsResult.assignments;
+        }
+        
+        // Populate dropdowns
+        populateUserDropdowns();
+        
+    } catch (error) {
+        console.error('Error loading management data:', error);
+        showToast('Error loading management data', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+function populateUserDropdowns() {
+    // Populate assignment annotator dropdown
+    if (elements.assignmentAnnotator) {
+        elements.assignmentAnnotator.innerHTML = '<option value="">Select annotator</option>';
+        allUsers.filter(u => u.role === 'annotator').forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.textContent = user.name;
+            elements.assignmentAnnotator.appendChild(option);
+        });
+    }
+    
+    // Populate report filter dropdown
+    if (elements.reportAnnotatorFilter) {
+        elements.reportAnnotatorFilter.innerHTML = '<option value="">All Annotators</option>';
+        allUsers.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.textContent = user.name;
+            elements.reportAnnotatorFilter.appendChild(option);
+        });
+    }
+    
+    // Populate assignment topic filter
+    if (elements.assignmentTopicFilter) {
+        const topics = ['Belief', 'Commerce', 'Education', 'Entertainment', 'Finance', 'Food', 
+                       'Government', 'Habitat', 'Health', 'Heritage', 'Language', 'Pets', 
+                       'Science', 'Social', 'Travel', 'Work'];
+        
+        elements.assignmentTopicFilter.innerHTML = '<option value="">All topics</option>';
+        topics.forEach(topic => {
+            const option = document.createElement('option');
+            option.value = topic;
+            option.textContent = topic;
+            elements.assignmentTopicFilter.appendChild(option);
+        });
+    }
+}
+
+function loadAnnotatorsData() {
+    if (!elements.annotatorsTableBody) return;
+    
+    elements.annotatorsTableBody.innerHTML = '';
+    
+    allUsers.forEach(user => {
+        const row = document.createElement('tr');
+        const userAssignments = allUsers.filter(a => a.annotatorId === user.id);
+        const completedAssignments = userAssignments.filter(a => a.status === 'completed');
+        
+        row.innerHTML = `
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td><span class="status-badge ${user.role}">${user.role}</span></td>
+            <td>${userAssignments.length}</td>
+            <td>${completedAssignments.length}</td>
+            <td>${user.lastActive ? new Date(user.lastActive.toDate()).toLocaleDateString() : 'Never'}</td>
+            <td class="actions">
+                <button class="btn btn-outline" onclick="editUser('${user.id}')">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-danger" onclick="deleteUser('${user.id}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        elements.annotatorsTableBody.appendChild(row);
+    });
+}
+
+function loadAssignmentsData() {
+    if (!elements.assignmentsTableBody) return;
+    
+    elements.assignmentsTableBody.innerHTML = '';
+    
+    allAssignments.forEach(assignment => {
+        const row = document.createElement('tr');
+        const user = allUsers.find(u => u.id === assignment.annotatorId);
+        const dueDate = assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : 'No due date';
+        
+        row.innerHTML = `
+            <td>${assignment.id.substring(0, 8)}...</td>
+            <td>${user ? user.name : 'Unknown'}</td>
+            <td>${assignment.itemCount || 0}</td>
+            <td>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${assignment.progress || 0}%"></div>
+                </div>
+                <span>${assignment.progress || 0}%</span>
+            </td>
+            <td>${dueDate}</td>
+            <td><span class="status-badge ${assignment.status}">${assignment.status}</span></td>
+            <td class="actions">
+                <button class="btn btn-outline" onclick="editAssignment('${assignment.id}')">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-danger" onclick="deleteAssignment('${assignment.id}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        elements.assignmentsTableBody.appendChild(row);
+    });
+}
+
+async function loadProgressData() {
+    try {
+        const statsResult = await FirebaseService.getOverallStatistics();
+        
+        if (statsResult.success) {
+            const stats = statsResult.stats;
+            
+            if (elements.totalAnnotators) elements.totalAnnotators.textContent = stats.totalUsers;
+            if (elements.totalAssignments) elements.totalAssignments.textContent = stats.totalAssignments;
+            if (elements.totalCompleted) elements.totalCompleted.textContent = stats.completedAnnotations;
+            if (elements.overallProgress) elements.overallProgress.textContent = stats.overallProgress + '%';
+        }
+    } catch (error) {
+        console.error('Error loading progress data:', error);
+        showToast('Error loading progress data', 'error');
+    }
+}
+
+function showAssignmentModal() {
+    if (elements.assignmentModal) {
+        elements.assignmentModal.classList.add('active');
+        
+        // Set default due date to one week from now
+        const nextWeek = new Date();
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        if (elements.assignmentDueDate) {
+            elements.assignmentDueDate.value = nextWeek.toISOString().split('T')[0];
+        }
+    }
+}
+
+function hideAssignmentModal() {
+    if (elements.assignmentModal) {
+        elements.assignmentModal.classList.remove('active');
+        if (elements.assignmentForm) elements.assignmentForm.reset();
+    }
+}
+
+async function handleCreateAssignment(e) {
+    e.preventDefault();
+    
+    const annotatorId = elements.assignmentAnnotator.value;
+    const itemCount = parseInt(elements.assignmentCount.value) || 10;
+    const topicFilter = elements.assignmentTopicFilter.value;
+    const dueDate = elements.assignmentDueDate.value;
+    const notes = elements.assignmentNotes.value;
+    const editingAssignmentId = elements.assignmentForm.dataset.editingAssignmentId;
+    
+    if (!annotatorId) {
+        showToast('Please select an annotator', 'error');
+        return;
+    }
+    
+    showLoading(true);
+    
+    try {
+        if (editingAssignmentId) {
+            // Update existing assignment
+            const updateResult = await FirebaseService.updateAssignment(editingAssignmentId, {
+                annotatorId,
+                itemCount,
+                topicFilter,
+                dueDate,
+                notes,
+                lastModifiedBy: currentUser.id,
+                lastModified: new Date().toISOString()
+            });
+            
+            if (!updateResult.success) {
+                throw new Error(updateResult.error);
+            }
+            
+            // Update local data
+            const assignmentIndex = allAssignments.findIndex(a => a.id === editingAssignmentId);
+            if (assignmentIndex !== -1) {
+                allAssignments[assignmentIndex] = {
+                    ...allAssignments[assignmentIndex],
+                    annotatorId,
+                    itemCount,
+                    topicFilter,
+                    dueDate,
+                    notes,
+                    lastModifiedBy: currentUser.id,
+                    lastModified: new Date().toISOString()
+                };
+            }
+            
+            hideAssignmentModal();
+            loadAssignmentsData();
+            showToast('Assignment updated successfully', 'success');
+            
+            // Clear editing state
+            delete elements.assignmentForm.dataset.editingAssignmentId;
+            
+        } else {
+            // Create new assignment
+            const assignmentData = {
+                annotatorId,
+                itemCount,
+                topicFilter,
+                dueDate,
+                notes,
+                createdBy: currentUser.id,
+                status: 'active',
+                progress: 0,
+                createdAt: new Date().toISOString()
+            };
+            
+            const result = await FirebaseService.createAssignment(assignmentData);
+            
+            if (result.success) {
+                // Add to local data
+                allAssignments.push({
+                    id: result.assignmentId,
+                    ...assignmentData
+                });
+                
+                hideAssignmentModal();
+                showToast('Assignment created successfully', 'success');
+                loadAssignmentsData();
+            } else {
+                throw new Error(result.error);
+            }
+        }
+    } catch (error) {
+        console.error('Error with assignment:', error);
+        showToast('Error with assignment: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+function showAddAnnotatorForm() {
+    // For simplicity, we'll reuse the login modal for adding annotators
+    showLoginModal();
+    if (elements.loginRole) {
+        elements.loginRole.value = 'annotator';
+    }
+}
+
+async function editUser(userId) {
+    const user = allUsers.find(u => u.id === userId);
+    if (!user) {
+        showToast('User not found', 'error');
+        return;
+    }
+    
+    // Pre-fill the login modal with user data for editing
+    if (elements.loginEmail) elements.loginEmail.value = user.email;
+    if (elements.loginName) elements.loginName.value = user.name;
+    if (elements.loginRole) elements.loginRole.value = user.role;
+    
+    // Store the user ID for updating
+    elements.loginForm.dataset.editingUserId = userId;
+    
+    showLoginModal();
+}
+
+async function deleteUser(userId) {
+    if (!confirm('Are you sure you want to delete this user?')) {
+        return;
+    }
+    
+    showLoading(true);
+    
+    try {
+        const result = await FirebaseService.deleteUser(userId);
+        
+        if (result.success) {
+            showToast('User deleted successfully', 'success');
+            loadManagementData();
+            loadAnnotatorsData();
+        } else {
+            throw new Error(result.error);
+        }
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        showToast('Error deleting user: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function editAssignment(assignmentId) {
+    const assignment = allAssignments.find(a => a.id === assignmentId);
+    if (!assignment) {
+        showToast('Assignment not found', 'error');
+        return;
+    }
+    
+    // Pre-fill the assignment modal with assignment data
+    if (elements.assignmentAnnotator) elements.assignmentAnnotator.value = assignment.annotatorId;
+    if (elements.assignmentCount) elements.assignmentCount.value = assignment.itemCount;
+    if (elements.assignmentTopicFilter) elements.assignmentTopicFilter.value = assignment.topicFilter || '';
+    if (elements.assignmentDueDate) {
+        const dueDate = assignment.dueDate ? new Date(assignment.dueDate).toISOString().split('T')[0] : '';
+        elements.assignmentDueDate.value = dueDate;
+    }
+    if (elements.assignmentNotes) elements.assignmentNotes.value = assignment.notes || '';
+    
+    // Store the assignment ID for updating
+    elements.assignmentForm.dataset.editingAssignmentId = assignmentId;
+    
+    showAssignmentModal();
+}
+
+async function deleteAssignment(assignmentId) {
+    if (!confirm('Are you sure you want to delete this assignment?')) {
+        return;
+    }
+    
+    showLoading(true);
+    
+    try {
+        const result = await FirebaseService.deleteAssignment(assignmentId);
+        
+        if (result.success) {
+            showToast('Assignment deleted successfully', 'success');
+            loadAssignmentsData();
+        } else {
+            throw new Error(result.error);
+        }
+    } catch (error) {
+        console.error('Error deleting assignment:', error);
+        showToast('Error deleting assignment: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function generateProgressReport() {
+    const annotatorId = elements.reportAnnotatorFilter.value;
+    const period = elements.reportPeriodFilter.value;
+    
+    showLoading(true);
+    
+    try {
+        let statsResult;
+        let reportData = {};
+        
+        if (annotatorId) {
+            // Generate individual user report
+            statsResult = await FirebaseService.getUserStatistics(annotatorId);
+            const user = allUsers.find(u => u.id === annotatorId);
+            
+            if (statsResult.success && user) {
+                reportData = {
+                    type: 'individual',
+                    user: user.name,
+                    stats: statsResult.stats,
+                    assignments: allAssignments.filter(a => a.annotatorId === annotatorId),
+                    annotations: annotations.filter(a => a.annotatorId === annotatorId)
+                };
+            }
+        } else {
+            // Generate overall report
+            statsResult = await FirebaseService.getOverallStatistics();
+            
+            if (statsResult.success) {
+                reportData = {
+                    type: 'overall',
+                    stats: statsResult.stats,
+                    totalUsers: allUsers.length,
+                    totalAssignments: allAssignments.length,
+                    userBreakdown: allUsers.map(user => {
+                        const userAssignments = allAssignments.filter(a => a.annotatorId === user.id);
+                        const userAnnotations = annotations.filter(a => a.annotatorId === user.id);
+                        const completedAnnotations = userAnnotations.filter(a => a.completed);
+                        
+                        return {
+                            name: user.name,
+                            email: user.email,
+                            role: user.role,
+                            assignmentsCount: userAssignments.length,
+                            annotationsCount: userAnnotations.length,
+                            completedCount: completedAnnotations.length,
+                            completionRate: userAnnotations.length > 0 ? 
+                                Math.round((completedAnnotations.length / userAnnotations.length) * 100) : 0,
+                            lastActive: user.lastActive
+                        };
+                    })
+                };
+            }
+        }
+        
+        if (statsResult.success) {
+            displayProgressReport(reportData);
+            showToast('Report generated successfully', 'success');
+        } else {
+            throw new Error(statsResult.error);
+        }
+    } catch (error) {
+        console.error('Error generating report:', error);
+        showToast('Error generating report: ' + error.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+function displayProgressReport(reportData) {
+    // Create a detailed report display
+    let reportHtml = '';
+    
+    if (reportData.type === 'individual') {
+        reportHtml = `
+            <div class="report-container">
+                <h3>Individual Report: ${reportData.user}</h3>
+                <div class="report-stats">
+                    <div class="stat-card">
+                        <h4>Total Assignments</h4>
+                        <p class="stat-number">${reportData.assignments.length}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total Annotations</h4>
+                        <p class="stat-number">${reportData.annotations.length}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Completed</h4>
+                        <p class="stat-number">${reportData.annotations.filter(a => a.completed).length}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Completion Rate</h4>
+                        <p class="stat-number">${reportData.annotations.length > 0 ? 
+                            Math.round((reportData.annotations.filter(a => a.completed).length / reportData.annotations.length) * 100) : 0}%</p>
+                    </div>
+                </div>
+                <div class="assignment-breakdown">
+                    <h4>Assignment Breakdown</h4>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Assignment ID</th>
+                                <th>Progress</th>
+                                <th>Status</th>
+                                <th>Due Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${reportData.assignments.map(assignment => `
+                                <tr>
+                                    <td>${assignment.id.substring(0, 8)}...</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${assignment.progress || 0}%"></div>
+                                        </div>
+                                        ${assignment.progress || 0}%
+                                    </td>
+                                    <td><span class="status-badge ${assignment.status}">${assignment.status}</span></td>
+                                    <td>${assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : 'No due date'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    } else {
+        reportHtml = `
+            <div class="report-container">
+                <h3>Overall Progress Report</h3>
+                <div class="report-stats">
+                    <div class="stat-card">
+                        <h4>Total Users</h4>
+                        <p class="stat-number">${reportData.totalUsers}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total Assignments</h4>
+                        <p class="stat-number">${reportData.totalAssignments}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Active Users</h4>
+                        <p class="stat-number">${reportData.userBreakdown.filter(u => u.annotationsCount > 0).length}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Average Completion</h4>
+                        <p class="stat-number">${Math.round(reportData.userBreakdown.reduce((sum, u) => sum + u.completionRate, 0) / reportData.userBreakdown.length) || 0}%</p>
+                    </div>
+                </div>
+                <div class="user-breakdown">
+                    <h4>User Performance Breakdown</h4>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Assignments</th>
+                                <th>Annotations</th>
+                                <th>Completed</th>
+                                <th>Completion Rate</th>
+                                <th>Last Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${reportData.userBreakdown.map(user => `
+                                <tr>
+                                    <td>${user.name}</td>
+                                    <td><span class="status-badge ${user.role}">${user.role}</span></td>
+                                    <td>${user.assignmentsCount}</td>
+                                    <td>${user.annotationsCount}</td>
+                                    <td>${user.completedCount}</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${user.completionRate}%"></div>
+                                        </div>
+                                        ${user.completionRate}%
+                                    </td>
+                                    <td>${user.lastActive ? new Date(user.lastActive.toDate()).toLocaleDateString() : 'Never'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Display the report in a modal or dedicated area
+    const reportModal = document.createElement('div');
+    reportModal.className = 'modal active';
+    reportModal.innerHTML = `
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>Progress Report</h2>
+                <button class="modal-close" onclick="this.closest('.modal').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                ${reportHtml}
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="exportReport()">
+                    <i class="fas fa-download"></i> Export Report
+                </button>
+                <button class="btn btn-outline" onclick="this.closest('.modal').remove()">Close</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(reportModal);
+}
+
+function exportReport() {
+    // Simple CSV export of the current report data
+    const reportModal = document.querySelector('.report-container');
+    if (!reportModal) return;
+    
+    const tables = reportModal.querySelectorAll('.report-table');
+    let csvContent = '';
+    
+    tables.forEach((table, index) => {
+        if (index > 0) csvContent += '\n\n';
+        
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('th, td');
+            const rowData = Array.from(cells).map(cell => {
+                // Clean up cell content (remove HTML tags and extra whitespace)
+                return cell.textContent.trim().replace(/\s+/g, ' ');
+            });
+            csvContent += rowData.join(',') + '\n';
+        });
+    });
+    
+    // Download CSV
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `progress_report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast('Report exported successfully', 'success');
+}
+
+async function loadUserData() {
+    if (!currentUser) return;
+    
+    try {
+        // Load user's annotations
+        const result = await FirebaseService.getAnnotationsByUser(currentUser.id, 
+            currentTaskMode === 'modification' ? COLLECTIONS.MODIFICATION : COLLECTIONS.CREATION);
+        
+        if (result.success) {
+            annotations = result.data || [];
+            currentIndex = 0;
+            applyFilters();
+            
+            if (filteredAnnotations.length > 0) {
+                loadAnnotation(currentIndex);
+            }
+            
+            updateUI();
+        }
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        showToast('Error loading your data', 'error');
+    }
 }
 
 function showLoading(show) {
