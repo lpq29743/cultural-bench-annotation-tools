@@ -861,6 +861,67 @@ function updateStatistics() {
     elements.totalCompleted.textContent = `Total Completed: ${annotations.filter(a => a.completed).length}`;
 }
 
+// Filter annotations based on current filter settings
+function applyFilters() {
+    if (!annotations || annotations.length === 0) {
+        filteredAnnotations = [];
+        updateUI();
+        return;
+    }
+    
+    const topicFilter = elements.topicFilter ? elements.topicFilter.value.toLowerCase() : '';
+    const statusFilter = elements.statusFilter ? elements.statusFilter.value.toLowerCase() : '';
+    const annotationStatusFilter = elements.annotationStatusFilter ? elements.annotationStatusFilter.value.toLowerCase() : '';
+    
+    filteredAnnotations = annotations.filter(annotation => {
+        // Topic filter
+        const topicMatch = !topicFilter || 
+            (annotation.topic && annotation.topic.toLowerCase().includes(topicFilter));
+        
+        // Status filter (for completion status)
+        let statusMatch = true;
+        if (statusFilter) {
+            if (statusFilter === 'completed') {
+                statusMatch = annotation.completed === true;
+            } else if (statusFilter === 'incomplete') {
+                statusMatch = annotation.completed !== true;
+            } else {
+                statusMatch = (annotation.status && annotation.status.toLowerCase().includes(statusFilter));
+            }
+        }
+        
+        // Annotation status filter (for accept/revise/reject)
+        const annotationStatusMatch = !annotationStatusFilter || 
+            (annotation.annotationStatus && annotation.annotationStatus.toLowerCase().includes(annotationStatusFilter));
+        
+        return topicMatch && statusMatch && annotationStatusMatch;
+    });
+    
+    // Update current index if it's out of bounds
+    if (currentIndex >= filteredAnnotations.length) {
+        currentIndex = Math.max(0, filteredAnnotations.length - 1);
+    }
+    
+    // Load current annotation if available
+    if (filteredAnnotations.length > 0) {
+        loadAnnotation(currentIndex);
+    } else {
+        clearForm();
+    }
+    
+    updateUI();
+}
+
+// Clear all filters
+function clearFilters() {
+    if (elements.topicFilter) elements.topicFilter.value = '';
+    if (elements.statusFilter) elements.statusFilter.value = '';
+    if (elements.annotationStatusFilter) elements.annotationStatusFilter.value = '';
+    
+    applyFilters();
+    showToast('Filters cleared', 'success');
+}
+
 function updateFilteredAnnotations() {
     filteredAnnotations = annotations.filter(annotation => {
         const topicMatch = !elements.topicFilter.value || annotation.topic.toLowerCase().includes(elements.topicFilter.value.toLowerCase());
