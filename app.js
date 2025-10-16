@@ -192,6 +192,11 @@ function initializeUserManagement() {
 async function handleUserLogin(event) {
     event.preventDefault();
     
+    // Check if FirebaseService is available first
+    if (!checkFirebaseService()) {
+        return;
+    }
+    
     const userIdInput = document.getElementById('loginUserId');
     const userId = userIdInput?.value?.trim();
     
