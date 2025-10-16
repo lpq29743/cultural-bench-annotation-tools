@@ -158,6 +158,130 @@ const elements = {
     csvFileInput: document.getElementById('csvFileInput')
 };
 
+// User Management Functions
+function initializeUserManagement() {
+    // Initialize user management UI elements
+    const userLoginSection = document.getElementById('userLoginSection');
+    const userInfoSection = document.getElementById('userInfoSection');
+    const loginForm = document.getElementById('loginForm');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    // Set up login form event listener
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleUserLogin);
+    }
+    
+    // Set up logout button event listener
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleUserLogout);
+    }
+    
+    // Check for existing user session
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+        try {
+            currentUser = JSON.parse(storedUser);
+            updateUserUI();
+        } catch (error) {
+            console.error('Error parsing stored user data:', error);
+            localStorage.removeItem('currentUser');
+        }
+    }
+}
+
+async function handleUserLogin(event) {
+    event.preventDefault();
+    
+    const userIdInput = document.getElementById('userIdInput');
+    const userId = userIdInput?.value?.trim();
+    
+    if (!userId) {
+        showToast('Please enter a valid User ID', 'error');
+        return;
+    }
+    
+    try {
+        showLoading('Validating user...');
+        
+        // Validate user with Firebase
+        const validation = await FirebaseService.validateUserWithPermissions(userId);
+        
+        if (!validation.success) {
+            throw new Error(validation.error || 'User validation failed');
+        }
+        
+        if (!validation.allowed) {
+            throw new Error(validation.message || 'User not authorized');
+        }
+        
+        // Try to get existing user or create new one
+        let userResult = await FirebaseService.getUserByUserId(userId);
+        
+        if (!userResult.success) {
+            // Create new user
+            const userData = {
+                userId: userId,
+                role: validation.userInfo.role,
+                accessibleCsvs: validation.userInfo.accessibleCsvs,
+                name: userId, // Default name to userId
+                email: '', // Can be updated later
+                isActive: true
+            };
+            
+            userResult = await FirebaseService.createUser(userData);
+            if (!userResult.success) {
+                throw new Error('Failed to create user account');
+            }
+            
+            currentUser = { id: userResult.id, ...userData };
+        } else {
+            currentUser = userResult.user;
+        }
+        
+        // Store user in localStorage
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        
+        // Update UI
+        updateUserUI();
+        showToast(`Welcome, ${currentUser.name || currentUser.userId}!`, 'success');
+        
+        // Clear form
+        if (userIdInput) userIdInput.value = '';
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        showToast(`Login failed: ${error.message}`, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+function handleUserLogout() {
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    updateUserUI();
+    showToast('Logged out successfully', 'success');
+}
+
+function updateUserUI() {
+    const userLoginSection = document.getElementById('userLoginSection');
+    const userInfoSection = document.getElementById('userInfoSection');
+    const currentUserName = document.getElementById('currentUserName');
+    const currentUserRole = document.getElementById('currentUserRole');
+    
+    if (currentUser) {
+        // User is logged in
+        if (userLoginSection) userLoginSection.style.display = 'none';
+        if (userInfoSection) userInfoSection.style.display = 'block';
+        if (currentUserName) currentUserName.textContent = currentUser.name || currentUser.userId;
+        if (currentUserRole) currentUserRole.textContent = currentUser.role || 'annotator';
+    } else {
+        // User is not logged in
+        if (userLoginSection) userLoginSection.style.display = 'block';
+        if (userInfoSection) userInfoSection.style.display = 'none';
+    }
+}
+
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
