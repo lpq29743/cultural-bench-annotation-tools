@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firestore File Uploader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .upload-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .upload-section:hover {
+            border-color: #007bff;
+        }
+        .upload-section.dragover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #007bff;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .file-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .collection-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .collection-btn {
+            padding: 10px 20px;
+            border: 2px solid #007bff;
+            background: white;
+            color: #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .collection-btn.active {
+            background: #007bff;
+            color: white;
+        }
+        .preview-section {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .upload-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .option-card {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option-card:hover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        .option-card.selected {
+            border-color: #007bff;
+            background-color: #e3f2fd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Firestore File Uploader</h1>
+        
+        <!-- Collection Selector -->
+        <div class="form-group">
+            <label>Select Target Collection:</label>
+            <div class="collection-selector">
+                <button class="collection-btn active" data-collection="cultural_annotations_created">
+                    📝 Created Annotations
+                </button>
+                <button class="collection-btn" data-collection="cultural_annotations_modified">
+                    ✏️ Modified Annotations
+                </button>
+                <button class="collection-btn" data-collection="allowed_users">
+                    👥 User Permissions
+                </button>
+                <button class="collection-btn" data-collection="annotators">
+                    🏷️ Annotators
+                </button>
+                <button class="collection-btn" data-collection="custom">
+                    🔧 Custom Collection
+                </button>
+            </div>
+        </div>
+
+        <!-- Custom Collection Input -->
+        <div class="form-group" id="customCollectionGroup" style="display: none;">
+            <label for="customCollection">Custom Collection Name:</label>
+            <input type="text" id="customCollection" placeholder="Enter collection name">
+        </div>
+
+        <!-- Upload Options -->
+        <div class="upload-options">
+            <div class="option-card" data-method="file">
+                <h3>📁 File Upload</h3>
+                <p>Upload CSV, JSON, or TXT files</p>
+            </div>
+            <div class="option-card" data-method="text">
+                <h3>📝 Text Input</h3>
+                <p>Paste or type data directly</p>
+            </div>
+            <div class="option-card" data-method="existing">
+                <h3>📂 Existing File</h3>
+                <p>Upload from project files</p>
+            </div>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="upload-section" id="fileUploadSection" style="display: none;">
+            <h3>Drag & Drop Files or Click to Select</h3>
+            <input type="file" id="fileInput" multiple accept=".csv,.json,.txt" style="display: none;">
+            <button class="btn" onclick="document.getElementById('fileInput').click()">
+                📁 Select Files
+            </button>
+            <div id="fileList"></div>
+        </div>
+
+        <!-- Text Input Section -->
+        <div id="textInputSection" style="display: none;">
+            <div class="form-group">
+                <label for="dataFormat">Data Format:</label>
+                <select id="dataFormat">
+                    <option value="csv">CSV (Comma Separated)</option>
+                    <option value="json">JSON</option>
+                    <option value="user_permissions">User Permissions (userId,role,csvAccess)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="textData">Data:</label>
+                <textarea id="textData" rows="10" placeholder="Paste your data here..."></textarea>
+            </div>
+        </div>
+
+        <!-- Existing File Section -->
+        <div id="existingFileSection" style="display: none;">
+            <div class="form-group">
+                <label>Available Project Files:</label>
+                <div id="projectFiles">
+                    <div class="file-info">
+                        <strong>📄 data_creation/zh_cn_yourid.csv</strong>
+                        <p>Standard annotation format: topic,scenario,question,answer,explanation</p>
+                        <button class="btn btn-success" onclick="uploadProjectFile('data_creation/zh_cn_yourid.csv')">
+                            Upload This File
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Options -->
+        <div class="form-group" id="uploadOptionsGroup" style="display: none;">
+            <label>
+                <input type="checkbox" id="clearBeforeUpload"> Clear collection before upload
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" id="addTimestamp" checked> Add timestamp to records
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" id="addUserInfo"> Add current user info (if logged in)
+            </label>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="previewSection" style="display: none;">
+            <h3>Data Preview:</h3>
+            <div class="preview-section" id="dataPreview"></div>
+            <p><strong>Records to upload:</strong> <span id="recordCount">0</span></p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="progressSection" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <p id="progressText">Preparing upload...</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div id="actionButtons" style="display: none;">
+            <button class="btn btn-success" id="uploadBtn">
+                🚀 Upload to Firestore
+            </button>
+            <button class="btn" id="previewBtn">
+                👁️ Preview Data
+            </button>
+            <button class="btn btn-danger" id="cancelBtn">
+                ❌ Cancel
+            </button>
+        </div>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        let selectedCollection = 'cultural_annotations_created';
+        let selectedMethod = null;
+        let uploadData = [];
+        let currentFiles = [];
+
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+        });
+
+        function initializeEventListeners() {
+            // Collection selector
+            document.querySelectorAll('.collection-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.collection-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    selectedCollection = e.target.dataset.collection;
+                    
+                    const customGroup = document.getElementById('customCollectionGroup');
+                    if (selectedCollection === 'custom') {
+                        customGroup.style.display = 'block';
+                    } else {
+                        customGroup.style.display = 'none';
+                    }
+                });
+            });
+
+            // Upload method selector
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                    e.currentTarget.classList.add('selected');
+                    selectedMethod = e.currentTarget.dataset.method;
+                    showMethodSection(selectedMethod);
+                });
+            });
+
+            // File input
+            const fileInput = document.getElementById('fileInput');
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // Drag and drop
+            const uploadSection = document.getElementById('fileUploadSection');
+            uploadSection.addEventListener('dragover', handleDragOver);
+            uploadSection.addEventListener('drop', handleFileDrop);
+            uploadSection.addEventListener('dragleave', handleDragLeave);
+
+            // Action buttons
+            document.getElementById('uploadBtn').addEventListener('click', uploadToFirestore);
+            document.getElementById('previewBtn').addEventListener('click', previewData);
+            document.getElementById('cancelBtn').addEventListener('click', resetForm);
+        }
+
+        function showMethodSection(method) {
+            // Hide all sections
+            document.getElementById('fileUploadSection').style.display = 'none';
+            document.getElementById('textInputSection').style.display = 'none';
+            document.getElementById('existingFileSection').style.display = 'none';
+            
+            // Show selected section
+            if (method === 'file') {
+                document.getElementById('fileUploadSection').style.display = 'block';
+            } else if (method === 'text') {
+                document.getElementById('textInputSection').style.display = 'block';
+            } else if (method === 'existing') {
+                document.getElementById('existingFileSection').style.display = 'block';
+            }
+            
+            document.getElementById('uploadOptionsGroup').style.display = 'block';
+            document.getElementById('actionButtons').style.display = 'block';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            processFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            processFiles(files);
+        }
+
+        function processFiles(files) {
+            currentFiles = files;
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            files.forEach((file, index) => {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'file-info';
+                fileDiv.innerHTML = `
+                    <strong>📄 ${file.name}</strong> (${(file.size / 1024).toFixed(1)} KB)
+                    <br>Type: ${file.type || 'Unknown'}
+                `;
+                fileList.appendChild(fileDiv);
+            });
+            
+            if (files.length > 0) {
+                document.getElementById('actionButtons').style.display = 'block';
+            }
+        }
+
+        async function previewData() {
+            try {
+                showStatus('Processing data for preview...', 'info');
+                
+                if (selectedMethod === 'file' && currentFiles.length > 0) {
+                    uploadData = await processFileData(currentFiles);
+                } else if (selectedMethod === 'text') {
+                    uploadData = await processTextData();
+                } else if (selectedMethod === 'existing') {
+                    showStatus('Please select a file upload method first', 'error');
+                    return;
+                }
+                
+                displayPreview(uploadData);
+                showStatus('Preview generated successfully', 'success');
+                
+            } catch (error) {
+                console.error('Preview error:', error);
+                showStatus('Error generating preview: ' + error.message, 'error');
+            }
+        }
+
+        async function processFileData(files) {
+            const allData = [];
+            
+            for (const file of files) {
+                const text = await readFileAsText(file);
+                const fileData = parseFileContent(text, file.name);
+                allData.push(...fileData);
+            }
+            
+            return allData;
+        }
+
+        async function processTextData() {
+            const format = document.getElementById('dataFormat').value;
+            const text = document.getElementById('textData').value.trim();
+            
+            if (!text) {
+                throw new Error('Please enter some data');
+            }
+            
+            return parseTextContent(text, format);
+        }
+
+        function readFileAsText(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = e => reject(new Error('Failed to read file'));
+                reader.readAsText(file);
+            });
+        }
+
+        function parseFileContent(content, filename) {
+            const extension = filename.split('.').pop().toLowerCase();
+            
+            if (extension === 'json') {
+                return JSON.parse(content);
+            } else if (extension === 'csv' || extension === 'txt') {
+                return parseCSV(content);
+            } else {
+                throw new Error('Unsupported file format: ' + extension);
+            }
+        }
+
+        function parseTextContent(content, format) {
+            if (format === 'json') {
+                return JSON.parse(content);
+            } else if (format === 'csv') {
+                return parseCSV(content);
+            } else if (format === 'user_permissions') {
+                return parseUserPermissions(content);
+            } else {
+                throw new Error('Unsupported format: ' + format);
+            }
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim());
+            if (lines.length < 2) return [];
+            
+            const headers = parseCSVLine(lines[0]);
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length >= headers.length) {
+                    const record = {};
+                    headers.forEach((header, index) => {
+                        record[header.trim()] = values[index] || '';
+                    });
+                    
+                    // Add metadata
+                    if (document.getElementById('addTimestamp').checked) {
+                        record.uploadedAt = new Date().toISOString();
+                    }
+                    
+                    data.push(record);
+                }
+            }
+            
+            return data;
+        }
+
+        function parseCSVLine(line) {
+            const values = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    values.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            values.push(current.trim());
+            return values.map(v => v.replace(/^"|"$/g, ''));
+        }
+
+        function parseUserPermissions(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            const data = [];
+            
+            for (const line of lines) {
+                const parts = line.trim().split(',');
+                if (parts.length === 3) {
+                    const [userId, role, csvAccess] = parts;
+                    const accessibleCsvs = csvAccess === 'all' ? ['all'] : csvAccess.split(';').map(csv => csv.trim());
+                    
+                    data.push({
+                        userId: userId.trim(),
+                        role: role.trim(),
+                        accessibleCsvs: accessibleCsvs,
+                        createdAt: new Date().toISOString(),
+                        isActive: true
+                    });
+                }
+            }
+            
+            return data;
+        }
+
+        function displayPreview(data) {
+            const preview = document.getElementById('dataPreview');
+            const recordCount = document.getElementById('recordCount');
+            
+            recordCount.textContent = data.length;
+            
+            if (data.length === 0) {
+                preview.textContent = 'No valid data found';
+                return;
+            }
+            
+            // Show first few records
+            const previewData = data.slice(0, 5);
+            preview.textContent = JSON.stringify(previewData, null, 2);
+            
+            if (data.length > 5) {
+                preview.textContent += `\n\n... and ${data.length - 5} more records`;
+            }
+            
+            document.getElementById('previewSection').style.display = 'block';
+        }
+
+        async function uploadToFirestore() {
+            try {
+                if (!uploadData || uploadData.length === 0) {
+                    showStatus('Please preview data first', 'error');
+                    return;
+                }
+                
+                let targetCollection = selectedCollection;
+                if (selectedCollection === 'custom') {
+                    targetCollection = document.getElementById('customCollection').value.trim();
+                    if (!targetCollection) {
+                        showStatus('Please enter custom collection name', 'error');
+                        return;
+                    }
+                }
+                
+                showProgress(true);
+                updateProgress(0, 'Starting upload...');
+                
+                // Clear collection if requested
+                if (document.getElementById('clearBeforeUpload').checked) {
+                    updateProgress(10, 'Clearing existing data...');
+                    const clearResult = await FirebaseService.clearCollection(targetCollection);
+                    if (!clearResult.success) {
+                        throw new Error('Failed to clear collection: ' + clearResult.error);
+                    }
+                }
+                
+                // Upload data in batches
+                const batchSize = 500; // Firestore batch limit
+                const totalBatches = Math.ceil(uploadData.length / batchSize);
+                
+                for (let i = 0; i < totalBatches; i++) {
+                    const start = i * batchSize;
+                    const end = Math.min(start + batchSize, uploadData.length);
+                    const batchData = uploadData.slice(start, end);
+                    
+                    updateProgress(
+                        20 + (i / totalBatches) * 70,
+                        `Uploading batch ${i + 1}/${totalBatches} (${end}/${uploadData.length} records)...`
+                    );
+                    
+                    const result = await FirebaseService.saveAllToCollection(targetCollection, batchData);
+                    if (!result.success) {
+                        throw new Error('Failed to upload batch: ' + result.error);
+                    }
+                }
+                
+                updateProgress(100, 'Upload completed successfully!');
+                showStatus(`✅ Successfully uploaded ${uploadData.length} records to ${targetCollection}`, 'success');
+                
+                setTimeout(() => {
+                    showProgress(false);
+                    resetForm();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                showStatus('❌ Upload failed: ' + error.message, 'error');
+                showProgress(false);
+            }
+        }
+
+        async function uploadProjectFile(filePath) {
+            try {
+                showStatus('Loading project file...', 'info');
+                
+                // For the existing CSV file, we know its format
+                if (filePath === 'data_creation/zh_cn_yourid.csv') {
+                    const csvContent = 'topic,scenario,question,answer,explanation'; // Header only for demo
+                    uploadData = parseCSV(csvContent);
+                    
+                    if (uploadData.length === 0) {
+                        // File only has headers, create sample data
+                        showStatus('File appears to be empty (headers only). Please add data to the CSV file first.', 'error');
+                        return;
+                    }
+                    
+                    displayPreview(uploadData);
+                    showStatus('Project file loaded successfully', 'success');
+                }
+                
+            } catch (error) {
+                console.error('Project file error:', error);
+                showStatus('Error loading project file: ' + error.message, 'error');
+            }
+        }
+
+        function showProgress(show) {
+            document.getElementById('progressSection').style.display = show ? 'block' : 'none';
+        }
+
+        function updateProgress(percent, text) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + type;
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function resetForm() {
+            uploadData = [];
+            currentFiles = [];
+            document.getElementById('fileList').innerHTML = '';
+            document.getElementById('textData').value = '';
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('progressSection').style.display = 'none';
+            document.getElementById('status').style.display = 'none';
+            
+            // Reset method selection
+            document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+            selectedMethod = null;
+            
+            // Hide method sections
+            document.getElementById('fileUploadSection').style.display = 'none';
+            document.getElementById('textInputSection').style.display = 'none';
+            document.getElementById('existingFileSection').style.display = 'none';
+            document.getElementById('uploadOptionsGroup').style.display = 'none';
+            document.getElementById('actionButtons').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
