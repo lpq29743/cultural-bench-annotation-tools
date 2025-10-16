@@ -604,7 +604,7 @@
             document.getElementById('displayUserId').textContent = currentUser.userId;
             document.getElementById('userRole').textContent = currentUser.role || 'Annotator';
             document.getElementById('accessibleRegions').textContent = 
-                'Regions: ' + (currentUser.accessibleCsvs ? currentUser.accessibleCsvs.join(', ') : 'All');
+                'Regions: ' + (currentUser.accessibleCsvs ? (Array.isArray(currentUser.accessibleCsvs) ? currentUser.accessibleCsvs.join(', ') : currentUser.accessibleCsvs) : 'All');
             
             // Set avatar initial
             const avatar = document.getElementById('userAvatar');
