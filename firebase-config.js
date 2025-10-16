@@ -23,7 +23,8 @@ const COLLECTIONS = {
     CREATION: 'cultural_annotations_created',
     USERS: 'annotators',
     ASSIGNMENTS: 'task_assignments',
-    SESSIONS: 'user_sessions'
+    SESSIONS: 'user_sessions',
+    ALLOWED_USERS: 'allowed_users' // New collection for user permissions
 };
 
 // Firebase service functions
@@ -223,46 +224,112 @@ const FirebaseService = {
         }
     },
 
-    // User validation using Firebase Storage file with enhanced format
+    // User validation using Firestore database instead of Storage
     async loadAllowedUsers() {
         try {
-            const storageRef = storage.ref('config/allowed_users.txt');
-            const downloadURL = await storageRef.getDownloadURL();
-            
-            const response = await fetch(downloadURL);
-            const text = await response.text();
+            const snapshot = await db.collection(COLLECTIONS.ALLOWED_USERS).get();
             
             const users = [];
-            const lines = text.split('\n').filter(line => line.trim().length > 0);
-            
-            for (const line of lines) {
-                const parts = line.trim().split(',');
-                
-                if (parts.length === 3) {
-                    // New format: userId,role,csvAccess
-                    const [userId, role, csvAccess] = parts;
-                    const accessibleCsvs = csvAccess === 'all' ? ['all'] : csvAccess.split(';');
-                    
-                    users.push({
-                        userId: userId.trim(),
-                        role: role.trim(),
-                        accessibleCsvs: accessibleCsvs.map(csv => csv.trim())
-                    });
-                } else if (parts.length === 1) {
-                    // Legacy format: just userId (backward compatibility)
-                    users.push({
-                        userId: parts[0].trim(),
-                        role: 'annotator', // default role
-                        accessibleCsvs: ['all'] // default access
-                    });
-                }
-            }
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                users.push({
+                    userId: data.userId,
+                    role: data.role,
+                    accessibleCsvs: data.accessibleCsvs || ['all']
+                });
+            });
             
             return { success: true, users };
         } catch (error) {
-            console.error('Error loading allowed users:', error);
-            // If file doesn't exist or error occurs, return empty array (allow all users)
+            console.error('Error loading allowed users from Firestore:', error);
+            // If collection doesn't exist or error occurs, return empty array (allow all users)
             return { success: false, error: error.message, users: [] };
+        }
+    },
+
+    // Add allowed user to Firestore
+    async addAllowedUser(userId, role, accessibleCsvs = ['all']) {
+        try {
+            await db.collection(COLLECTIONS.ALLOWED_USERS).add({
+                userId: userId.trim(),
+                role: role.trim(),
+                accessibleCsvs: Array.isArray(accessibleCsvs) ? accessibleCsvs : [accessibleCsvs],
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                isActive: true
+            });
+            return { success: true };
+        } catch (error) {
+            console.error('Error adding allowed user:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Update allowed user permissions
+    async updateAllowedUser(userId, updates) {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.ALLOWED_USERS)
+                .where('userId', '==', userId)
+                .limit(1)
+                .get();
+            
+            if (snapshot.empty) {
+                return { success: false, error: 'User not found in allowed users' };
+            }
+            
+            const doc = snapshot.docs[0];
+            await doc.ref.update({
+                ...updates,
+                lastModified: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            return { success: true };
+        } catch (error) {
+            console.error('Error updating allowed user:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Remove user from allowed users
+    async removeAllowedUser(userId) {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.ALLOWED_USERS)
+                .where('userId', '==', userId)
+                .get();
+            
+            const batch = db.batch();
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            
+            await batch.commit();
+            return { success: true };
+        } catch (error) {
+            console.error('Error removing allowed user:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Batch add multiple allowed users
+    async batchAddAllowedUsers(usersData) {
+        try {
+            const batch = db.batch();
+            
+            usersData.forEach(userData => {
+                const docRef = db.collection(COLLECTIONS.ALLOWED_USERS).doc();
+                batch.set(docRef, {
+                    userId: userData.userId.trim(),
+                    role: userData.role.trim(),
+                    accessibleCsvs: userData.accessibleCsvs || ['all'],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    isActive: true
+                });
+            });
+            
+            await batch.commit();
+            return { success: true };
+        } catch (error) {
+            console.error('Error batch adding allowed users:', error);
+            return { success: false, error: error.message };
         }
     },
 
