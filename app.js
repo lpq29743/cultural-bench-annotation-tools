@@ -602,6 +602,46 @@ function isAnnotationComplete(annotation) {
     return annotation.topic && annotation.scenario && annotation.question && annotation.answer && annotation.explanation;
 }
 
+// Auto-save function for form inputs
+function autoSave() {
+    if (filteredAnnotations.length === 0 || currentIndex < 0 || currentIndex >= filteredAnnotations.length) {
+        return;
+    }
+    
+    try {
+        // Get current form data
+        const formData = getFormData();
+        
+        // Update the current annotation
+        const annotation = filteredAnnotations[currentIndex];
+        Object.assign(annotation, formData);
+        annotation.lastModified = new Date().toISOString();
+        
+        // Add user tracking if logged in
+        if (isLoggedIn && currentUser) {
+            annotation.lastModifiedBy = currentUser.id || currentUser.userId;
+        }
+        
+        // Update completion status
+        annotation.completed = isAnnotationComplete(annotation);
+        
+        // Update in main array
+        const mainIndex = annotations.findIndex(a => a.id === annotation.id);
+        if (mainIndex !== -1) {
+            annotations[mainIndex] = annotation;
+        }
+        
+        // Update UI to reflect changes
+        updateUI();
+        
+        // Optional: Show a subtle indication that auto-save occurred
+        console.log('Auto-saved annotation:', annotation.id);
+        
+    } catch (error) {
+        console.error('Error during auto-save:', error);
+    }
+}
+
 function debounce(func, wait) {
     let timeout;
     return function(...args) {
