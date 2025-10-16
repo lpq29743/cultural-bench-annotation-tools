@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firestore用户权限管理工具</title>
+    <title>Firestore User Permission Management Tool</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -134,65 +134,65 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔥 Firestore用户权限管理工具</h1>
+        <h1>🔥 Firestore User Permission Management Tool</h1>
         
         <!-- Firestore Method -->
         <div id="firestore-method" class="method-content active">
-            <h3>Firestore用户权限管理</h3>
+            <h3>Firestore User Permission Management</h3>
             <p><strong>Completely Free Solution!</strong> Use Firestore database to store user permission information, avoiding Storage costs.</p>
             
             <div class="form-group">
-                <label>批量添加用户数据：</label>
-                <div class="example">格式：每行一个用户，格式为 userId,role,language_region_code
+                <label>Batch Add User Data:</label>
+                <div class="example">Format: One user per line, format: userId,role,language_region_code</div>
 user001,annotator,zh_cn
 admin_li,admin,en_us
 annotator_zhang,annotator,ar_sa</div>
             </div>
 
             <div class="form-group">
-                <label for="userDataText">批量用户数据：</label>
-                <textarea id="userDataText" placeholder="按照上面的格式输入用户数据...">user001,annotator,zh_cn
+                <label for="userDataText">Batch User Data:</label>
+                <textarea id="userDataText" placeholder="Enter user data according to the format above...">user001,annotator,zh_cn
 admin_li,admin,en_us
 annotator_zhang,annotator,ar_sa</textarea>
             </div>
 
             <button class="btn btn-success" onclick="batchAddAllowedUsers()">
-                📋 批量添加到权限数据库
+                📋 Batch Add to Permission Database
             </button>
 
             <hr style="margin: 30px 0;">
             
-            <h4>单个用户管理</h4>
+            <h4>Individual User Management</h4>
 
             <div class="form-group">
-                <label for="userId">用户ID：</label>
-                <input type="text" id="userId" placeholder="例如：user001">
+                <label for="userId">User ID:</label>
+                <input type="text" id="userId" placeholder="e.g.: user001">
             </div>
 
             <div class="form-group">
-                <label for="userName">用户名：</label>
-                <input type="text" id="userName" placeholder="例如：张三">
+                <label for="userName">User Name:</label>
+                <input type="text" id="userName" placeholder="e.g.: John Smith">
             </div>
 
             <div class="form-group">
-                <label for="userRole">角色：</label>
+                <label for="userRole">Role:</label>
                 <select id="userRole">
-                    <option value="annotator">标注者 (annotator)</option>
-                    <option value="admin">管理员 (admin)</option>
+                    <option value="annotator">Annotator</option>
+                    <option value="admin">Administrator</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="accessibleCsvs">语言区域代码：</label>
-                <input type="text" id="accessibleCsvs" placeholder="例如：zh_cn, en_us, ar_sa">
+                <label for="accessibleCsvs">Language Region Code:</label>
+                <input type="text" id="accessibleCsvs" placeholder="e.g.: zh_cn, en_us, ar_sa">
             </div>
 
             <button class="btn" onclick="addSingleAllowedUser()">
-                ➕ 添加到权限数据库
+                ➕ Add to Permission Database
             </button>
 
             <button class="btn btn-success" onclick="viewAllowedUsers()">
-                👥 查看所有权限用户
+                👥 View All Permission Users
             </button>
         </div>
 
@@ -209,7 +209,7 @@ annotator_zhang,annotator,ar_sa</textarea>
         // Helper function to check if FirebaseService is available
         function checkFirebaseService() {
             if (typeof FirebaseService === 'undefined') {
-                showStatus('Firebase服务未加载，请刷新页面重试', 'error');
+                showStatus('Firebase service not loaded, please refresh the page and try again', 'error');
                 return false;
             }
             return true;
@@ -224,12 +224,12 @@ annotator_zhang,annotator,ar_sa</textarea>
             const userData = document.getElementById('userDataText').value.trim();
             
             if (!userData) {
-                showStatus('请输入用户数据', 'error');
+                showStatus('Please enter user data', 'error');
                 return;
             }
 
             try {
-                showStatus('正在批量添加用户权限到Firestore...', 'success');
+                showStatus('Batch adding user permissions to Firestore...', 'success');
                 
                 const lines = userData.split('\n').filter(line => line.trim().length > 0);
                 const usersData = [];
@@ -249,21 +249,21 @@ annotator_zhang,annotator,ar_sa</textarea>
                 }
 
                 if (usersData.length === 0) {
-                    showStatus('❌ 没有找到有效的用户数据', 'error');
+                    showStatus('❌ No valid user data found', 'error');
                     return;
                 }
 
                 const result = await FirebaseService.batchAddAllowedUsers(usersData);
                 
                 if (result.success) {
-                    showStatus(`✅ 成功添加 ${usersData.length} 个用户权限到数据库！`, 'success');
+                    showStatus(`✅ Successfully added ${usersData.length} user permissions to database!`, 'success');
                 } else {
                     throw new Error(result.error);
                 }
                 
             } catch (error) {
                 console.error('Batch add allowed users error:', error);
-                showStatus('❌ 批量添加失败: ' + error.message, 'error');
+                showStatus('❌ Batch add failed: ' + error.message, 'error');
             }
         }
 
@@ -278,17 +278,17 @@ annotator_zhang,annotator,ar_sa</textarea>
             const accessibleCsvs = document.getElementById('accessibleCsvs').value.trim();
 
             if (!userId) {
-                showStatus('请填写用户ID', 'error');
+                showStatus('Please enter User ID', 'error');
                 return;
             }
 
             try {
-                showStatus('正在添加用户权限到Firestore...', 'success');
+                showStatus('Adding user permissions to Firestore...', 'success');
 
                 const result = await FirebaseService.addAllowedUser(userId, userRole, accessibleCsvs);
                 
                 if (result.success) {
-                    showStatus('✅ 用户权限添加成功！', 'success');
+                    showStatus('✅ User permissions added successfully!', 'success');
                     // Clear form
                     document.getElementById('userId').value = '';
                     document.getElementById('accessibleCsvs').value = '';
@@ -298,7 +298,7 @@ annotator_zhang,annotator,ar_sa</textarea>
                 
             } catch (error) {
                 console.error('Add allowed user error:', error);
-                showStatus('❌ 添加用户权限失败: ' + error.message, 'error');
+                showStatus('❌ Failed to add user permissions: ' + error.message, 'error');
             }
         }
 
@@ -309,16 +309,16 @@ annotator_zhang,annotator,ar_sa</textarea>
             }
 
             try {
-                showStatus('正在加载用户权限列表...', 'success');
+                showStatus('Loading user permissions list...', 'success');
                 
                 const result = await FirebaseService.loadAllowedUsers();
                 
                 if (result.success) {
                     const users = result.users;
-                    let displayText = `📋 当前权限用户列表 (共 ${users.length} 个用户):\n\n`;
+                    let displayText = `📋 Current Permission Users List (Total ${users.length} users):\n\n`;
                     
                     if (users.length === 0) {
-                        displayText += '暂无用户权限数据';
+                        displayText += 'No user permission data available';
                     } else {
                         users.forEach((user, index) => {
                             const languageCode = user.languageRegionCode || user.accessibleCsvs || 'N/A';
@@ -327,14 +327,14 @@ annotator_zhang,annotator,ar_sa</textarea>
                     }
                     
                     alert(displayText);
-                    showStatus('✅ 权限列表加载完成', 'success');
+                    showStatus('✅ Permission list loaded successfully', 'success');
                 } else {
                     throw new Error(result.error);
                 }
                 
             } catch (error) {
                 console.error('View allowed users error:', error);
-                showStatus('❌ 加载权限列表失败: ' + error.message, 'error');
+                showStatus('❌ Failed to load permission list: ' + error.message, 'error');
             }
         }
 
