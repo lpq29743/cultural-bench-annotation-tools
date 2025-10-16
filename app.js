@@ -931,3 +931,41 @@ function hideLoading() {
 function generateId() {
     return Math.random().toString(36).substr(2, 9);
 }
+
+// Save data to Firebase
+async function saveToFirebase() {
+    if (typeof FirebaseService === 'undefined') {
+        console.error('FirebaseService is not defined. Please check firebase-config.js');
+        showToast('Firebase service not available. Please refresh the page.', 'error');
+        return;
+    }
+
+    if (!currentUser) {
+        showToast('Please login first to save data.', 'error');
+        return;
+    }
+
+    try {
+        showLoading('Saving data to Firebase...');
+        
+        // Determine which collection to save to based on current task mode
+        const collectionName = currentTaskMode === 'modification' 
+            ? 'cultural_annotations_modified' 
+            : 'cultural_annotations_created';
+        
+        // Save all annotations to Firebase
+        const result = await FirebaseService.saveAllToCollection(collectionName, filteredAnnotations);
+        
+        if (result.success) {
+            showToast('Data saved successfully to Firebase!', 'success');
+            console.log('Data saved to Firebase successfully');
+        } else {
+            throw new Error(result.error || 'Failed to save data');
+        }
+    } catch (error) {
+        console.error('Error saving to Firebase:', error);
+        showToast(`Failed to save data: ${error.message}`, 'error');
+    } finally {
+        hideLoading();
+    }
+}
