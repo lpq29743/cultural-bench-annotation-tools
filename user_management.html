@@ -206,7 +206,21 @@ annotator_zhang,annotator,dataset3.csv;dataset4.csv</textarea>
     <script src="firebase-config.js"></script>
 
     <script>
+        // Helper function to check if FirebaseService is available
+        function checkFirebaseService() {
+            if (typeof FirebaseService === 'undefined') {
+                showStatus('Firebase服务未加载，请刷新页面重试', 'error');
+                return false;
+            }
+            return true;
+        }
+
         async function batchAddAllowedUsers() {
+            // Check if FirebaseService is available first
+            if (!checkFirebaseService()) {
+                return;
+            }
+
             const userData = document.getElementById('userDataText').value.trim();
             
             if (!userData) {
@@ -255,6 +269,11 @@ annotator_zhang,annotator,dataset3.csv;dataset4.csv</textarea>
         }
 
         async function addSingleAllowedUser() {
+            // Check if FirebaseService is available first
+            if (!checkFirebaseService()) {
+                return;
+            }
+
             const userId = document.getElementById('userId').value.trim();
             const userRole = document.getElementById('userRole').value;
             const accessibleCsvs = document.getElementById('accessibleCsvs').value.trim();
@@ -287,6 +306,11 @@ annotator_zhang,annotator,dataset3.csv;dataset4.csv</textarea>
         }
 
         async function viewAllowedUsers() {
+            // Check if FirebaseService is available first
+            if (!checkFirebaseService()) {
+                return;
+            }
+
             try {
                 showStatus('正在加载用户权限列表...', 'success');
                 
