@@ -15,6 +15,19 @@
     <!-- SheetJS for Excel file support -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
+    <!-- Ensure Firebase is loaded before using FirebaseService -->
+    <script>
+        // Wait for all scripts to load before proceeding
+        window.addEventListener('load', function() {
+            // Check if FirebaseService is available
+            if (typeof FirebaseService === 'undefined') {
+                console.error('FirebaseService is not defined. Please check firebase-config.js');
+            } else {
+                console.log('FirebaseService loaded successfully');
+            }
+        });
+    </script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -808,10 +821,25 @@
             document.getElementById('previewSection').style.display = 'block';
         }
 
+        // Helper function to check if FirebaseService is available
+        function checkFirebaseService() {
+            if (typeof FirebaseService === 'undefined') {
+                showStatus('Firebase服务未加载，请刷新页面重试', 'error');
+                showToast('Firebase Error', 'FirebaseService未定义，请检查网络连接并刷新页面', 'error', 10000);
+                return false;
+            }
+            return true;
+        }
+
         async function uploadToFirestore() {
             let loadingToastId = null;
             
             try {
+                // Check if FirebaseService is available first
+                if (!checkFirebaseService()) {
+                    return;
+                }
+
                 if (!uploadData || uploadData.length === 0) {
                     showStatus('Please preview data first', 'error');
                     showToast('No Data', 'Please preview data before uploading', 'warning');

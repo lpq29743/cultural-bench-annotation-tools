@@ -12,6 +12,19 @@
     <!-- Firebase Configuration -->
     <script src="firebase-config.js"></script>
     
+    <!-- Ensure Firebase is loaded before using FirebaseService -->
+    <script>
+        // Wait for all scripts to load before proceeding
+        window.addEventListener('load', function() {
+            // Check if FirebaseService is available
+            if (typeof FirebaseService === 'undefined') {
+                console.error('FirebaseService is not defined. Please check firebase-config.js');
+            } else {
+                console.log('FirebaseService loaded successfully');
+            }
+        });
+    </script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
