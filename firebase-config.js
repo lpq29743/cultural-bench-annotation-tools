@@ -250,6 +250,284 @@ const FirebaseService = {
     // Add allowed user to Firestore
     async addAllowedUser(userId, role, accessibleCsvs = ['all']) {
         try {
+            const userDoc = {
+                userId: userId,
+                role: role,
+                accessibleCsvs: accessibleCsvs,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                isActive: true
+            };
+            
+            const docRef = await db.collection(COLLECTIONS.ALLOWED_USERS).add(userDoc);
+            return { success: true, id: docRef.id };
+        } catch (error) {
+            console.error('Error adding allowed user:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Remove allowed user from Firestore
+    async removeAllowedUser(userId) {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.ALLOWED_USERS)
+                .where('userId', '==', userId)
+                .get();
+            
+            if (snapshot.empty) {
+                return { success: false, error: 'User not found' };
+            }
+            
+            const batch = db.batch();
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            
+            await batch.commit();
+            return { success: true };
+        } catch (error) {
+            console.error('Error removing allowed user:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Update user information
+    async updateUser(id, userData) {
+        try {
+            await db.collection(COLLECTIONS.USERS).doc(id).update({
+                ...userData,
+                lastModified: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            return { success: true };
+        } catch (error) {
+            console.error('Error updating user:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Get all users
+    async getAllUsers() {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.USERS)
+                .orderBy('createdAt', 'desc')
+                .get();
+            
+            const users = [];
+            snapshot.forEach(doc => {
+                users.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return { success: true, users };
+        } catch (error) {
+            console.error('Error getting all users:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Task Assignment Methods
+    async createAssignment(assignmentData) {
+        try {
+            const assignment = {
+                ...assignmentData,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                status: 'active',
+                progress: {
+                    completed: 0,
+                    total: assignmentData.itemCount || 0,
+                    percentage: 0
+                }
+            };
+            
+            const docRef = await db.collection(COLLECTIONS.ASSIGNMENTS).add(assignment);
+            return { success: true, id: docRef.id, assignment };
+        } catch (error) {
+            console.error('Error creating assignment:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async updateAssignment(id, assignmentData) {
+        try {
+            await db.collection(COLLECTIONS.ASSIGNMENTS).doc(id).update({
+                ...assignmentData,
+                lastModified: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            return { success: true };
+        } catch (error) {
+            console.error('Error updating assignment:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async deleteAssignment(id) {
+        try {
+            await db.collection(COLLECTIONS.ASSIGNMENTS).doc(id).delete();
+            return { success: true };
+        } catch (error) {
+            console.error('Error deleting assignment:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async getAllAssignments() {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.ASSIGNMENTS)
+                .orderBy('createdAt', 'desc')
+                .get();
+            
+            const assignments = [];
+            snapshot.forEach(doc => {
+                assignments.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return { success: true, assignments };
+        } catch (error) {
+            console.error('Error getting assignments:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async getAssignmentsByAnnotator(annotatorId) {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.ASSIGNMENTS)
+                .where('annotatorId', '==', annotatorId)
+                .orderBy('createdAt', 'desc')
+                .get();
+            
+            const assignments = [];
+            snapshot.forEach(doc => {
+                assignments.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return { success: true, assignments };
+        } catch (error) {
+            console.error('Error getting assignments by annotator:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Session Management
+    async createSession(userId, sessionData) {
+        try {
+            const session = {
+                userId: userId,
+                ...sessionData,
+                startTime: firebase.firestore.FieldValue.serverTimestamp(),
+                isActive: true
+            };
+            
+            const docRef = await db.collection(COLLECTIONS.SESSIONS).add(session);
+            return { success: true, id: docRef.id, session };
+        } catch (error) {
+            console.error('Error creating session:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async endSession(sessionId) {
+        try {
+            await db.collection(COLLECTIONS.SESSIONS).doc(sessionId).update({
+                endTime: firebase.firestore.FieldValue.serverTimestamp(),
+                isActive: false
+            });
+            return { success: true };
+        } catch (error) {
+            console.error('Error ending session:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async getActiveSessions() {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.SESSIONS)
+                .where('isActive', '==', true)
+                .orderBy('startTime', 'desc')
+                .get();
+            
+            const sessions = [];
+            snapshot.forEach(doc => {
+                sessions.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return { success: true, sessions };
+        } catch (error) {
+            console.error('Error getting active sessions:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Statistics and Reporting
+    async getAnnotationStats(collectionName, annotatorId = null) {
+        try {
+            let query = db.collection(collectionName);
+            
+            if (annotatorId) {
+                query = query.where('annotatorId', '==', annotatorId);
+            }
+            
+            const snapshot = await query.get();
+            
+            const stats = {
+                total: 0,
+                accepted: 0,
+                revised: 0,
+                rejected: 0,
+                pending: 0
+            };
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                stats.total++;
+                
+                if (data.annotationStatus) {
+                    stats[data.annotationStatus]++;
+                } else {
+                    stats.pending++;
+                }
+            });
+            
+            return { success: true, stats };
+        } catch (error) {
+            console.error('Error getting annotation stats:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Utility Methods
+    async testConnection() {
+        try {
+            // Test basic Firestore connectivity
+            await db.collection('connection_test').limit(1).get();
+            return { success: true, message: 'Firebase connection successful' };
+        } catch (error) {
+            console.error('Firebase connection test failed:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Get collection reference
+    getCollection(collectionName) {
+        return db.collection(collectionName);
+    },
+
+    // Get database reference
+    getDatabase() {
+        return db;
+    }
+};
+    async addAllowedUser(userId, role, accessibleCsvs = ['all']) {
+        try {
             await db.collection(COLLECTIONS.ALLOWED_USERS).add({
                 userId: userId.trim(),
                 role: role.trim(),
