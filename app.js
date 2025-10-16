@@ -196,6 +196,18 @@ function initializeEventListeners() {
     elements.exportBtn.addEventListener('click', exportToCSV);
     elements.csvFileInput.addEventListener('change', handleFileImport);
     
+    // User data operations
+    const searchUserBtn = document.getElementById('searchUserBtn');
+    const loadMyDataBtn = document.getElementById('loadMyDataBtn');
+    
+    if (searchUserBtn) {
+        searchUserBtn.addEventListener('click', searchUserData);
+    }
+    
+    if (loadMyDataBtn) {
+        loadMyDataBtn.addEventListener('click', loadCurrentUserData);
+    }
+    
     // Filters
     elements.topicFilter.addEventListener('change', applyFilters);
     elements.statusFilter.addEventListener('change', applyFilters);
@@ -528,34 +540,36 @@ function loadAnnotation(index) {
     elements.questionInput.value = annotation.question || '';
     elements.answerInput.value = annotation.answer || '';
     elements.explanationInput.value = annotation.explanation || '';
+    elements.annotationStatus.value = annotation.annotationStatus || '';
+    elements.rejectionReason.value = annotation.rejectionReason || '';
+    elements.sourceExcerpt.value = annotation.sourceExcerpt || '';
     
-    // Load modification-specific fields
-    if (currentTaskMode === 'modification') {
-        elements.sourceExcerpt.value = annotation.sourceExcerpt || '';
-        elements.annotationStatus.value = annotation.annotationStatus || 'pending';
-        elements.rejectionReason.value = annotation.rejectionReason || '';
-        
-        // Update decision buttons
-        document.querySelectorAll('.btn-decision').forEach(btn => btn.classList.remove('active'));
-        if (annotation.annotationStatus) {
-            const activeBtn = document.getElementById(annotation.annotationStatus + 'Btn');
-            if (activeBtn) activeBtn.classList.add('active');
-            
-            // Show/hide rejection reason
-            if (annotation.annotationStatus === 'reject') {
-                elements.rejectionReasonGroup.style.display = 'block';
-                setFormFieldsReadonly(true);
-            } else if (annotation.annotationStatus === 'accept') {
-                elements.rejectionReasonGroup.style.display = 'none';
-                setFormFieldsReadonly(true);
-            } else {
-                elements.rejectionReasonGroup.style.display = 'none';
-                setFormFieldsReadonly(false);
-            }
-        }
+    // Set form fields based on annotation status
+    if (annotation.annotationStatus === 'pending') {
+        setAnnotationDecision('accept');
+    } else if (annotation.annotationStatus === 'revise') {
+        setAnnotationDecision('revise');
+    } else if (annotation.annotationStatus === 'rejected') {
+        setAnnotationDecision('reject');
     }
     
-    isEditing = true;
+    // Set form fields based on completion status
+    if (annotation.completed) {
+        elements.acceptBtn.classList.add('active');
+        elements.rejectionReasonGroup.style.display = 'none';
+        setFormFieldsReadonly(true);
+    } else {
+        elements.acceptBtn.classList.remove('active');
+        elements.rejectionReasonGroup.style.display = 'none';
+        setFormFieldsReadonly(false);
+    }
+    
+    // Set form fields based on task mode
+    if (currentTaskMode === 'creation') {
+        elements.topicSelect.focus();
+    } else {
+        elements.sourceExcerpt.focus();
+    }
 }
 
 function clearForm() {
@@ -564,950 +578,327 @@ function clearForm() {
     elements.questionInput.value = '';
     elements.answerInput.value = '';
     elements.explanationInput.value = '';
+    elements.annotationStatus.value = '';
+    elements.rejectionReason.value = '';
+    elements.sourceExcerpt.value = '';
     
-    if (currentTaskMode === 'modification') {
-        elements.sourceExcerpt.value = '';
-        elements.annotationStatus.value = '';
-        elements.rejectionReason.value = '';
-        elements.rejectionReasonGroup.style.display = 'none';
-        document.querySelectorAll('.btn-decision').forEach(btn => btn.classList.remove('active'));
-        setFormFieldsReadonly(false);
-    }
-    
-    isEditing = false;
+    setAnnotationDecision('');
+    setFormFieldsReadonly(false);
 }
 
 function getFormData() {
-    const data = {
-        topic: elements.topicSelect.value.trim(),
-        scenario: elements.scenarioInput.value.trim(),
-        question: elements.questionInput.value.trim(),
-        answer: elements.answerInput.value.trim(),
-        explanation: elements.explanationInput.value.trim()
+    return {
+        topic: elements.topicSelect.value,
+        scenario: elements.scenarioInput.value,
+        question: elements.questionInput.value,
+        answer: elements.answerInput.value,
+        explanation: elements.explanationInput.value,
+        annotationStatus: elements.annotationStatus.value,
+        rejectionReason: elements.rejectionReason.value
     };
-    
-    if (currentTaskMode === 'modification') {
-        data.sourceExcerpt = elements.sourceExcerpt.value.trim();
-        data.annotationStatus = elements.annotationStatus.value;
-        data.rejectionReason = elements.rejectionReason.value;
-    }
-    
-    return data;
 }
 
 function isAnnotationComplete(annotation) {
-    const basicComplete = annotation.topic && annotation.scenario && annotation.question && 
-                         annotation.answer && annotation.explanation;
-    
-    if (currentTaskMode === 'modification') {
-        return basicComplete && annotation.annotationStatus && annotation.annotationStatus !== 'pending';
-    }
-    
-    return basicComplete;
-}
-
-// Auto-save functionality
-function autoSave() {
-    if (isEditing && filteredAnnotations.length > 0) {
-        updateCurrentAnnotation();
-    }
-}
-
-// Filtering
-function applyFilters() {
-    const topicFilter = elements.topicFilter.value;
-    const statusFilter = elements.statusFilter.value;
-    const annotationStatusFilter = elements.annotationStatusFilter.value;
-    
-    filteredAnnotations = annotations.filter(annotation => {
-        const topicMatch = !topicFilter || annotation.topic === topicFilter;
-        const statusMatch = !statusFilter || 
-            (statusFilter === 'completed' && annotation.completed) ||
-            (statusFilter === 'incomplete' && !annotation.completed);
-        
-        let annotationMatch = true;
-        if (currentTaskMode === 'modification' && annotationStatusFilter) {
-            annotationMatch = annotation.annotationStatus === annotationStatusFilter ||
-                            (annotationStatusFilter === 'pending' && (!annotation.annotationStatus || annotation.annotationStatus === 'pending'));
-        }
-        
-        return topicMatch && statusMatch && annotationMatch;
-    });
-    
-    // Adjust current index
-    if (currentIndex >= filteredAnnotations.length) {
-        currentIndex = Math.max(0, filteredAnnotations.length - 1);
-    }
-    
-    updateTopicFilter();
-}
-
-function clearFilters() {
-    elements.topicFilter.value = '';
-    elements.statusFilter.value = '';
-    elements.annotationStatusFilter.value = '';
-    applyFilters();
-    updateUI();
-}
-
-function updateTopicFilter() {
-    const topics = [...new Set(annotations.map(a => a.topic).filter(t => t))];
-    const currentValue = elements.topicFilter.value;
-    
-    elements.topicFilter.innerHTML = '<option value="">All Topics</option>';
-    topics.forEach(topic => {
-        const option = document.createElement('option');
-        option.value = topic;
-        option.textContent = topic;
-        if (topic === currentValue) option.selected = true;
-        elements.topicFilter.appendChild(option);
-    });
-}
-
-// UI updates
-function updateUI() {
-    updateStats();
-    updateNavigation();
-    updateFormVisibility();
-    updateButtons();
-}
-
-function updateStats() {
-    const total = annotations.length;
-    const completed = annotations.filter(a => a.completed).length;
-    const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
-    elements.totalCount.textContent = total;
-    elements.completedCount.textContent = completed;
-    elements.progressPercent.textContent = `${progress}%`;
-    
-    if (currentTaskMode === 'modification') {
-        const accepted = annotations.filter(a => a.annotationStatus === 'accept').length;
-        const revised = annotations.filter(a => a.annotationStatus === 'revise').length;
-        const rejected = annotations.filter(a => a.annotationStatus === 'reject').length;
-        
-        elements.acceptedCount.textContent = accepted;
-        elements.revisedCount.textContent = revised;
-        elements.rejectedCount.textContent = rejected;
-    }
-}
-
-function updateNavigation() {
-    const hasItems = filteredAnnotations.length > 0;
-    
-    elements.prevBtn.disabled = !hasItems;
-    elements.nextBtn.disabled = !hasItems;
-    
-    if (hasItems) {
-        elements.itemCounter.textContent = `${currentIndex + 1} / ${filteredAnnotations.length}`;
-    } else {
-        elements.itemCounter.textContent = '0 / 0';
-    }
-}
-
-function updateFormVisibility() {
-    const hasItems = filteredAnnotations.length > 0;
-    
-    if (hasItems) {
-        elements.annotationForm.classList.add('active');
-        elements.emptyState.classList.add('hidden');
-    } else {
-        elements.annotationForm.classList.remove('active');
-        elements.emptyState.classList.remove('hidden');
-    }
-}
-
-function updateButtons() {
-    const hasItems = filteredAnnotations.length > 0;
-    
-    elements.updateBtn.disabled = !hasItems;
-    elements.deleteBtn.disabled = !hasItems;
-    elements.exportBtn.disabled = annotations.length === 0;
-    elements.saveBtn.disabled = annotations.length === 0;
-}
-
-// File operations
-function handleFileImport(event) {
-    const files = Array.from(event.target.files);
-    if (!files.length) return;
-    
-    // Validate all files first
-    const invalidFiles = files.filter(file => {
-        const isCSV = file.type === 'text/csv' || file.name.endsWith('.csv');
-        const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
-        return !isCSV && !isExcel;
-    });
-    
-    if (invalidFiles.length > 0) {
-        showToast(`Invalid file types: ${invalidFiles.map(f => f.name).join(', ')}. Please select only CSV or Excel files.`, 'error');
-        return;
-    }
-    
-    showLoading(true);
-    
-    let totalImported = 0;
-    let processedFiles = 0;
-    let allImportedData = [];
-    let hasErrors = false;
-    
-    // Process each file
-    files.forEach((file, index) => {
-        const isCSV = file.type === 'text/csv' || file.name.endsWith('.csv');
-        const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                let imported;
-                if (isCSV) {
-                    imported = parseCSV(e.target.result);
-                } else {
-                    // For Excel files, we'll treat them as CSV for now
-                    // In a real implementation, you'd use a library like SheetJS
-                    showToast(`Excel import not fully implemented for ${file.name}. Please convert to CSV first.`, 'warning');
-                    hasErrors = true;
-                    imported = [];
-                }
-                
-                if (imported.length > 0) {
-                    allImportedData = allImportedData.concat(imported);
-                    totalImported += imported.length;
-                }
-                
-            } catch (error) {
-                console.error(`Import error for ${file.name}:`, error);
-                showToast(`Error importing ${file.name}: ${error.message}`, 'error');
-                hasErrors = true;
-            }
-            
-            processedFiles++;
-            
-            // When all files are processed
-            if (processedFiles === files.length) {
-                try {
-                    if (allImportedData.length > 0) {
-                        // Append to existing annotations instead of replacing
-                        annotations = annotations.concat(allImportedData);
-                        currentIndex = 0;
-                        applyFilters();
-                        
-                        if (filteredAnnotations.length > 0) {
-                            loadAnnotation(currentIndex);
-                        }
-                        
-                        updateUI();
-                        
-                        const successMessage = files.length === 1 
-                            ? `Imported ${totalImported} annotations from ${files[0].name}`
-                            : `Imported ${totalImported} annotations from ${files.length} files`;
-                        showToast(successMessage, 'success');
-                    } else {
-                        showToast('No valid data found in any file', 'warning');
-                    }
-                } catch (error) {
-                    console.error('Final processing error:', error);
-                    showToast('Error processing imported data: ' + error.message, 'error');
-                } finally {
-                    showLoading(false);
-                    event.target.value = ''; // Reset file input
-                }
-            }
-        };
-        
-        reader.onerror = function() {
-            showToast(`Error reading file: ${file.name}`, 'error');
-            hasErrors = true;
-            processedFiles++;
-            
-            if (processedFiles === files.length) {
-                showLoading(false);
-                event.target.value = '';
-            }
-        };
-        
-        reader.readAsText(file);
-    });
-}
-
-function parseCSV(csv) {
-    const lines = csv.split('\n').filter(line => line.trim());
-    if (lines.length < 2) return [];
-    
-    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, '').toLowerCase());
-    const requiredHeaders = ['topic', 'scenario', 'question', 'answer', 'explanation'];
-    const modificationHeaders = ['source_excerpt'];
-    
-    // Check for required headers
-    const hasRequiredHeaders = requiredHeaders.every(header => 
-        headers.some(h => h === header)
-    );
-    
-    if (!hasRequiredHeaders) {
-        throw new Error('CSV must contain columns: ' + requiredHeaders.join(', '));
-    }
-    
-    // Check if this is modification data
-    const hasModificationData = modificationHeaders.some(header =>
-        headers.some(h => h === header)
-    );
-    
-    const annotations = [];
-    
-    for (let i = 1; i < lines.length; i++) {
-        const values = parseCSVLine(lines[i]);
-        if (values.length >= headers.length) {
-            const annotation = {
-                id: generateId(),
-                topic: '',
-                scenario: '',
-                question: '',
-                answer: '',
-                explanation: '',
-                completed: false,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Add modification-specific fields if detected
-            if (hasModificationData) {
-                annotation.sourceExcerpt = '';
-                annotation.annotationStatus = 'pending';
-                annotation.rejectionReason = '';
-            }
-            
-            headers.forEach((header, index) => {
-                const value = values[index] || '';
-                switch(header) {
-                    case 'topic':
-                        annotation.topic = value;
-                        break;
-                    case 'scenario':
-                        annotation.scenario = value;
-                        break;
-                    case 'question':
-                        annotation.question = value;
-                        break;
-                    case 'answer':
-                        annotation.answer = value;
-                        break;
-                    case 'explanation':
-                        annotation.explanation = value;
-                        break;
-                    case 'source_excerpt':
-                        annotation.sourceExcerpt = value;
-                        break;
-                }
-            });
-            
-            annotation.completed = isAnnotationComplete(annotation);
-            annotations.push(annotation);
-        }
-    }
-    
-    return annotations;
-}
-
-function parseCSVLine(line) {
-    const values = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        
-        if (char === '"') {
-            inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-            values.push(current.trim());
-            current = '';
-        } else {
-            current += char;
-        }
-    }
-    
-    values.push(current.trim());
-    return values.map(v => v.replace(/^"|"$/g, ''));
-}
-
-function exportToCSV() {
-    if (annotations.length === 0) {
-        showToast('No data to export', 'warning');
-        return;
-    }
-    
-    let headers, filename;
-    
-    if (currentTaskMode === 'modification') {
-        headers = ['source_excerpt', 'topic', 'scenario', 'question', 'answer', 'explanation', 'annotation_status', 'rejection_reason'];
-        filename = `cultural_annotations_modified_${new Date().toISOString().split('T')[0]}.csv`;
-    } else {
-        headers = ['topic', 'scenario', 'question', 'answer', 'explanation'];
-        filename = `cultural_annotations_created_${new Date().toISOString().split('T')[0]}.csv`;
-    }
-    
-    const csvContent = [
-        headers.join(','),
-        ...annotations.map(annotation => 
-            headers.map(header => {
-                const key = header.replace('_', '');
-                const value = annotation[key] || '';
-                return `"${value.replace(/"/g, '""')}"`;
-            }).join(',')
-        )
-    ].join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    
-    link.setAttribute('href', url);
-    link.setAttribute('download', filename);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast('CSV exported successfully', 'success');
-}
-
-// Firebase operations
-async function saveToFirebase() {
-    if (!isLoggedIn || !currentUser) {
-        showToast('Please log in to save data', 'warning');
-        showLoginModal();
-        return;
-    }
-    
-    // Check if FirebaseService is available first
-    if (!checkFirebaseService()) {
-        return;
-    }
-    
-    if (annotations.length === 0) {
-        showToast('No data to save', 'warning');
-        return;
-    }
-    
-    showLoading(true);
-    
-    try {
-        const collectionName = currentTaskMode === 'modification' ? 
-            'cultural_annotations_modified' : 'cultural_annotations_created';
-        
-        // Add user information to each annotation
-        const annotationsWithUser = annotations.map(annotation => ({
-            ...annotation,
-            annotatorId: currentUser.id,
-            annotatorName: currentUser.name,
-            lastModifiedBy: currentUser.id,
-            lastModified: new Date().toISOString()
-        }));
-        
-        // Clear existing data first
-        const clearResult = await FirebaseService.clearCollection(collectionName);
-        if (!clearResult.success) {
-            throw new Error(clearResult.error);
-        }
-        
-        // Save all annotations with user tracking
-        const saveResult = await FirebaseService.saveAllToCollection(collectionName, annotationsWithUser);
-        if (!saveResult.success) {
-            throw new Error(saveResult.error);
-        }
-        
-        // Update user activity
-        await FirebaseService.updateUserActivity(currentUser.id);
-        
-        showToast('Data saved to Firebase successfully', 'success');
-    } catch (error) {
-        console.error('Firebase save error:', error);
-        showToast('Error saving to Firebase: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-async function loadFromFirebase() {
-    // Check if FirebaseService is available first
-    if (!checkFirebaseService()) {
-        return;
-    }
-
-    showLoading(true);
-    
-    try {
-        const collectionName = currentTaskMode === 'modification' ? 
-            'cultural_annotations_modified' : 'cultural_annotations_created';
-        
-        const result = await FirebaseService.loadFromCollection(collectionName);
-        if (result.success && result.data.length > 0) {
-            annotations = result.data.map(item => ({
-                id: item.id,
-                sourceExcerpt: item.sourceExcerpt || '',
-                topic: item.topic || '',
-                scenario: item.scenario || '',
-                question: item.question || '',
-                answer: item.answer || '',
-                explanation: item.explanation || '',
-                annotationStatus: item.annotationStatus || 'pending',
-                rejectionReason: item.rejectionReason || '',
-                completed: item.completed || false,
-                createdAt: item.createdAt || new Date().toISOString(),
-                lastModified: item.lastModified
-            }));
-            
-            currentIndex = 0;
-            applyFilters();
-            
-            if (filteredAnnotations.length > 0) {
-                loadAnnotation(currentIndex);
-            }
-            
-            updateUI();
-            showToast(`Loaded ${annotations.length} annotations from Firebase`, 'success');
-        }
-    } catch (error) {
-        console.error('Firebase load error:', error);
-        showToast('Error loading from Firebase: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-// Utility functions
-function generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    return annotation.topic && annotation.scenario && annotation.question && annotation.answer && annotation.explanation;
 }
 
 function debounce(func, wait) {
     let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
+    return function(...args) {
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        timeout = setTimeout(() => func.apply(this, args), wait);
     };
 }
 
-// User Management Functions
-function initializeUserManagement() {
-    // Add user management event listeners
-    if (elements.loginBtn) {
-        elements.loginBtn.addEventListener('click', showLoginModal);
-    }
-    
-    if (elements.logoutBtn) {
-        elements.logoutBtn.addEventListener('click', handleLogout);
-    }
-    
-    if (elements.manageBtn) {
-        elements.manageBtn.addEventListener('click', showManageModal);
-    }
-    
-    // Modal close events
-    if (elements.loginModalClose) {
-        elements.loginModalClose.addEventListener('click', hideLoginModal);
-    }
-    
-    if (elements.manageModalClose) {
-        elements.manageModalClose.addEventListener('click', hideManageModal);
-    }
-    
-    if (elements.assignmentModalClose) {
-        elements.assignmentModalClose.addEventListener('click', hideAssignmentModal);
-    }
-    
-    // Form events
-    if (elements.loginForm) {
-        elements.loginForm.addEventListener('submit', handleLogin);
-    }
-    
-    if (elements.loginCancel) {
-        elements.loginCancel.addEventListener('click', hideLoginModal);
-    }
-    
-    if (elements.assignmentForm) {
-        elements.assignmentForm.addEventListener('submit', handleCreateAssignment);
-    }
-    
-    if (elements.assignmentCancel) {
-        elements.assignmentCancel.addEventListener('click', hideAssignmentModal);
-    }
-    
-    // Tab switching
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const tabName = e.target.dataset.tab;
-            switchTab(tabName);
-        });
-    });
-    
-    // Management actions
-    if (elements.addAnnotatorBtn) {
-        elements.addAnnotatorBtn.addEventListener('click', showAddAnnotatorForm);
-    }
-    
-    if (elements.createAssignmentBtn) {
-        elements.createAssignmentBtn.addEventListener('click', showAssignmentModal);
-    }
-    
-    if (elements.generateReportBtn) {
-        elements.generateReportBtn.addEventListener('click', generateProgressReport);
-    }
-    
-    // Close modals when clicking outside
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) {
-            e.target.classList.remove('active');
-        }
-    });
-}
-
-function checkLoginStatus() {
-    // Check if user is stored in localStorage
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-        try {
-            currentUser = JSON.parse(storedUser);
-            isLoggedIn = true;
-            updateUserInterface();
-            loadUserData();
-        } catch (error) {
-            console.error('Error parsing stored user:', error);
-            localStorage.removeItem('currentUser');
-        }
-    } else {
-        updateUserInterface();
-    }
-}
-
-function updateUserInterface() {
-    if (isLoggedIn && currentUser) {
-        // Show logged in state
-        if (elements.loginBtn) elements.loginBtn.style.display = 'none';
-        if (elements.userInfo) elements.userInfo.style.display = 'flex';
-        if (elements.dataActions) elements.dataActions.style.display = 'flex';
-        
-        // Update user info
-        if (elements.userName) elements.userName.textContent = currentUser.name;
-        if (elements.userRole) elements.userRole.textContent = currentUser.role;
-        
-        // Show manage button for admins
-        if (elements.manageBtn) {
-            elements.manageBtn.style.display = currentUser.role === 'admin' ? 'inline-flex' : 'none';
-        }
-        
-        // Load user's data
-        loadFromFirebase();
-    } else {
-        // Show logged out state
-        if (elements.loginBtn) elements.loginBtn.style.display = 'inline-flex';
-        if (elements.userInfo) elements.userInfo.style.display = 'none';
-        if (elements.dataActions) elements.dataActions.style.display = 'none';
-        
-        // Clear data
-        annotations = [];
-        updateUI();
-    }
-}
-
-function showLoginModal() {
-    if (elements.loginModal) {
-        elements.loginModal.classList.add('active');
-        if (elements.loginUserId) elements.loginUserId.focus();
-    }
-}
-
-function hideLoginModal() {
-    if (elements.loginModal) {
-        elements.loginModal.classList.remove('active');
-        if (elements.loginForm) elements.loginForm.reset();
-    }
-}
-
-async function handleLogin(e) {
-    e.preventDefault();
-    
-    // Check if FirebaseService is available first
+// User Data Retrieval Functions
+async function searchUserData() {
     if (!checkFirebaseService()) {
         return;
     }
     
-    const userId = elements.loginUserId.value.trim();
-    const role = elements.loginRole.value;
-    const editingUserId = elements.loginForm.dataset.editingUserId;
-    
-    if (!userId || !role) {
-        showToast('Please fill in all fields', 'error');
+    const userId = prompt('Enter User ID to search for their data:');
+    if (!userId || !userId.trim()) {
+        showToast('Please enter a valid User ID', 'error');
         return;
     }
     
-    showLoading(true);
+    try {
+        showLoading('Searching user data...');
+        
+        const result = await loadUserRelatedData(userId.trim());
+        
+        if (result.success) {
+            annotations = result.data;
+            currentIndex = 0;
+            applyFilters();
+            
+            if (annotations.length > 0) {
+                loadAnnotation(currentIndex);
+                showToast(`Loaded ${annotations.length} annotations for user: ${userId}`, 'success');
+            } else {
+                showToast(`No data found for user: ${userId}`, 'info');
+            }
+            
+            updateUI();
+        } else {
+            showToast(`Error loading user data: ${result.error}`, 'error');
+        }
+    } catch (error) {
+        console.error('Error searching user data:', error);
+        showToast('Error searching user data', 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+async function loadCurrentUserData() {
+    if (!isLoggedIn || !currentUser) {
+        showToast('Please login first to load your data', 'error');
+        return;
+    }
+    
+    if (!checkFirebaseService()) {
+        return;
+    }
     
     try {
-        if (editingUserId) {
-            // Update existing user
-            const updateResult = await FirebaseService.updateUser(editingUserId, {
-                userId,
-                role,
-                name: userId // Use userId as name for simplified login
-            });
+        showLoading('Loading your data...');
+        
+        const result = await loadUserRelatedData(currentUser.userId || currentUser.id);
+        
+        if (result.success) {
+            annotations = result.data;
+            currentIndex = 0;
+            applyFilters();
             
-            if (!updateResult.success) {
-                throw new Error(updateResult.error);
-            }
-            
-            // Update local data
-            const userIndex = allUsers.findIndex(u => u.id === editingUserId);
-            if (userIndex !== -1) {
-                allUsers[userIndex] = { ...allUsers[userIndex], userId, role, name: userId };
-            }
-            
-            // If editing current user, update current user data
-            if (currentUser && currentUser.id === editingUserId) {
-                currentUser = { ...currentUser, userId, role, name: userId };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                updateUserInterface();
-            }
-            
-            hideLoginModal();
-            loadAnnotatorsData();
-            showToast('User updated successfully', 'success');
-            
-            // Clear editing state
-            delete elements.loginForm.dataset.editingUserId;
-            
-        } else {
-            // Check if user exists for login/creation with validation
-            const userResult = await FirebaseService.getUserByUserIdWithValidation(userId, role);
-            
-            if (userResult.success) {
-                // User exists and is validated, log them in
-                currentUser = userResult.user;
+            if (annotations.length > 0) {
+                loadAnnotation(currentIndex);
+                showToast(`Loaded ${annotations.length} of your annotations`, 'success');
             } else {
-                // Check if it's a validation error or user doesn't exist
-                if (userResult.error && (userResult.error.includes('not authorized') || userResult.error.includes('role mismatch'))) {
-                    throw new Error(userResult.error);
-                }
-                
-                // User doesn't exist in database but might be in validation file
-                if (userResult.validationInfo) {
-                    // User is validated but doesn't exist in database, create new user
-                    const createResult = await FirebaseService.createUser({
-                        userId,
-                        name: userId, // Use userId as display name
-                        role: userResult.validationInfo.role, // Use role from validation file
-                        email: '', // Empty email for simplified login
-                        accessibleCsvs: userResult.validationInfo.accessibleCsvs,
-                        createdAt: new Date().toISOString()
-                    });
-                    
-                    if (!createResult.success) {
-                        throw new Error(createResult.error);
-                    }
-                    
-                    currentUser = { 
-                        id: createResult.id, 
-                        userId, 
-                        name: userId,
-                        role: userResult.validationInfo.role,
-                        email: '',
-                        accessibleCsvs: userResult.validationInfo.accessibleCsvs
-                    };
-                } else {
-                    // User validation failed completely
-                    throw new Error('User ID not authorized. Please contact administrator.');
-                }
+                showToast('No annotations found for your account', 'info');
             }
             
-            // Update activity
-            await FirebaseService.updateUserActivity(currentUser.id);
-            
-            // Create session
-            const sessionResult = await FirebaseService.createSession(currentUser.id, {
-                loginTime: new Date().toISOString(),
-                userAgent: navigator.userAgent
-            });
-            
-            if (sessionResult.success) {
-                currentSession = sessionResult.sessionId;
-            }
-            
-            // Store user in localStorage
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            
-            isLoggedIn = true;
-            hideLoginModal();
-            updateUserInterface();
-            showToast(`Welcome, ${currentUser.name}!`, 'success');
+            updateUI();
+        } else {
+            showToast(`Error loading your data: ${result.error}`, 'error');
+        }
+    } catch (error) {
+        console.error('Error loading current user data:', error);
+        showToast('Error loading your data', 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+async function loadUserRelatedData(userId) {
+    try {
+        // Get user information and validate permissions
+        const userResult = await FirebaseService.getUserByUserIdWithValidation(userId);
+        
+        if (!userResult.success) {
+            return { success: false, error: userResult.error };
         }
         
-    } catch (error) {
-        console.error('Login/Update error:', error);
-        showToast('Operation failed: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-async function handleLogout() {
-    if (currentSession) {
-        await FirebaseService.endSession(currentSession);
-    }
-    
-    currentUser = null;
-    currentSession = null;
-    isLoggedIn = false;
-    
-    localStorage.removeItem('currentUser');
-    updateUserInterface();
-    showToast('Logged out successfully', 'success');
-}
-
-function showManageModal() {
-    if (elements.manageModal) {
-        elements.manageModal.classList.add('active');
-        switchTab('annotators');
-        loadManagementData();
-    }
-}
-
-function hideManageModal() {
-    if (elements.manageModal) {
-        elements.manageModal.classList.remove('active');
-    }
-}
-
-function switchTab(tabName) {
-    // Hide all tabs
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // Remove active class from all buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // Show selected tab
-    const selectedTab = document.getElementById(tabName + 'Tab');
-    if (selectedTab) {
-        selectedTab.classList.add('active');
-    }
-    
-    // Activate button
-    const selectedBtn = document.querySelector(`[data-tab="${tabName}"]`);
-    if (selectedBtn) {
-        selectedBtn.classList.add('active');
-    }
-    
-    // Load tab-specific data
-    switch (tabName) {
-        case 'annotators':
-            loadAnnotatorsData();
-            break;
-        case 'assignments':
-            loadAssignmentsData();
-            break;
-        case 'progress':
-            loadProgressData();
-            break;
-    }
-}
-
-async function loadManagementData() {
-    showLoading(true);
-    
-    try {
-        const [usersResult, assignmentsResult] = await Promise.all([
-            FirebaseService.getAllUsers(),
-            FirebaseService.getAllAssignments()
+        const userInfo = userResult.user;
+        
+        // Get user's accessible language region codes
+        const accessResult = await FirebaseService.getUserAccessibleCsvs(userId);
+        
+        if (!accessResult.success) {
+            return { success: false, error: 'Unable to determine user access permissions' };
+        }
+        
+        const accessibleRegions = accessResult.csvs;
+        const hasFullAccess = accessResult.hasFullAccess;
+        
+        // Load annotations from both collections
+        const [creationResult, modificationResult] = await Promise.all([
+            FirebaseService.getAnnotationsByUser(userId, FirebaseService.COLLECTIONS.CREATION),
+            FirebaseService.getAnnotationsByUser(userId, FirebaseService.COLLECTIONS.MODIFICATION)
         ]);
         
-        if (usersResult.success) {
-            allUsers = usersResult.users;
+        let allAnnotations = [];
+        
+        // Combine annotations from both collections
+        if (creationResult.success) {
+            allAnnotations = allAnnotations.concat(creationResult.data || []);
         }
         
-        if (assignmentsResult.success) {
-            allAssignments = assignmentsResult.assignments;
+        if (modificationResult.success) {
+            allAnnotations = allAnnotations.concat(modificationResult.data || []);
         }
         
-        // Populate dropdowns
-        populateUserDropdowns();
+        // Filter annotations based on user's accessible regions
+        let filteredAnnotations = allAnnotations;
+        
+        if (!hasFullAccess && accessibleRegions.length > 0) {
+            filteredAnnotations = allAnnotations.filter(annotation => {
+                // Check if annotation has language region information
+                const annotationRegion = annotation.languageRegionCode || annotation.language_region || 
+                                       extractRegionFromData(annotation);
+                
+                if (!annotationRegion) {
+                    // If no region info, allow access (backward compatibility)
+                    return true;
+                }
+                
+                return accessibleRegions.includes(annotationRegion);
+            });
+        }
+        
+        // Sort by timestamp (newest first)
+        filteredAnnotations.sort((a, b) => {
+            const timeA = new Date(a.timestamp || a.createdAt || 0);
+            const timeB = new Date(b.timestamp || b.createdAt || 0);
+            return timeB - timeA;
+        });
+        
+        return {
+            success: true,
+            data: filteredAnnotations,
+            userInfo: userInfo,
+            totalCount: allAnnotations.length,
+            filteredCount: filteredAnnotations.length,
+            accessibleRegions: accessibleRegions
+        };
         
     } catch (error) {
-        console.error('Error loading management data:', error);
-        showToast('Error loading management data', 'error');
-    } finally {
-        showLoading(false);
+        console.error('Error loading user related data:', error);
+        return { success: false, error: error.message };
     }
 }
 
-function populateUserDropdowns() {
-    // Populate assignment annotator dropdown
-    if (elements.assignmentAnnotator) {
-        elements.assignmentAnnotator.innerHTML = '<option value="">Select annotator</option>';
-        allUsers.filter(u => u.role === 'annotator').forEach(user => {
-            const option = document.createElement('option');
-            option.value = user.id;
-            option.textContent = user.name;
-            elements.assignmentAnnotator.appendChild(option);
-        });
+function extractRegionFromData(annotation) {
+    // Try to extract region code from various possible fields
+    if (annotation.metadata && annotation.metadata.region) {
+        return annotation.metadata.region;
     }
     
-    // Populate report filter dropdown
-    if (elements.reportAnnotatorFilter) {
-        elements.reportAnnotatorFilter.innerHTML = '<option value="">All Annotators</option>';
-        allUsers.forEach(user => {
-            const option = document.createElement('option');
-            option.value = user.id;
-            option.textContent = user.name;
-            elements.reportAnnotatorFilter.appendChild(option);
-        });
+    if (annotation.sourceFile) {
+        // Try to extract from filename like "zh_cn_data.csv"
+        const match = annotation.sourceFile.match(/([a-z]{2}_[a-z]{2})/i);
+        if (match) {
+            return match[1].toLowerCase();
+        }
     }
     
-    // Populate assignment topic filter
-    if (elements.assignmentTopicFilter) {
-        const topics = ['Belief', 'Commerce', 'Education', 'Entertainment', 'Finance', 'Food', 
-                       'Government', 'Habitat', 'Health', 'Heritage', 'Language', 'Pets', 
-                       'Science', 'Social', 'Travel', 'Work'];
+    if (annotation.topic) {
+        // Some topics might contain region info
+        const match = annotation.topic.match(/([a-z]{2}_[a-z]{2})/i);
+        if (match) {
+            return match[1].toLowerCase();
+        }
+    }
+    
+    return null;
+}
+
+async function saveUserRelatedData(targetUserId) {
+    if (!checkFirebaseService()) {
+        return { success: false, error: 'Firebase service not available' };
+    }
+    
+    if (!targetUserId) {
+        targetUserId = currentUser ? (currentUser.userId || currentUser.id) : null;
+    }
+    
+    if (!targetUserId) {
+        return { success: false, error: 'No target user specified' };
+    }
+    
+    try {
+        showLoading('Saving annotations...');
         
-        elements.assignmentTopicFilter.innerHTML = '<option value="">All topics</option>';
-        topics.forEach(topic => {
-            const option = document.createElement('option');
-            option.value = topic;
-            option.textContent = topic;
-            elements.assignmentTopicFilter.appendChild(option);
-        });
+        // Determine which collection to use based on task mode
+        const collectionName = currentTaskMode === 'modification' 
+            ? FirebaseService.COLLECTIONS.MODIFICATION 
+            : FirebaseService.COLLECTIONS.CREATION;
+        
+        // Add user tracking to all annotations
+        const annotationsToSave = annotations.map(annotation => ({
+            ...annotation,
+            annotatorId: targetUserId,
+            lastModifiedBy: currentUser ? (currentUser.userId || currentUser.id) : targetUserId,
+            lastModified: new Date().toISOString(),
+            taskMode: currentTaskMode
+        }));
+        
+        // Save all annotations
+        const saveResult = await FirebaseService.saveAllToCollection(collectionName, annotationsToSave);
+        
+        if (saveResult.success) {
+            // Update assignment progress if user is logged in
+            if (isLoggedIn && currentUser && targetUserId === (currentUser.userId || currentUser.id)) {
+                await updateAssignmentProgress();
+            }
+            
+            showToast(`Successfully saved ${annotationsToSave.length} annotations`, 'success');
+            return { success: true, count: annotationsToSave.length };
+        } else {
+            showToast(`Error saving annotations: ${saveResult.error}`, 'error');
+            return { success: false, error: saveResult.error };
+        }
+        
+    } catch (error) {
+        console.error('Error saving user related data:', error);
+        showToast('Error saving annotations', 'error');
+        return { success: false, error: error.message };
+    } finally {
+        hideLoading();
     }
 }
 
-function loadAnnotatorsData() {
-    if (!elements.annotatorsTableBody) return;
+// UI functions
+function updateUI() {
+    updateStatistics();
+    updateFilteredAnnotations();
+    updateDisplayElements();
+}
+
+function updateStatistics() {
+    elements.totalAnnotators.textContent = `Total Annotators: ${allUsers.length}`;
+    elements.totalAssignments.textContent = `Total Assignments: ${allAssignments.length}`;
+    elements.totalCompleted.textContent = `Total Completed: ${annotations.filter(a => a.completed).length}`;
+}
+
+function updateFilteredAnnotations() {
+    filteredAnnotations = annotations.filter(annotation => {
+        const topicMatch = !elements.topicFilter.value || annotation.topic.toLowerCase().includes(elements.topicFilter.value.toLowerCase());
+        const statusMatch = !elements.statusFilter.value || annotation.annotationStatus.toLowerCase().includes(elements.statusFilter.value.toLowerCase());
+        const annotationStatusMatch = !elements.annotationStatusFilter.value || annotation.annotationStatus.toLowerCase().includes(elements.annotationStatusFilter.value.toLowerCase());
+        return topicMatch && statusMatch && annotationStatusMatch;
+    });
+    
+    elements.totalCount.textContent = `Total Annotations: ${filteredAnnotations.length}`;
+}
+
+function updateDisplayElements() {
+    if (filteredAnnotations.length === 0) {
+        elements.emptyState.classList.remove('hidden');
+        elements.loadingOverlay.classList.add('hidden');
+    } else {
+        elements.emptyState.classList.add('hidden');
+        elements.loadingOverlay.classList.remove('hidden');
+    }
     
     elements.annotatorsTableBody.innerHTML = '';
+    elements.assignmentsTableBody.innerHTML = '';
     
-    allUsers.forEach(user => {
+    filteredAnnotations.forEach((annotation, index) => {
         const row = document.createElement('tr');
-        const userAssignments = allAssignments.filter(a => a.annotatorId === user.id);
-        const completedAssignments = userAssignments.filter(a => a.status === 'completed');
+        row.dataset.index = index;
         
         row.innerHTML = `
-            <td>${user.name || user.userId}</td>
-            <td>${user.userId}</td>
-            <td><span class="status-badge ${user.role}">${user.role}</span></td>
-            <td>${userAssignments.length}</td>
-            <td>${completedAssignments.length}</td>
-            <td>${user.lastActive ? new Date(user.lastActive.toDate()).toLocaleDateString() : 'Never'}</td>
-            <td class="actions">
-                <button class="btn btn-outline" onclick="editUser('${user.id}')">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-danger" onclick="deleteUser('${user.id}')">
-                    <i class="fas fa-trash"></i>
-                </button>
+            <td>${annotation.topic}</td>
+            <td>${annotation.scenario}</td>
+            <td>${annotation.question}</td>
+            <td>${annotation.answer}</td>
+            <td>${annotation.explanation}</td>
+            <td>${annotation.annotationStatus}</td>
+            <td>${annotation.completed ? 'Yes' : 'No'}</td>
+            <td>
+                <button class="btn btn-primary" onclick="loadAnnotation(${index})">Edit</button>
+                <button class="btn btn-danger" onclick="deleteCurrentAnnotation()">Delete</button>
             </td>
         `;
         
@@ -1515,822 +906,28 @@ function loadAnnotatorsData() {
     });
 }
 
-function loadAssignmentsData() {
-    if (!elements.assignmentsTableBody) return;
-    
-    elements.assignmentsTableBody.innerHTML = '';
-    
-    allAssignments.forEach(assignment => {
-        const row = document.createElement('tr');
-        const user = allUsers.find(u => u.id === assignment.annotatorId);
-        const dueDate = assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : 'No due date';
-        
-        row.innerHTML = `
-            <td>${assignment.id.substring(0, 8)}...</td>
-            <td>${user ? user.name : 'Unknown'}</td>
-            <td>${assignment.itemCount || 0}</td>
-            <td>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${assignment.progress || 0}%"></div>
-                </div>
-                <span>${assignment.progress || 0}%</span>
-            </td>
-            <td>${dueDate}</td>
-            <td><span class="status-badge ${assignment.status}">${assignment.status}</span></td>
-            <td class="actions">
-                <button class="btn btn-outline" onclick="editAssignment('${assignment.id}')">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-danger" onclick="deleteAssignment('${assignment.id}')">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        `;
-        
-        elements.assignmentsTableBody.appendChild(row);
-    });
-}
-
-async function loadProgressData() {
-    try {
-        const statsResult = await FirebaseService.getOverallStatistics();
-        
-        if (statsResult.success) {
-            const stats = statsResult.stats;
-            
-            if (elements.totalAnnotators) elements.totalAnnotators.textContent = stats.totalUsers;
-            if (elements.totalAssignments) elements.totalAssignments.textContent = stats.totalAssignments;
-            if (elements.totalCompleted) elements.totalCompleted.textContent = stats.completedAnnotations;
-            if (elements.overallProgress) elements.overallProgress.textContent = stats.overallProgress + '%';
-        }
-    } catch (error) {
-        console.error('Error loading progress data:', error);
-        showToast('Error loading progress data', 'error');
-    }
-}
-
-function showAssignmentModal() {
-    if (elements.assignmentModal) {
-        elements.assignmentModal.classList.add('active');
-        
-        // Set default due date to one week from now
-        const nextWeek = new Date();
-        nextWeek.setDate(nextWeek.getDate() + 7);
-        if (elements.assignmentDueDate) {
-            elements.assignmentDueDate.value = nextWeek.toISOString().split('T')[0];
-        }
-    }
-}
-
-function hideAssignmentModal() {
-    if (elements.assignmentModal) {
-        elements.assignmentModal.classList.remove('active');
-        if (elements.assignmentForm) elements.assignmentForm.reset();
-    }
-}
-
-async function handleCreateAssignment(e) {
-    e.preventDefault();
-    
-    const annotatorId = elements.assignmentAnnotator.value;
-    const itemCount = parseInt(elements.assignmentCount.value) || 10;
-    const topicFilter = elements.assignmentTopicFilter.value;
-    const dueDate = elements.assignmentDueDate.value;
-    const notes = elements.assignmentNotes.value;
-    const editingAssignmentId = elements.assignmentForm.dataset.editingAssignmentId;
-    
-    if (!annotatorId) {
-        showToast('Please select an annotator', 'error');
-        return;
-    }
-    
-    showLoading(true);
-    
-    try {
-        if (editingAssignmentId) {
-            // Update existing assignment
-            const updateResult = await FirebaseService.updateAssignment(editingAssignmentId, {
-                annotatorId,
-                itemCount,
-                topicFilter,
-                dueDate,
-                notes,
-                lastModifiedBy: currentUser.id,
-                lastModified: new Date().toISOString()
-            });
-            
-            if (!updateResult.success) {
-                throw new Error(updateResult.error);
-            }
-            
-            // Update local data
-            const assignmentIndex = allAssignments.findIndex(a => a.id === editingAssignmentId);
-            if (assignmentIndex !== -1) {
-                allAssignments[assignmentIndex] = {
-                    ...allAssignments[assignmentIndex],
-                    annotatorId,
-                    itemCount,
-                    topicFilter,
-                    dueDate,
-                    notes,
-                    lastModifiedBy: currentUser.id,
-                    lastModified: new Date().toISOString()
-                };
-            }
-            
-            hideAssignmentModal();
-            loadAssignmentsData();
-            showToast('Assignment updated successfully', 'success');
-            
-            // Clear editing state
-            delete elements.assignmentForm.dataset.editingAssignmentId;
-            
-        } else {
-            // Create new assignment
-            const assignmentData = {
-                annotatorId,
-                itemCount,
-                topicFilter,
-                dueDate,
-                notes,
-                createdBy: currentUser.id,
-                status: 'active',
-                progress: 0,
-                createdAt: new Date().toISOString()
-            };
-            
-            const result = await FirebaseService.createAssignment(assignmentData);
-            
-            if (result.success) {
-                // Add to local data
-                allAssignments.push({
-                    id: result.assignmentId,
-                    ...assignmentData
-                });
-                
-                hideAssignmentModal();
-                showToast('Assignment created successfully', 'success');
-                loadAssignmentsData();
-            } else {
-                throw new Error(result.error);
-            }
-        }
-    } catch (error) {
-        console.error('Error with assignment:', error);
-        showToast('Error with assignment: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-function showAddAnnotatorForm() {
-    // For simplicity, we'll reuse the login modal for adding annotators
-    showLoginModal();
-    if (elements.loginRole) {
-        elements.loginRole.value = 'annotator';
-    }
-}
-
-async function editUser(userId) {
-    const user = allUsers.find(u => u.id === userId);
-    if (!user) {
-        showToast('User not found', 'error');
-        return;
-    }
-    
-    // Pre-fill the login modal with user data for editing
-    if (elements.loginEmail) elements.loginEmail.value = user.email;
-    if (elements.loginName) elements.loginName.value = user.name;
-    if (elements.loginRole) elements.loginRole.value = user.role;
-    
-    // Store the user ID for updating
-    elements.loginForm.dataset.editingUserId = userId;
-    
-    showLoginModal();
-}
-
-async function deleteUser(userId) {
-    if (!confirm('Are you sure you want to delete this user?')) {
-        return;
-    }
-    
-    showLoading(true);
-    
-    try {
-        const result = await FirebaseService.deleteUser(userId);
-        
-        if (result.success) {
-            showToast('User deleted successfully', 'success');
-            loadManagementData();
-            loadAnnotatorsData();
-        } else {
-            throw new Error(result.error);
-        }
-    } catch (error) {
-        console.error('Error deleting user:', error);
-        showToast('Error deleting user: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-async function editAssignment(assignmentId) {
-    const assignment = allAssignments.find(a => a.id === assignmentId);
-    if (!assignment) {
-        showToast('Assignment not found', 'error');
-        return;
-    }
-    
-    // Pre-fill the assignment modal with assignment data
-    if (elements.assignmentAnnotator) elements.assignmentAnnotator.value = assignment.annotatorId;
-    if (elements.assignmentCount) elements.assignmentCount.value = assignment.itemCount;
-    if (elements.assignmentTopicFilter) elements.assignmentTopicFilter.value = assignment.topicFilter || '';
-    if (elements.assignmentDueDate) {
-        const dueDate = assignment.dueDate ? new Date(assignment.dueDate).toISOString().split('T')[0] : '';
-        elements.assignmentDueDate.value = dueDate;
-    }
-    if (elements.assignmentNotes) elements.assignmentNotes.value = assignment.notes || '';
-    
-    // Store the assignment ID for updating
-    elements.assignmentForm.dataset.editingAssignmentId = assignmentId;
-    
-    showAssignmentModal();
-}
-
-async function deleteAssignment(assignmentId) {
-    if (!confirm('Are you sure you want to delete this assignment?')) {
-        return;
-    }
-    
-    showLoading(true);
-    
-    try {
-        const result = await FirebaseService.deleteAssignment(assignmentId);
-        
-        if (result.success) {
-            showToast('Assignment deleted successfully', 'success');
-            loadAssignmentsData();
-        } else {
-            throw new Error(result.error);
-        }
-    } catch (error) {
-        console.error('Error deleting assignment:', error);
-        showToast('Error deleting assignment: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-async function generateProgressReport() {
-    const annotatorId = elements.reportAnnotatorFilter.value;
-    const period = elements.reportPeriodFilter.value;
-    
-    showLoading(true);
-    
-    try {
-        let statsResult;
-        let reportData = {};
-        
-        if (annotatorId) {
-            // Generate individual user report
-            statsResult = await FirebaseService.getUserStatistics(annotatorId);
-            const user = allUsers.find(u => u.id === annotatorId);
-            
-            if (statsResult.success && user) {
-                reportData = {
-                    type: 'individual',
-                    user: user.name,
-                    stats: statsResult.stats,
-                    assignments: allAssignments.filter(a => a.annotatorId === annotatorId),
-                    annotations: annotations.filter(a => a.annotatorId === annotatorId)
-                };
-            }
-        } else {
-            // Generate overall report
-            statsResult = await FirebaseService.getOverallStatistics();
-            
-            if (statsResult.success) {
-                reportData = {
-                    type: 'overall',
-                    stats: statsResult.stats,
-                    totalUsers: allUsers.length,
-                    totalAssignments: allAssignments.length,
-                    userBreakdown: allUsers.map(user => {
-                        const userAssignments = allAssignments.filter(a => a.annotatorId === user.id);
-                        const userAnnotations = annotations.filter(a => a.annotatorId === user.id);
-                        const completedAnnotations = userAnnotations.filter(a => a.completed);
-                        
-                        return {
-                            name: user.name,
-                            email: user.email,
-                            role: user.role,
-                            assignmentsCount: userAssignments.length,
-                            annotationsCount: userAnnotations.length,
-                            completedCount: completedAnnotations.length,
-                            completionRate: userAnnotations.length > 0 ? 
-                                Math.round((completedAnnotations.length / userAnnotations.length) * 100) : 0,
-                            lastActive: user.lastActive
-                        };
-                    })
-                };
-            }
-        }
-        
-        if (statsResult.success) {
-            displayProgressReport(reportData);
-            showToast('Report generated successfully', 'success');
-        } else {
-            throw new Error(statsResult.error);
-        }
-    } catch (error) {
-        console.error('Error generating report:', error);
-        showToast('Error generating report: ' + error.message, 'error');
-    } finally {
-        showLoading(false);
-    }
-}
-
-function displayProgressReport(reportData) {
-    // Create a detailed report display
-    let reportHtml = '';
-    
-    if (reportData.type === 'individual') {
-        reportHtml = `
-            <div class="report-container">
-                <h3>Individual Report: ${reportData.user}</h3>
-                <div class="report-stats">
-                    <div class="stat-card">
-                        <h4>Total Assignments</h4>
-                        <p class="stat-number">${reportData.assignments.length}</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Total Annotations</h4>
-                        <p class="stat-number">${reportData.annotations.length}</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Completed</h4>
-                        <p class="stat-number">${reportData.annotations.filter(a => a.completed).length}</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Completion Rate</h4>
-                        <p class="stat-number">${reportData.annotations.length > 0 ? 
-                            Math.round((reportData.annotations.filter(a => a.completed).length / reportData.annotations.length) * 100) : 0}%</p>
-                    </div>
-                </div>
-                <div class="assignment-breakdown">
-                    <h4>Assignment Breakdown</h4>
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>Assignment ID</th>
-                                <th>Progress</th>
-                                <th>Status</th>
-                                <th>Due Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${reportData.assignments.map(assignment => `
-                                <tr>
-                                    <td>${assignment.id.substring(0, 8)}...</td>
-                                    <td>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: ${assignment.progress || 0}%"></div>
-                                        </div>
-                                        ${assignment.progress || 0}%
-                                    </td>
-                                    <td><span class="status-badge ${assignment.status}">${assignment.status}</span></td>
-                                    <td>${assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : 'No due date'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    } else {
-        reportHtml = `
-            <div class="report-container">
-                <h3>Overall Progress Report</h3>
-                <div class="report-stats">
-                    <div class="stat-card">
-                        <h4>Total Users</h4>
-                        <p class="stat-number">${reportData.totalUsers}</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Total Assignments</h4>
-                        <p class="stat-number">${reportData.totalAssignments}</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Active Users</h4>
-                        <p class="stat-number">${reportData.userBreakdown.filter(u => u.annotationsCount > 0).length}</p>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Average Completion</h4>
-                        <p class="stat-number">${Math.round(reportData.userBreakdown.reduce((sum, u) => sum + u.completionRate, 0) / reportData.userBreakdown.length) || 0}%</p>
-                    </div>
-                </div>
-                <div class="user-breakdown">
-                    <h4>User Performance Breakdown</h4>
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>Assignments</th>
-                                <th>Annotations</th>
-                                <th>Completed</th>
-                                <th>Completion Rate</th>
-                                <th>Last Active</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${reportData.userBreakdown.map(user => `
-                                <tr>
-                                    <td>${user.name}</td>
-                                    <td><span class="status-badge ${user.role}">${user.role}</span></td>
-                                    <td>${user.assignmentsCount}</td>
-                                    <td>${user.annotationsCount}</td>
-                                    <td>${user.completedCount}</td>
-                                    <td>
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width: ${user.completionRate}%"></div>
-                                        </div>
-                                        ${user.completionRate}%
-                                    </td>
-                                    <td>${user.lastActive ? new Date(user.lastActive.toDate()).toLocaleDateString() : 'Never'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    }
-    
-    // Display the report in a modal or dedicated area
-    const reportModal = document.createElement('div');
-    reportModal.className = 'modal active';
-    reportModal.innerHTML = `
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h2>Progress Report</h2>
-                <button class="modal-close" onclick="this.closest('.modal').remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                ${reportHtml}
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="exportReport()">
-                    <i class="fas fa-download"></i> Export Report
-                </button>
-                <button class="btn btn-outline" onclick="this.closest('.modal').remove()">Close</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(reportModal);
-}
-
-function exportReport() {
-    // Simple CSV export of the current report data
-    const reportModal = document.querySelector('.report-container');
-    if (!reportModal) return;
-    
-    const tables = reportModal.querySelectorAll('.report-table');
-    let csvContent = '';
-    
-    tables.forEach((table, index) => {
-        if (index > 0) csvContent += '\n\n';
-        
-        const rows = table.querySelectorAll('tr');
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('th, td');
-            const rowData = Array.from(cells).map(cell => {
-                // Clean up cell content (remove HTML tags and extra whitespace)
-                return cell.textContent.trim().replace(/\s+/g, ' ');
-            });
-            csvContent += rowData.join(',') + '\n';
-        });
-    });
-    
-    // Download CSV
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    
-    link.setAttribute('href', url);
-    link.setAttribute('download', `progress_report_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast('Report exported successfully', 'success');
-}
-
-async function loadUserData() {
-    if (!currentUser) return;
-    
-    try {
-        // Load user's annotations
-        const result = await FirebaseService.getAnnotationsByUser(currentUser.id, 
-            currentTaskMode === 'modification' ? COLLECTIONS.MODIFICATION : COLLECTIONS.CREATION);
-        
-        if (result.success) {
-            annotations = result.data || [];
-            currentIndex = 0;
-            applyFilters();
-            
-            if (filteredAnnotations.length > 0) {
-                loadAnnotation(currentIndex);
-            }
-            
-            updateUI();
-        }
-    } catch (error) {
-        console.error('Error loading user data:', error);
-        showToast('Error loading your data', 'error');
-    }
-}
-
-function showLoading(show) {
-    if (show) {
-        elements.loadingOverlay.classList.add('active');
-    } else {
-        elements.loadingOverlay.classList.remove('active');
-    }
-}
-
-function showToast(message, type = 'success') {
+function showToast(message, type) {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
-    const iconMap = {
-        success: 'fas fa-check-circle',
-        error: 'fas fa-exclamation-circle',
-        warning: 'fas fa-exclamation-triangle'
-    };
-    
-    toast.innerHTML = `
-        <i class="${iconMap[type]} toast-icon"></i>
-        <span class="toast-message">${message}</span>
-        <button class="toast-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-times"></i>
-        </button>
-    `;
-    
+    toast.textContent = message;
     elements.toastContainer.appendChild(toast);
     
-    // Show toast
-    setTimeout(() => toast.classList.add('show'), 100);
-    
-    // Auto remove after 5 seconds
     setTimeout(() => {
-        if (toast.parentElement) {
-            toast.remove();
-        }
+        toast.remove();
     }, 5000);
 }
 
-// CSV Upload to Firebase Functions
-function initializeCsvUpload() {
-    // Add event listeners for CSV upload modal
-    if (elements.csvUploadModalClose) {
-        elements.csvUploadModalClose.addEventListener('click', hideCsvUploadModal);
-    }
-    
-    if (elements.csvUploadCancel) {
-        elements.csvUploadCancel.addEventListener('click', hideCsvUploadModal);
-    }
-    
-    if (elements.csvUploadInput) {
-        elements.csvUploadInput.addEventListener('change', handleCsvFileSelection);
-    }
-    
-    if (elements.csvDropArea) {
-        elements.csvDropArea.addEventListener('dragover', handleDragOver);
-        elements.csvDropArea.addEventListener('drop', handleDrop);
-        elements.csvDropArea.addEventListener('click', () => elements.csvUploadInput.click());
-    }
-    
-    if (elements.uploadCsvBtn) {
-        elements.uploadCsvBtn.addEventListener('click', uploadCsvToFirebase);
-    }
-    
-    // Add CSV upload button to header
-    const csvUploadBtn = document.createElement('button');
-    csvUploadBtn.className = 'btn btn-secondary';
-    csvUploadBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload CSV to Firebase';
-    csvUploadBtn.addEventListener('click', showCsvUploadModal);
-    
-    // Insert after the existing import button
-    if (elements.importBtn && elements.importBtn.parentNode) {
-        elements.importBtn.parentNode.insertBefore(csvUploadBtn, elements.importBtn.nextSibling);
-    }
+function showLoading(message) {
+    elements.loadingOverlay.classList.remove('hidden');
+    elements.loadingOverlay.textContent = message;
 }
 
-function showCsvUploadModal() {
-    if (elements.csvUploadModal) {
-        elements.csvUploadModal.classList.add('active');
-        resetCsvUploadForm();
-    }
+function hideLoading() {
+    elements.loadingOverlay.classList.add('hidden');
+    elements.loadingOverlay.textContent = '';
 }
 
-function hideCsvUploadModal() {
-    if (elements.csvUploadModal) {
-        elements.csvUploadModal.classList.remove('active');
-        resetCsvUploadForm();
-    }
+// Utility functions
+function generateId() {
+    return Math.random().toString(36).substr(2, 9);
 }
-
-function resetCsvUploadForm() {
-    if (elements.csvUploadInput) elements.csvUploadInput.value = '';
-    if (elements.selectedFiles) elements.selectedFiles.style.display = 'none';
-    if (elements.filesList) elements.filesList.innerHTML = '';
-    if (elements.uploadProgress) elements.uploadProgress.style.display = 'none';
-    if (elements.uploadCsvBtn) elements.uploadCsvBtn.disabled = true;
-    selectedCsvFiles = [];
-}
-
-let selectedCsvFiles = [];
-
-function handleCsvFileSelection(event) {
-    const files = Array.from(event.target.files);
-    processCsvFiles(files);
-}
-
-function handleDragOver(event) {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-    elements.csvDropArea.classList.add('drag-over');
-}
-
-function handleDrop(event) {
-    event.preventDefault();
-    elements.csvDropArea.classList.remove('drag-over');
-    
-    const files = Array.from(event.dataTransfer.files);
-    const csvFiles = files.filter(file => file.name.endsWith('.csv'));
-    
-    if (csvFiles.length !== files.length) {
-        showToast('Only CSV files are allowed', 'warning');
-    }
-    
-    if (csvFiles.length > 0) {
-        processCsvFiles(csvFiles);
-    }
-}
-
-function processCsvFiles(files) {
-    selectedCsvFiles = files;
-    
-    if (files.length > 0) {
-        elements.selectedFiles.style.display = 'block';
-        elements.filesList.innerHTML = '';
-        
-        files.forEach(file => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <i class="fas fa-file-csv"></i>
-                <span>${file.name}</span>
-                <span class="file-size">(${formatFileSize(file.size)})</span>
-            `;
-            elements.filesList.appendChild(li);
-        });
-        
-        elements.uploadCsvBtn.disabled = false;
-    } else {
-        elements.selectedFiles.style.display = 'none';
-        elements.uploadCsvBtn.disabled = true;
-    }
-}
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-async function uploadCsvToFirebase() {
-    if (selectedCsvFiles.length === 0) {
-        showToast('Please select CSV files to upload', 'warning');
-        return;
-    }
-    
-    if (!isLoggedIn || !currentUser) {
-        showToast('Please log in to upload files', 'warning');
-        showLoginModal();
-        return;
-    }
-    
-    const collectionName = elements.uploadCollection.value;
-    const clearBefore = elements.clearBeforeUpload.checked;
-    
-    elements.uploadProgress.style.display = 'block';
-    elements.uploadCsvBtn.disabled = true;
-    
-    try {
-        let totalProcessed = 0;
-        let totalFiles = selectedCsvFiles.length;
-        let allAnnotations = [];
-        
-        // Clear existing data if requested
-        if (clearBefore) {
-            elements.uploadStatus.textContent = 'Clearing existing data...';
-            const clearResult = await FirebaseService.clearCollection(collectionName);
-            if (!clearResult.success) {
-                throw new Error('Failed to clear existing data: ' + clearResult.error);
-            }
-        }
-        
-        // Process each CSV file
-        for (let i = 0; i < selectedCsvFiles.length; i++) {
-            const file = selectedCsvFiles[i];
-            elements.uploadStatus.textContent = `Processing ${file.name}...`;
-            
-            try {
-                const csvContent = await readFileAsText(file);
-                const parsedData = parseCSV(csvContent);
-                
-                // Add user tracking to each annotation
-                const annotationsWithUser = parsedData.map(annotation => ({
-                    ...annotation,
-                    annotatorId: currentUser.id,
-                    uploadedBy: currentUser.userId || currentUser.id,
-                    uploadedAt: new Date().toISOString(),
-                    sourceFile: file.name
-                }));
-                
-                allAnnotations = allAnnotations.concat(annotationsWithUser);
-                totalProcessed++;
-                
-                // Update progress
-                const progress = Math.round((totalProcessed / totalFiles) * 100);
-                elements.uploadProgressBar.style.width = progress + '%';
-                
-            } catch (error) {
-                console.error(`Error processing ${file.name}:`, error);
-                showToast(`Error processing ${file.name}: ${error.message}`, 'error');
-            }
-        }
-        
-        // Upload all annotations to Firebase
-        if (allAnnotations.length > 0) {
-            elements.uploadStatus.textContent = 'Uploading to Firebase...';
-            
-            const uploadResult = await FirebaseService.saveAllToCollection(collectionName, allAnnotations);
-            
-            if (uploadResult.success) {
-                elements.uploadProgressBar.style.width = '100%';
-                elements.uploadStatus.textContent = 'Upload completed successfully!';
-                
-                showToast(`Successfully uploaded ${allAnnotations.length} annotations from ${totalFiles} files`, 'success');
-                
-                // Refresh local data if uploading to current collection
-                const currentCollection = currentTaskMode === 'modification' 
-                    ? COLLECTIONS.MODIFICATION 
-                    : COLLECTIONS.CREATION;
-                    
-                if (collectionName === currentCollection) {
-                    await loadFromFirebase();
-                }
-                
-                setTimeout(() => {
-                    hideCsvUploadModal();
-                }, 2000);
-                
-            } else {
-                throw new Error(uploadResult.error);
-            }
-        } else {
-            throw new Error('No valid data found in any CSV file');
-        }
-        
-    } catch (error) {
-        console.error('Upload error:', error);
-        elements.uploadStatus.textContent = 'Upload failed';
-        showToast('Upload failed: ' + error.message, 'error');
-    } finally {
-        elements.uploadCsvBtn.disabled = false;
-    }
-}
-
-function readFileAsText(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = (e) => reject(new Error('Failed to read file'));
-        reader.readAsText(file);
-    });
-}
-
-// Initialize CSV upload when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // ... existing initialization code ...
-    initializeCsvUpload();
-});
