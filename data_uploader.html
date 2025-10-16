@@ -819,8 +819,8 @@
         // Helper function to check if FirebaseService is available
         function checkFirebaseService() {
             if (typeof FirebaseService === 'undefined') {
-                showStatus('Firebase服务未加载，请刷新页面重试', 'error');
-                showToast('Firebase Error', 'FirebaseService未定义，请检查网络连接并刷新页面', 'error', 10000);
+                showStatus('Firebase service not loaded, please refresh the page and try again', 'error');
+                showToast('Firebase Error', 'FirebaseService is not defined. Please check network connection and refresh the page.', 'error', 10000);
                 return false;
             }
             return true;
