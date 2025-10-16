@@ -1047,3 +1047,244 @@ function exportToCSV() {
         showToast(`Failed to export CSV: ${error.message}`, 'error');
     }
 }
+
+// Handle CSV file import
+function handleFileImport(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) {
+        showToast('No files selected', 'error');
+        return;
+    }
+
+    try {
+        showLoading('Processing CSV files...');
+        
+        const filePromises = Array.from(files).map(file => {
+            return new Promise((resolve, reject) => {
+                if (!file.name.toLowerCase().endsWith('.csv')) {
+                    reject(new Error(`${file.name} is not a CSV file`));
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const csvContent = e.target.result;
+                        const parsedData = parseCSV(csvContent, file.name);
+                        resolve(parsedData);
+                    } catch (error) {
+                        reject(new Error(`Error parsing ${file.name}: ${error.message}`));
+                    }
+                };
+                reader.onerror = function() {
+                    reject(new Error(`Error reading ${file.name}`));
+                };
+                reader.readAsText(file);
+            });
+        });
+
+        Promise.all(filePromises)
+            .then(results => {
+                // Flatten all results into a single array
+                const allAnnotations = results.flat();
+                
+                if (allAnnotations.length === 0) {
+                    showToast('No valid annotations found in the uploaded files', 'warning');
+                    return;
+                }
+
+                // Add imported annotations to the existing array
+                annotations = annotations.concat(allAnnotations);
+                currentIndex = 0;
+                
+                // Apply filters and update UI
+                applyFilters();
+                if (filteredAnnotations.length > 0) {
+                    loadAnnotation(currentIndex);
+                }
+                updateUI();
+                
+                showToast(`Successfully imported ${allAnnotations.length} annotations from ${files.length} file(s)`, 'success');
+                console.log(`Imported ${allAnnotations.length} annotations from ${files.length} files`);
+            })
+            .catch(error => {
+                console.error('Error importing files:', error);
+                showToast(`Failed to import files: ${error.message}`, 'error');
+            })
+            .finally(() => {
+                hideLoading();
+                // Clear the file input
+                event.target.value = '';
+            });
+
+    } catch (error) {
+        console.error('Error handling file import:', error);
+        showToast(`Error importing files: ${error.message}`, 'error');
+        hideLoading();
+    }
+}
+
+// Parse CSV content into annotation objects
+function parseCSV(csvContent, fileName) {
+    const lines = csvContent.split('\n').filter(line => line.trim());
+    
+    if (lines.length === 0) {
+        throw new Error('CSV file is empty');
+    }
+
+    // Parse header row
+    const headers = lines[0].split(',').map(header => header.trim().replace(/"/g, ''));
+    
+    if (lines.length === 1) {
+        throw new Error('CSV file contains only headers');
+    }
+
+    const annotations = [];
+    
+    // Process data rows
+    for (let i = 1; i < lines.length; i++) {
+        try {
+            const values = parseCSVLine(lines[i]);
+            
+            if (values.length !== headers.length) {
+                console.warn(`Row ${i + 1} in ${fileName} has ${values.length} values but expected ${headers.length}. Skipping.`);
+                continue;
+            }
+
+            const annotation = {
+                id: generateId(),
+                sourceFile: fileName,
+                createdAt: new Date().toISOString(),
+                lastModified: new Date().toISOString()
+            };
+
+            // Map CSV columns to annotation properties
+            headers.forEach((header, index) => {
+                const value = values[index];
+                const normalizedHeader = header.toLowerCase().replace(/\s+/g, '');
+                
+                switch (normalizedHeader) {
+                    case 'id':
+                        // Keep original ID if provided, otherwise use generated one
+                        if (value && value.trim()) {
+                            annotation.originalId = value.trim();
+                        }
+                        break;
+                    case 'topic':
+                        annotation.topic = value || '';
+                        break;
+                    case 'scenario':
+                        annotation.scenario = value || '';
+                        break;
+                    case 'question':
+                        annotation.question = value || '';
+                        break;
+                    case 'answer':
+                        annotation.answer = value || '';
+                        break;
+                    case 'explanation':
+                        annotation.explanation = value || '';
+                        break;
+                    case 'sourceexcerpt':
+                    case 'source_excerpt':
+                    case 'source':
+                        annotation.sourceExcerpt = value || '';
+                        break;
+                    case 'languageregion':
+                    case 'language_region':
+                    case 'region':
+                        annotation.languageRegion = value || '';
+                        break;
+                    case 'annotationstatus':
+                    case 'annotation_status':
+                    case 'status':
+                        annotation.annotationStatus = value || 'pending';
+                        break;
+                    case 'rejectionreason':
+                    case 'rejection_reason':
+                        annotation.rejectionReason = value || '';
+                        break;
+                    case 'completed':
+                        annotation.completed = value === 'true' || value === 'Yes' || value === '1';
+                        break;
+                    case 'annotatorid':
+                    case 'annotator_id':
+                    case 'annotator':
+                        annotation.annotatorId = value || '';
+                        break;
+                    case 'createdat':
+                    case 'created_at':
+                        if (value && value.trim()) {
+                            annotation.createdAt = value.trim();
+                        }
+                        break;
+                    case 'lastmodified':
+                    case 'last_modified':
+                        if (value && value.trim()) {
+                            annotation.lastModified = value.trim();
+                        }
+                        break;
+                    default:
+                        // Store any additional columns as metadata
+                        if (!annotation.metadata) {
+                            annotation.metadata = {};
+                        }
+                        annotation.metadata[header] = value;
+                        break;
+                }
+            });
+
+            // Validate required fields
+            if (!annotation.topic && !annotation.question && !annotation.answer) {
+                console.warn(`Row ${i + 1} in ${fileName} is missing required fields. Skipping.`);
+                continue;
+            }
+
+            // Set completion status based on content
+            if (annotation.completed === undefined) {
+                annotation.completed = isAnnotationComplete(annotation);
+            }
+
+            annotations.push(annotation);
+            
+        } catch (error) {
+            console.warn(`Error parsing row ${i + 1} in ${fileName}: ${error.message}. Skipping.`);
+            continue;
+        }
+    }
+
+    return annotations;
+}
+
+// Parse a single CSV line, handling quoted values and commas
+function parseCSVLine(line) {
+    const values = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        
+        if (char === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+                // Escaped quote
+                current += '"';
+                i++; // Skip next quote
+            } else {
+                // Toggle quote state
+                inQuotes = !inQuotes;
+            }
+        } else if (char === ',' && !inQuotes) {
+            // End of field
+            values.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    
+    // Add the last field
+    values.push(current.trim());
+    
+    return values;
+}
