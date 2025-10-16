@@ -516,7 +516,7 @@ const FirebaseService = {
                     role: userData.role.trim(),
                     accessibleCsvs: userData.accessibleCsvs || ['all'],
                     canModifyData: userData.canModifyData || false, // Include data modification permission
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: new Date(),
                     isActive: true
                 });
             });
