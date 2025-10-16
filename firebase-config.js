@@ -235,7 +235,7 @@ const FirebaseService = {
                 users.push({
                     userId: data.userId,
                     role: data.role,
-                    accessibleCsvs: data.accessibleCsvs || ['all'],
+                    language_code: data.language_code || ['all'],
                     canModifyData: data.canModifyData || false // Include data modification permission
                 });
             });
@@ -260,13 +260,13 @@ const FirebaseService = {
                     user: {
                         userId,
                         role: 'annotator',
-                        accessibleCsvs: ['all'],
+                        language_code: ['all'],
                         canModifyData: false
                     },
                     userInfo: {
                         userId,
                         role: 'annotator',
-                        accessibleCsvs: ['all'],
+                        language_code: ['all'],
                         canModifyData: false
                     }
                 };
@@ -297,12 +297,12 @@ const FirebaseService = {
     },
 
     // Add allowed user to Firestore
-    async addAllowedUser(userId, role, accessibleCsvs = ['all'], canModifyData = false) {
+    async addAllowedUser(userId, role, language_code = ['all'], canModifyData = false) {
         try {
             const userDoc = {
                 userId: userId,
                 role: role,
-                accessibleCsvs: accessibleCsvs,
+                language_code: language_code,
                 canModifyData: canModifyData, // New field to control data modification permissions
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 isActive: true
@@ -562,7 +562,7 @@ const FirebaseService = {
                 batch.set(docRef, {
                     userId: userData.userId.trim(),
                     role: userData.role.trim(),
-                    accessibleCsvs: userData.accessibleCsvs || ['all'],
+                    language_code: userData.language_code || ['all'],
                     canModifyData: userData.canModifyData || false, // Include data modification permission
                     createdAt: new Date(),
                     isActive: true
@@ -590,13 +590,13 @@ const FirebaseService = {
                     user: {
                         userId,
                         role: 'annotator',
-                        accessibleCsvs: ['all'],
+                        language_code: ['all'],
                         canModifyData: false
                     },
                     userInfo: {
                         userId,
                         role: 'annotator',
-                        accessibleCsvs: ['all'],
+                        language_code: ['all'],
                         canModifyData: false
                     }
                 };
@@ -651,13 +651,13 @@ const FirebaseService = {
     },
 
     // Data Modification Methods - Load user's annotation data based on accessible CSVs
-    async loadUserAnnotationData(userId, accessibleCsvs = ['all']) {
+    async loadUserAnnotationData(userId, language_code = ['all']) {
         try {
             let query = db.collection(COLLECTIONS.MODIFICATION);
             
             // If user has specific CSV access restrictions, filter by those
-            if (accessibleCsvs && !accessibleCsvs.includes('all')) {
-                query = query.where('language_region', 'in', accessibleCsvs);
+            if (language_code && !language_code.includes('all')) {
+                query = query.where('language_region', 'in', language_code);
             }
             
             // Also filter by assigned user if needed

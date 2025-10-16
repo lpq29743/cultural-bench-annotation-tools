@@ -188,19 +188,19 @@
                     {
                         userId: 'test001',
                         role: 'annotator',
-                        accessibleCsvs: ['all'],
+                        language_code: ['all'],
                         canModifyData: true
                     },
                     {
                         userId: 'test002', 
                         role: 'annotator',
-                        accessibleCsvs: ['zh_cn'],
+                        language_code: ['zh_cn'],
                         canModifyData: false
                     },
                     {
                         userId: 'admin001',
                         role: 'admin',
-                        accessibleCsvs: ['all'],
+                        language_code: ['all'],
                         canModifyData: true
                     }
                 ];
@@ -212,7 +212,7 @@
                         const result = await FirebaseService.addAllowedUser(
                             user.userId,
                             user.role,
-                            user.accessibleCsvs,
+                            user.language_code,
                             user.canModifyData
                         );
                         
@@ -258,7 +258,7 @@
                             <strong>ID:</strong> ${user.userId}<br>
                             <strong>角色:</strong> ${user.role}<br>
                             <strong>可修改数据:</strong> ${user.canModifyData ? '是' : '否'}<br>
-                            <strong>可访问CSV:</strong> ${Array.isArray(user.accessibleCsvs) ? user.accessibleCsvs.join(', ') : (user.accessibleCsvs || 'all')}
+                            <strong>可访问CSV:</strong> ${Array.isArray(user.language_code) ? user.language_code.join(', ') : (user.language_code || 'all')}
                         </div>
                     `).join('');
                     

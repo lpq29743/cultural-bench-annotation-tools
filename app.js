@@ -227,7 +227,7 @@ async function handleUserLogin(event) {
             const userData = {
                 userId: userId,
                 role: validation.userInfo.role,
-                accessibleCsvs: validation.userInfo.accessibleCsvs,
+                language_code: validation.userInfo.language_code,
                 canModifyData: validation.userInfo.canModifyData || false,
                 name: userId, // Default name to userId
                 email: '', // Can be updated later
@@ -1012,7 +1012,7 @@ async function loadUserRelatedData(userId) {
         const userInfo = userResult.user;
         
         // Get user's accessible language region codes
-        const accessResult = await FirebaseService.getUserAccessibleCsvs(userId);
+        const accessResult = await FirebaseService.getUserLanguageCode(userId);
         
         if (!accessResult.success) {
             return { success: false, error: 'Unable to determine user access permissions' };
