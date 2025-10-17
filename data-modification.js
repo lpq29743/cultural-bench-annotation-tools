@@ -299,11 +299,18 @@ function displayCurrentItem() {
 }
 
 function resetDecisionState() {
-    // Reset button states
-    const buttons = [elements.acceptBtn, elements.reviseBtn, elements.rejectBtn];
-    buttons.forEach(btn => {
-        if (btn) {
-            btn.classList.remove('selected');
+    // Reset button states with better null checking
+    const buttons = [
+        { element: elements.acceptBtn, name: 'acceptBtn' },
+        { element: elements.reviseBtn, name: 'reviseBtn' },
+        { element: elements.rejectBtn, name: 'rejectBtn' }
+    ];
+    
+    buttons.forEach(({ element, name }) => {
+        if (element && element.classList) {
+            element.classList.remove('selected');
+        } else {
+            console.warn(`Button element ${name} is null or missing classList`);
         }
     });
 }
