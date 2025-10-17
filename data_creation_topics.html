@@ -1298,55 +1298,6 @@
                 `;
             }
         }
-            if (!topicExamples.length) {
-                // Show loading state if no data available
-                const currentTopicField = document.getElementById('currentTopicField');
-                const currentExampleField = document.getElementById('currentExampleField');
-                if (currentTopicField) currentTopicField.textContent = 'Loading...';
-                if (currentExampleField) currentExampleField.textContent = 'Loading...';
-                return;
-            }
-
-            if (currentTopicIndex < 1 || currentTopicIndex > topicExamples.length) {
-                return;
-            }
-
-            const example = topicExamples[currentTopicIndex - 1];
-            const maxTopics = topicExamples.length;
-
-            // Update topic counter
-            const topicCounter = document.getElementById('topicCounter');
-            if (topicCounter) {
-                topicCounter.textContent = `Topic ${currentTopicIndex} of ${maxTopics}`;
-            }
-
-            // Update current topic display fields
-            const currentTopicField = document.getElementById('currentTopicField');
-            const currentExampleField = document.getElementById('currentExampleField');
-            if (currentTopicField) currentTopicField.textContent = example.topic || '-';
-            if (currentExampleField) {
-                const scenario = example.scenario || example.example || '-';
-                currentExampleField.textContent = scenario.length > 100 ? scenario.substring(0, 100) + '...' : scenario;
-            }
-
-            // Update navigation buttons state
-            const prevBtn = document.getElementById('prevTopic');
-            const nextBtn = document.getElementById('nextTopic');
-            const topicIndexInput = document.getElementById('topicIndex');
-
-            if (prevBtn) {
-                prevBtn.disabled = currentTopicIndex <= 1;
-                prevBtn.style.opacity = currentTopicIndex <= 1 ? '0.5' : '1';
-            }
-            if (nextBtn) {
-                nextBtn.disabled = currentTopicIndex >= maxTopics;
-                nextBtn.style.opacity = currentTopicIndex >= maxTopics ? '0.5' : '1';
-            }
-            if (topicIndexInput) {
-                topicIndexInput.value = currentTopicIndex;
-                topicIndexInput.max = maxTopics;
-            }
-        }
 
         // Update progress display
         function updateProgressDisplay() {
