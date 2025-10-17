@@ -435,6 +435,167 @@
                 animation: none;
             }
         }
+        
+        /* Data display styles */
+        .data-section {
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: #667eea;
+        }
+        
+        .topic-example-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .example-header {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .example-field {
+            margin-bottom: 0.75rem;
+        }
+        
+        .example-field label {
+            font-weight: 600;
+            color: #374151;
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .example-field p {
+            margin: 0;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .topic-tag {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+        
+        .topic-tag:hover {
+            transform: translateY(-2px);
+        }
+        
+        .data-table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .data-table th {
+            background: #f8fafc;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .data-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+        
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+        
+        .scenario-cell {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .topic-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .topic-badge.commerce {
+            background: #10b981;
+        }
+        
+        .topic-badge.travel {
+            background: #3b82f6;
+        }
+        
+        .dataset-stats {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
     </style>
 </head>
 <body>
@@ -497,28 +658,113 @@
             <div class="creation-container">
                 <div class="left-panel">
                     <h2 class="panel-title">
-                        <i class="fas fa-lightbulb"></i>
-                        Material Resources
+                        <i class="fas fa-database"></i>
+                        Reference Data & Examples
                     </h2>
-                    <p>Use the following resources for inspiration:</p>
-                    <ul class="material-list">
-                        <li><strong>Personal experience:</strong> Draw examples from your own perspective or cultural knowledge.</li>
-                        <li><strong>Local online forums:</strong> Use credible forums or community discussions as inspiration.</li>
-                        <li>
-                            <strong>Topic list with examples:</strong> Refer to the predefined topics and examples provided in <span class="code">data_creation/cultural_topics.xlsx</span>.
-                            <div style="margin-top: 8px; font-size: 0.9em; color: #666;">
-                                <strong>16 Available Topics:</strong> Belief, Commerce, Education, Entertainment, Finance, Food, Government, Habitat, Health, Heritage, Language, Pets, Science, Social, Travel, Work
+                    
+                    <!-- Topic Examples Section -->
+                    <div class="data-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-tags"></i>
+                            Available Topics with Example
+                        </h3>
+                        <div class="topic-example-card">
+                            <div class="example-header">
+                                <strong>Topic:</strong> Cultural Traditions
                             </div>
-                        </li>
-                        <li>
-                            <strong>Multilingual data:</strong> Leverage annotated data from other languages available in <span class="code">data_creation/annotated_data.csv</span>.
-                            <div style="margin-top: 8px; font-size: 0.9em; color: #666;">
-                                <strong>Dataset Info:</strong> 6,213 cultural benchmark items with bilingual content (original language + English translation)
-                                <br><strong>Format:</strong> language, region, language_region, topic, scenario, question, answer, explanation
-                                <br><strong>Example Topics:</strong> Commerce (shopping apps), Travel (transportation), Education (exams), Government (policies)
+                            <div class="example-content">
+                                <div class="example-field">
+                                    <label>Scenario:</label>
+                                    <p>Spring Festival Celebration</p>
+                                </div>
+                                <div class="example-field">
+                                    <label>Question:</label>
+                                    <p>What is the most important traditional activity during Chinese New Year?</p>
+                                </div>
+                                <div class="example-field">
+                                    <label>Answer:</label>
+                                    <p>Family reunion dinner on New Year's Eve</p>
+                                </div>
+                                <div class="example-field">
+                                    <label>Explanation:</label>
+                                    <p>The reunion dinner (Nian Ye Fan) is considered the most significant tradition as it symbolizes family unity and marks the beginning of the new year celebrations.</p>
+                                </div>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                        
+                        <div class="topics-grid">
+                            <div class="topic-tag">Belief</div>
+                            <div class="topic-tag">Commerce</div>
+                            <div class="topic-tag">Education</div>
+                            <div class="topic-tag">Entertainment</div>
+                            <div class="topic-tag">Finance</div>
+                            <div class="topic-tag">Food</div>
+                            <div class="topic-tag">Government</div>
+                            <div class="topic-tag">Habitat</div>
+                            <div class="topic-tag">Health</div>
+                            <div class="topic-tag">Heritage</div>
+                            <div class="topic-tag">Language</div>
+                            <div class="topic-tag">Pets</div>
+                            <div class="topic-tag">Science</div>
+                            <div class="topic-tag">Social</div>
+                            <div class="topic-tag">Travel</div>
+                            <div class="topic-tag">Work</div>
+                        </div>
+                    </div>
+
+                    <!-- Sample Data Section -->
+                    <div class="data-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-table"></i>
+                            Sample Data from Existing Dataset
+                        </h3>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Topic</th>
+                                        <th>Scenario (Chinese)</th>
+                                        <th>Question</th>
+                                        <th>Answer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="topic-badge commerce">Commerce</span></td>
+                                        <td class="scenario-cell">结束了一周忙碌的工作，我打算在我位于天心区的小窝里好好地做顿饭。外面的天气炎热，实在不想出门买菜。其他城市的朋友给我推荐了一个叫朴朴买菜的软件...</td>
+                                        <td>请问朋友最可能的回答是？</td>
+                                        <td>没有</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="topic-badge commerce">Commerce</span></td>
+                                        <td class="scenario-cell">用户点进了我家的线上超市，逛了一圈后，询问我家客服：你们有没有tree tree的产品</td>
+                                        <td>请问我家客服应该向用户推荐什么？A. 薯片 B. 盆栽 C. 沙拉 D. 果冻</td>
+                                        <td>A</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="topic-badge travel">Travel</span></td>
+                                        <td class="scenario-cell">这个假期，我打算来个两城游。为了交通方便，想要找两个有地铁连接的城市作为目标。</td>
+                                        <td>请问以下哪个不符合要求？A. 广州-佛山 B. 杭州-绍兴 C. 成都-资阳 D. 北京-天津</td>
+                                        <td>D</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="dataset-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">6,213</span>
+                                <span class="stat-label">Total Items</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">16</span>
+                                <span class="stat-label">Topics</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">Bilingual</span>
+                                <span class="stat-label">Format</span>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
                         <h4 style="margin: 0 0 10px 0; color: #0369a1;">
