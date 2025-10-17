@@ -37,6 +37,8 @@
             width: 100%;
             position: relative;
             min-height: auto;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         
         .user-details {
@@ -44,6 +46,7 @@
             align-items: center;
             gap: 2rem;
             flex: 1;
+            min-width: 0;
         }
         
         .user-details h3 {
@@ -61,6 +64,7 @@
             display: flex;
             gap: 1.5rem;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .annotation-progress {
@@ -135,6 +139,8 @@
             border-radius: 8px;
             margin-bottom: 1.5rem;
             border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         
         .meta-field {
@@ -197,6 +203,7 @@
             gap: 1rem;
             margin: 2rem 0;
             justify-content: center;
+            flex-wrap: wrap;
         }
         
         .btn-decision {
@@ -209,6 +216,8 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            min-width: 120px;
+            justify-content: center;
         }
         
         .btn-accept {
@@ -220,6 +229,11 @@
             background: #059669;
         }
         
+        .btn-accept:focus {
+            outline: 2px solid #10b981;
+            outline-offset: 2px;
+        }
+        
         .btn-revise {
             background: #f59e0b;
             color: white;
@@ -229,6 +243,11 @@
             background: #d97706;
         }
         
+        .btn-revise:focus {
+            outline: 2px solid #f59e0b;
+            outline-offset: 2px;
+        }
+        
         .btn-reject {
             background: #ef4444;
             color: white;
@@ -236,6 +255,11 @@
         
         .btn-reject:hover {
             background: #dc2626;
+        }
+        
+        .btn-reject:focus {
+            outline: 2px solid #ef4444;
+            outline-offset: 2px;
         }
         
         .rejection-reason {
@@ -263,6 +287,8 @@
             padding: 1rem;
             background: #f8fafc;
             border-radius: 8px;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         
         .nav-btn {
@@ -276,6 +302,11 @@
         
         .nav-btn:hover:not(:disabled) {
             background: #f3f4f6;
+        }
+        
+        .nav-btn:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
         }
         
         .nav-btn:disabled {
@@ -381,6 +412,132 @@
         .back-link:hover {
             color: #5a67d8;
         }
+        
+        .back-link:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content-area {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .user-details {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .user-info-items {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .user-info-section {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            
+            .user-details {
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .decision-buttons-top {
+                justify-content: center;
+            }
+            
+            .btn-decision {
+                flex: 1;
+                min-width: auto;
+            }
+            
+            .navigation-controls {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .meta-info-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .annotation-item {
+                padding: 1.5rem;
+            }
+            
+            .left-column {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .decision-buttons-top {
+                flex-direction: column;
+            }
+            
+            .btn-decision {
+                width: 100%;
+            }
+            
+            .user-info-items {
+                width: 100%;
+            }
+            
+            .annotation-progress {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .btn-decision {
+                border: 2px solid currentColor;
+            }
+            
+            .field-content {
+                border: 2px solid #000;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .btn-decision,
+            .nav-btn,
+            .back-link,
+            .toast {
+                transition: none;
+            }
+            
+            .spinner {
+                animation: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -388,10 +545,10 @@
         <!-- Header -->
         <div class="header">
             <div class="header-content">
-                <h1><i class="fas fa-edit"></i> Data Modification</h1>
+                <h1><i class="fas fa-edit" aria-hidden="true"></i> Data Modification</h1>
                 <div class="header-actions">
-                    <a href="main.html" class="back-link">
-                        <i class="fas fa-arrow-left"></i>
+                    <a href="main.html" class="back-link" aria-label="Go back to main page">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
                         Back to Main
                     </a>
                 </div>
@@ -399,7 +556,7 @@
         </div>
         
         <!-- User Info Section (Hidden initially) - Moved to top -->
-        <div id="userInfoSection" class="user-info-section hidden">
+        <div id="userInfoSection" class="user-info-section hidden" role="banner" aria-label="User information">
             <div class="user-details">
                 <h3 id="userDisplayName">Welcome, User</h3>
                 <div class="user-info-items">
@@ -408,43 +565,45 @@
                     <p><strong>Permission:</strong> <span id="userPermission"></span></p>
                 </div>
             </div>
-            <div class="annotation-progress">
-                <div class="progress-number" id="progressNumber">0/0</div>
+            <div class="annotation-progress" role="status" aria-label="Annotation progress">
+                <div class="progress-number" id="progressNumber" aria-live="polite">0/0</div>
                 <div class="progress-label">Items</div>
             </div>
-            <button id="logoutBtn" class="btn btn-secondary">
-                <i class="fas fa-sign-out-alt"></i>
+            <button id="logoutBtn" class="btn btn-secondary" aria-label="Logout from current session">
+                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                 Logout
             </button>
         </div>
 
         <div class="main-content">
             <!-- Login Section -->
-            <div id="loginSection" class="login-section">
-                <h2><i class="fas fa-user-check"></i> User Authentication</h2>
+            <div id="loginSection" class="login-section" role="main">
+                <h2><i class="fas fa-user-check" aria-hidden="true"></i> User Authentication</h2>
                 <p>Please enter your User ID to access the data modification tool.</p>
                 
-                <form id="loginForm" class="login-form">
+                <form id="loginForm" class="login-form" role="form" aria-label="Login form">
                     <div class="form-group">
                         <label for="userId">User ID</label>
-                        <input type="text" id="userId" class="form-input" placeholder="Enter your User ID" required>
+                        <input type="text" id="userId" class="form-input" placeholder="Enter your User ID" required aria-describedby="userId-help">
+                        <div id="userId-help" class="sr-only">Enter your assigned user ID to access the data modification tool</div>
                     </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i>
+                    <button type="submit" class="btn btn-primary" aria-describedby="login-help">
+                        <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
                         Login
                     </button>
+                    <div id="login-help" class="sr-only">Click to authenticate and access the annotation interface</div>
                 </form>
             </div>
             
             <!-- Annotation Section (Hidden initially) -->
-            <div id="annotationSection" class="hidden">
+            <div id="annotationSection" class="hidden" role="main" aria-label="Annotation interface">
                 <!-- Meta Information at the top -->
-                <div class="meta-info-section">
+                <div class="meta-info-section" role="region" aria-label="Item metadata">
                     <div class="field-group">
-                        <label class="field-label">Topic</label>
-                        <div id="topic" class="field-content meta-field"></div>
+                        <label class="field-label" for="topic">Topic</label>
+                        <div id="topic" class="field-content meta-field" role="text"></div>
                     </div>
-                    <div class="item-counter-top">
+                    <div class="item-counter-top" role="status" aria-live="polite">
                         Item <span id="currentItemIndexTop">1</span> of <span id="totalItemsTop">0</span>
                     </div>
                 </div>
@@ -454,85 +613,95 @@
                     <!-- Left Column: Source Excerpt -->
                     <div class="left-column">
                         <div class="field-group">
-                            <label class="field-label">Source Excerpt</label>
-                            <div id="sourceExcerpt" class="field-content source-excerpt-content"></div>
+                            <label class="field-label" for="sourceExcerpt">Source Excerpt</label>
+                            <div id="sourceExcerpt" class="field-content source-excerpt-content" role="textbox" aria-readonly="true" tabindex="0"></div>
                         </div>
                     </div>
                     
                     <!-- Right Column: Decision Buttons and Form Fields -->
                     <div class="right-column">
                         <!-- Decision Buttons at the top right -->
-                        <div class="decision-buttons-top">
-                            <button id="acceptBtn" class="btn-decision btn-accept">
-                                <i class="fas fa-check"></i>
+                        <div class="decision-buttons-top" role="group" aria-label="Annotation decisions">
+                            <button id="acceptBtn" class="btn-decision btn-accept" aria-describedby="accept-help">
+                                <i class="fas fa-check" aria-hidden="true"></i>
                                 Accept
                             </button>
-                            <button id="reviseBtn" class="btn-decision btn-revise">
-                                <i class="fas fa-edit"></i>
+                            <div id="accept-help" class="sr-only">Accept the current annotation as correct</div>
+                            
+                            <button id="reviseBtn" class="btn-decision btn-revise" aria-describedby="revise-help">
+                                <i class="fas fa-edit" aria-hidden="true"></i>
                                 Revise
                             </button>
-                            <button id="rejectBtn" class="btn-decision btn-reject">
-                                <i class="fas fa-times"></i>
+                            <div id="revise-help" class="sr-only">Mark for revision and edit the content</div>
+                            
+                            <button id="rejectBtn" class="btn-decision btn-reject" aria-describedby="reject-help">
+                                <i class="fas fa-times" aria-hidden="true"></i>
                                 Reject
                             </button>
+                            <div id="reject-help" class="sr-only">Reject the annotation with a reason</div>
                         </div>
                         
                         <!-- Rejection Reason (Hidden initially) -->
-                        <div id="rejectionReason" class="rejection-reason">
-                            <label class="field-label">Rejection Reason</label>
-                            <select id="rejectionSelect" class="form-select">
+                        <div id="rejectionReason" class="rejection-reason" role="region" aria-label="Rejection reason selection">
+                            <label class="field-label" for="rejectionSelect">Rejection Reason</label>
+                            <select id="rejectionSelect" class="form-select" aria-describedby="rejection-help">
                                 <option value="">Select a reason...</option>
                                 <option value="incorrect_information">Source excerpt contains incorrect information</option>
                                 <option value="subjective_content">Source excerpt is subjective and not objective</option>
                                 <option value="cannot_revise">Generated sample cannot be reasonably revised</option>
                                 <option value="other">Other reason</option>
                             </select>
+                            <div id="rejection-help" class="sr-only">Choose the primary reason for rejecting this annotation</div>
                         </div>
                         
                         <!-- Form Fields -->
-                        <div class="form-fields">
+                        <div class="form-fields" role="region" aria-label="Editable annotation fields">
                             <div class="field-group">
-                                <label class="field-label">Scenario</label>
-                                <textarea id="scenario" class="field-content editable-field" rows="3"></textarea>
+                                <label class="field-label" for="scenario">Scenario</label>
+                                <textarea id="scenario" class="field-content editable-field" rows="3" aria-describedby="scenario-help"></textarea>
+                                <div id="scenario-help" class="sr-only">Edit the scenario description for this cultural benchmark item</div>
                             </div>
                             
                             <div class="field-group">
-                                <label class="field-label">Question</label>
-                                <textarea id="question" class="field-content editable-field" rows="2"></textarea>
+                                <label class="field-label" for="question">Question</label>
+                                <textarea id="question" class="field-content editable-field" rows="2" aria-describedby="question-help"></textarea>
+                                <div id="question-help" class="sr-only">Edit the question text for this benchmark item</div>
                             </div>
                             
                             <div class="field-group">
-                                <label class="field-label">Answer</label>
-                                <textarea id="answer" class="field-content editable-field" rows="2"></textarea>
+                                <label class="field-label" for="answer">Answer</label>
+                                <textarea id="answer" class="field-content editable-field" rows="2" aria-describedby="answer-help"></textarea>
+                                <div id="answer-help" class="sr-only">Edit the correct answer for this question</div>
                             </div>
                             
                             <div class="field-group">
-                                <label class="field-label">Explanation</label>
-                                <textarea id="explanation" class="field-content editable-field" rows="3"></textarea>
+                                <label class="field-label" for="explanation">Explanation</label>
+                                <textarea id="explanation" class="field-content editable-field" rows="3" aria-describedby="explanation-help"></textarea>
+                                <div id="explanation-help" class="sr-only">Edit the explanation for why this answer is correct</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Navigation Controls -->
-                <div class="navigation-controls">
-                    <button id="prevBtn" class="nav-btn">
-                        <i class="fas fa-chevron-left"></i>
+                <div class="navigation-controls" role="navigation" aria-label="Item navigation">
+                    <button id="prevBtn" class="nav-btn" aria-label="Go to previous item">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
                         Previous
                     </button>
-                    <div class="item-info">
+                    <div class="item-info" role="status" aria-live="polite">
                         <span id="currentItemIndex">1</span> of <span id="totalItems">0</span>
                     </div>
-                    <button id="nextBtn" class="nav-btn">
+                    <button id="nextBtn" class="nav-btn" aria-label="Go to next item">
                         Next
-                        <i class="fas fa-chevron-right"></i>
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
             
             <!-- Empty State -->
-            <div id="emptyState" class="empty-state hidden">
-                <i class="fas fa-inbox"></i>
+            <div id="emptyState" class="empty-state hidden" role="status">
+                <i class="fas fa-inbox" aria-hidden="true"></i>
                 <h3>No Data Available</h3>
                 <p id="emptyStateMessage">No annotation items found for your language code.</p>
             </div>
@@ -540,15 +709,15 @@
     </div>
     
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden">
+    <div id="loadingOverlay" class="loading-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="loadingMessage">
         <div class="loading-content">
-            <div class="spinner"></div>
+            <div class="spinner" aria-hidden="true"></div>
             <div id="loadingMessage">Loading...</div>
         </div>
     </div>
     
     <!-- Toast Container -->
-    <div id="toastContainer"></div>
+    <div id="toastContainer" role="region" aria-live="polite" aria-label="Notifications"></div>
     
     <!-- Scripts -->
     <!-- Firebase SDK -->
