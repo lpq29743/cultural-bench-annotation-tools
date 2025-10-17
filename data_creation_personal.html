@@ -456,15 +456,19 @@
 
 <body>
     <div class="container">
-        <a href="main.html" class="back-link">
-            <i class="fas fa-arrow-left"></i>
-            Back to Main
-        </a>
-        
-        <header class="header">
-            <h1>Personal Experience Data Creation</h1>
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-user-edit" aria-hidden="true"></i> Personal Experience Data Creation</h1>
+                <div class="header-actions">
+                    <a href="main.html" class="back-link" aria-label="Go back to main page">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        Back to Main
+                    </a>
+                </div>
+            </div>
             <p>Create cultural benchmark data based on your personal perspective and cultural knowledge, or draw inspiration from credible local online forums and community discussions.</p>
-        </header>
+        </div>
         
         <!-- Login Section -->
         <div id="loginSection" class="login-section">
@@ -519,6 +523,15 @@
 
             <div class="creation-container">
                 <div class="left-panel">
+                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <h3 style="margin: 0 0 0.5rem 0; color: #991b1b; font-size: 1.1rem;">
+                            <i class="fas fa-exclamation-triangle"></i> Important: Please read this first before creating data
+                        </h3>
+                        <p style="margin: 0; color: #7f1d1d; font-size: 0.9rem; line-height: 1.4;">
+                            Before creating any data, please carefully review all guidelines below to ensure your annotations meet the quality standards and cultural authenticity requirements.
+                        </p>
+                    </div>
+                    
                     <h2 class="panel-title">
                         <i class="fas fa-lightbulb"></i>
                         Personal Experience Guidelines
