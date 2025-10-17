@@ -10,6 +10,17 @@
     
     <style>
         /* Additional styles specific to data modification */
+        
+        /* Expand container width for better annotation section display */
+        .container {
+            max-width: 1400px !important;
+            width: 95% !important;
+        }
+        
+        /* Improve annotation section layout */
+        #annotationSection {
+            width: 100%;
+        }
         .login-section {
             background: white;
             border-radius: 12px;
@@ -28,37 +39,61 @@
         .user-info-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            margin-bottom: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
             position: relative;
+            min-height: auto;
+        }
+        
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex: 1;
         }
         
         .user-details h3 {
-            margin-bottom: 0.5rem;
+            margin: 0;
+            font-size: 1.1rem;
         }
         
         .user-details p {
             opacity: 0.9;
-            margin-bottom: 0.25rem;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .user-info-items {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
         }
         
         .annotation-progress {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 1rem;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
             text-align: center;
-            min-width: 200px;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .progress-number {
-            font-size: 2rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin: 0;
+        }
+        
+        .progress-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
         }
         
         .annotation-item {
@@ -378,13 +413,15 @@
         <div id="userInfoSection" class="user-info-section hidden">
             <div class="user-details">
                 <h3 id="userDisplayName">Welcome, User</h3>
-                <p><strong>User ID:</strong> <span id="userIdDisplay"></span></p>
-                <p><strong>Language Code:</strong> <span id="userLanguageCode"></span></p>
-                <p><strong>Permission:</strong> <span id="userPermission"></span></p>
+                <div class="user-info-items">
+                    <p><strong>ID:</strong> <span id="userIdDisplay"></span></p>
+                    <p><strong>Language:</strong> <span id="userLanguageCode"></span></p>
+                    <p><strong>Permission:</strong> <span id="userPermission"></span></p>
+                </div>
             </div>
             <div class="annotation-progress">
                 <div class="progress-number" id="progressNumber">0/0</div>
-                <div>Items Completed</div>
+                <div class="progress-label">Items</div>
             </div>
             <button id="logoutBtn" class="btn btn-secondary">
                 <i class="fas fa-sign-out-alt"></i>
