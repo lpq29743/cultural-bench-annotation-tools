@@ -229,6 +229,36 @@ const FirebaseService = {
         }
     },
 
+    // Get all created data (annotated data)
+    async getAllCreatedData() {
+        try {
+            return await this.loadFromCollection(COLLECTIONS.CREATED_DATA);
+        } catch (error) {
+            console.error('Error getting all created data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Get all annotated data (alias for getAllCreatedData for backward compatibility)
+    async getAllAnnotatedData() {
+        try {
+            return await this.loadFromCollection(COLLECTIONS.ANNOTATED_DATA);
+        } catch (error) {
+            console.error('Error getting all annotated data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    // Get all modified data
+    async getAllModifiedData() {
+        try {
+            return await this.loadFromCollection(COLLECTIONS.MODIFIED_DATA);
+        } catch (error) {
+            console.error('Error getting all modified data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
     // User validation using Firestore database instead of Storage
     async loadAllowedUsers() {
         try {
