@@ -173,7 +173,7 @@ async function handleLogin(event) {
             return;
         }
         
-        // Step 4: If canModifyData is true, get language_code (type: str)
+        // Step 4: If canModifyData is true, get language_region (type: str)
         currentUser = {
             userId: validation.userInfo.userId,
             role: validation.userInfo.role,
