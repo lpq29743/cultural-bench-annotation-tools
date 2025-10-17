@@ -1032,7 +1032,7 @@
                         <div class="navigation-controls">
                             <div class="nav-input-group">
                                 <label for="dataIndex">Go to item:</label>
-                                <input type="number" id="dataIndex" min="1" max="100" value="1" class="form-input"
+                                <input type="number" id="dataIndex" min="1" max="1" value="1" class="form-input"
                                     style="width: 80px;">
                                 <button id="goToData" class="btn btn-primary">Go</button>
                             </div>
@@ -1041,14 +1041,20 @@
                                     <i class="fas fa-chevron-left"></i>
                                     Previous
                                 </button>
-                                <div class="topic-counter">
-                                    Item <span id="currentItemNumber">1</span> of 100
+                                <div class="topic-counter" id="dataCounter">
+                                    Item <span id="currentItemNumber">1</span> of <span id="totalItems">0</span>
                                 </div>
                                 <button id="nextData" class="btn btn-secondary">
                                     Next
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
+                        </div>
+                        
+                        <!-- Current Data Display -->
+                        <div id="currentDataDisplay" class="topic-example-card" style="margin-top: 1rem;">
+                            <div class="example-header">Loading Firebase Data...</div>
+                            <p>Please wait while we load the annotated data from Firebase.</p>
                         </div>
                     </div>
 
@@ -1388,7 +1394,6 @@
 
         async function loadAnnotatedData() {
             const statusDiv = document.getElementById('firebaseStatus');
-            const materialList = document.getElementById('materialList');
 
             try {
                 showFirebaseStatus('Loading annotated data from Firebase...', 'loading');
@@ -1397,24 +1402,24 @@
 
                 if (result.success && result.data.length > 0) {
                     firebaseAnnotatedData = result.data;
-                    displayAnnotatedData(result.data);
+                    multilingualData = result.data; // Use Firebase data as multilingual data
+                    
+                    // Update navigation controls
+                    updateNavigationControls();
+                    
+                    // Display first item
+                    currentDataIndex = 1;
+                    displayCurrentData();
+                    
                     showFirebaseStatus(`Loaded ${result.data.length} annotated items from Firebase`, 'success');
                 } else {
                     showFirebaseStatus('No annotated data found in Firebase. Please ensure data exists in the annotated_data collection.', 'error');
-                    
-                    // If materialList exists, show a fallback message
-                    if (materialList) {
-                        materialList.innerHTML = '<li><strong>No Data:</strong> No annotated data available from Firebase.</li>';
-                    }
+                    displayNoDataMessage();
                 }
             } catch (error) {
                 console.error('Error loading annotated data:', error);
                 showFirebaseStatus('Failed to load annotated data from Firebase: ' + error.message, 'error');
-                
-                // If materialList exists, show an error message
-                if (materialList) {
-                    materialList.innerHTML = '<li><strong>Error:</strong> Failed to load data from Firebase. Please check your connection and try again.</li>';
-                }
+                displayErrorMessage(error.message);
             }
         }
 
@@ -1509,88 +1514,21 @@
         // Multilingual Data Navigation and Examples
         let currentDataIndex = 1;
         let multilingualData = [];
-        // Sample multilingual data based on annotated_data.csv structure
-        const sampleMultilingualData = [
-            {
-                language: "zh",
-                region: "cn",
-                language_region: "zh_cn",
-                topic: "Commerce",
-                scenario: "结束了一周忙碌的工作，我打算在我位于天心区的小窝里好好地做顿饭。外面的天气炎热，实在不想出门买菜。其他城市的朋友给我推荐了一个叫朴朴买菜的软件，说在上面买菜很方便。我问我这也有吗？朋友上网看了一下。",
-                question: "请问朋友最可能的回答是？",
-                answer: "没有",
-                explanation: "朴朴买菜只在成都市，东莞市，佛山市，福州市，广州市，泉州市，深圳市，武汉市，厦门市提供服务。天心区位于长沙市，暂时不受支持"
-            },
-            {
-                language: "zh",
-                region: "cn",
-                language_region: "zh_cn",
-                topic: "Commerce",
-                scenario: "用户点进了我家的线上超市，逛了一圈后，询问我家客服：你们有没有tree tree的产品",
-                question: "请问我家客服应该向用户推荐什么？",
-                answer: "薯片",
-                explanation: "Tree Tree是一个薯片品牌，以其独特的包装和口味在中国市场受到欢迎"
-            },
-            {
-                language: "zh",
-                region: "cn",
-                language_region: "zh_cn",
-                topic: "Food",
-                scenario: "春节期间，家人聚在一起准备年夜饭。奶奶说一定要准备一道特别的菜，寓意年年有余。",
-                question: "奶奶最可能准备什么菜？",
-                answer: "鱼",
-                explanation: "在中国传统文化中，鱼象征着'年年有余'，是年夜饭必备的吉祥菜肴"
-            },
-            {
-                language: "zh",
-                region: "cn",
-                language_region: "zh_cn",
-                topic: "Heritage",
-                scenario: "小明第一次去寺庙参拜，看到很多人在烧香。他不知道应该怎么做。",
-                question: "小明应该如何正确地烧香？",
-                answer: "双手合十，虔诚祈祷，然后将香插入香炉",
-                explanation: "烧香是中国传统的祈福方式，需要保持虔诚的心态，双手合十表示尊敬"
-            },
-            {
-                language: "zh",
-                region: "cn",
-                language_region: "zh_cn",
-                topic: "Social",
-                scenario: "在商务场合，张先生要和新客户交换名片。",
-                question: "张先生应该如何递交名片？",
-                answer: "双手递交，名片正面朝向对方",
-                explanation: "在中国商务礼仪中，双手递交名片表示尊重，名片正面朝向对方便于阅读"
-            }
-        ];
-        // Generate more sample data to reach 100 items
-        function generateMultilingualData() {
-            const data = [];
-            const topics = ["Commerce", "Food", "Heritage", "Social", "Entertainment", "Education", "Health", "Travel", "Work", "Government"];
-            // Add the predefined examples
-            data.push(...sampleMultilingualData);
-            // Generate additional examples to reach 100
-            for (let i = sampleMultilingualData.length; i < 100; i++) {
-                const topicIndex = i % topics.length;
-                const topic = topics[topicIndex];
-                const exampleNum = Math.floor(i / topics.length) + 1;
-                data.push({
-                    language: "zh",
-                    region: "cn",
-                    language_region: "zh_cn",
-                    topic: topic,
-                    scenario: `${topic}相关的文化场景示例 ${exampleNum}`,
-                    question: `关于${topic}的文化问题是什么？`,
-                    answer: `与${topic}相关的文化答案`,
-                    explanation: `这涉及到中国传统的${topic}文化实践和价值观念。`
-                });
-            }
-            return data;
-        }
         // Initialize multilingual data
         function initializeMultilingualData() {
-            multilingualData = generateMultilingualData();
-            displayCurrentData();
+            // Setup navigation controls first
             setupDataNavigation();
+            
+            // If no Firebase data loaded yet, show loading message
+            if (!multilingualData || multilingualData.length === 0) {
+                const currentDataDisplay = document.getElementById('currentDataDisplay');
+                if (currentDataDisplay) {
+                    currentDataDisplay.innerHTML = `
+                        <div class="example-header">Loading Firebase Data...</div>
+                        <p>Please wait while we load the annotated data from Firebase.</p>
+                    `;
+                }
+            }
         }
         // Setup data navigation event listeners
         function setupDataNavigation() {
@@ -1598,14 +1536,16 @@
             const goToDataBtn = document.getElementById('goToData');
             const prevDataBtn = document.getElementById('prevData');
             const nextDataBtn = document.getElementById('nextData');
+            
             if (goToDataBtn) {
                 goToDataBtn.addEventListener('click', () => {
                     const index = parseInt(dataIndexInput.value);
-                    if (index >= 1 && index <= 100) {
+                    const maxItems = multilingualData.length || 1;
+                    if (index >= 1 && index <= maxItems) {
                         currentDataIndex = index;
                         displayCurrentData();
                     } else {
-                        showToast('Please enter a number between 1 and 100', 'error');
+                        showToast(`Please enter a number between 1 and ${maxItems}`, 'error');
                     }
                 });
             }
@@ -1622,7 +1562,8 @@
 
             if (nextDataBtn) {
                 nextDataBtn.addEventListener('click', () => {
-                    if (currentDataIndex < 100) {
+                    const maxItems = multilingualData.length || 1;
+                    if (currentDataIndex < maxItems) {
                         currentDataIndex++;
                         displayCurrentData();
                         if (dataIndexInput) dataIndexInput.value = currentDataIndex;
@@ -1640,28 +1581,67 @@
             }
         }
 
+        // Update navigation controls based on loaded data
+        function updateNavigationControls() {
+            const dataIndexInput = document.getElementById('dataIndex');
+            const totalItems = document.getElementById('totalItems');
+            
+            if (dataIndexInput && multilingualData.length > 0) {
+                dataIndexInput.max = multilingualData.length;
+            }
+            
+            if (totalItems) {
+                totalItems.textContent = multilingualData.length;
+            }
+        }
+
         // Display current multilingual data example
         function displayCurrentData() {
+            const currentDataDisplay = document.getElementById('currentDataDisplay');
+            
+            if (!multilingualData || multilingualData.length === 0) {
+                if (currentDataDisplay) {
+                    currentDataDisplay.innerHTML = `
+                        <div class="example-header">No Data Available</div>
+                        <p>No annotated data found in Firebase.</p>
+                    `;
+                }
+                return;
+            }
+
             if (currentDataIndex < 1 || currentDataIndex > multilingualData.length) {
                 return;
             }
 
             const example = multilingualData[currentDataIndex - 1];
 
-            // Update table with current example
-            const tableBody = document.querySelector('.data-table tbody');
-            if (tableBody) {
-                const row = tableBody.querySelector('tr');
-                if (row) {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length >= 5) {
-                        cells[0].innerHTML = `<strong>${example.language_region}</strong>`;
-                        cells[1].innerHTML = `<span class="topic-badge ${example.topic.toLowerCase()}">${example.topic}</span>`;
-                        cells[2].textContent = example.scenario.substring(0, 100) + (example.scenario.length > 100 ? '...' : '');
-                        cells[3].textContent = example.question;
-                        cells[4].textContent = example.answer;
-                    }
-                }
+            // Update current data display
+            if (currentDataDisplay) {
+                currentDataDisplay.innerHTML = `
+                    <div class="example-header">Item ${currentDataIndex}: ${example.topic || 'Unknown Topic'}</div>
+                    <div class="example-field">
+                        <label>Language Region:</label>
+                        <p>${example.language_region || 'N/A'}</p>
+                    </div>
+                    <div class="example-field">
+                        <label>Scenario:</label>
+                        <p>${example.scenario || example.content || 'No scenario available'}</p>
+                    </div>
+                    <div class="example-field">
+                        <label>Question:</label>
+                        <p>${example.question || 'No question available'}</p>
+                    </div>
+                    <div class="example-field">
+                        <label>Answer:</label>
+                        <p>${example.answer || 'No answer available'}</p>
+                    </div>
+                    ${example.explanation ? `
+                    <div class="example-field">
+                        <label>Explanation:</label>
+                        <p>${example.explanation}</p>
+                    </div>
+                    ` : ''}
+                `;
             }
 
             // Update current item number display
@@ -1674,6 +1654,29 @@
             const dataIndexInput = document.getElementById('dataIndex');
             if (dataIndexInput) {
                 dataIndexInput.value = currentDataIndex;
+            }
+        }
+
+        // Display no data message
+        function displayNoDataMessage() {
+            const currentDataDisplay = document.getElementById('currentDataDisplay');
+            if (currentDataDisplay) {
+                currentDataDisplay.innerHTML = `
+                    <div class="example-header">No Data Available</div>
+                    <p>No annotated data found in Firebase. Please ensure data exists in the annotated_data collection.</p>
+                `;
+            }
+        }
+
+        // Display error message
+        function displayErrorMessage(errorMsg) {
+            const currentDataDisplay = document.getElementById('currentDataDisplay');
+            if (currentDataDisplay) {
+                currentDataDisplay.innerHTML = `
+                    <div class="example-header">Error Loading Data</div>
+                    <p>Failed to load data from Firebase: ${errorMsg}</p>
+                    <p>Please check your connection and try again.</p>
+                `;
             }
         }
 
