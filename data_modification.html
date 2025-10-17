@@ -34,6 +34,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
+            position: relative;
         }
         
         .user-details h3 {
@@ -372,6 +374,24 @@
             </div>
         </div>
         
+        <!-- User Info Section (Hidden initially) - Moved to top -->
+        <div id="userInfoSection" class="user-info-section hidden">
+            <div class="user-details">
+                <h3 id="userDisplayName">Welcome, User</h3>
+                <p><strong>User ID:</strong> <span id="userIdDisplay"></span></p>
+                <p><strong>Language Code:</strong> <span id="userLanguageCode"></span></p>
+                <p><strong>Permission:</strong> <span id="userPermission"></span></p>
+            </div>
+            <div class="annotation-progress">
+                <div class="progress-number" id="progressNumber">0/0</div>
+                <div>Items Completed</div>
+            </div>
+            <button id="logoutBtn" class="btn btn-secondary">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+        </div>
+
         <div class="main-content">
             <!-- Login Section -->
             <div id="loginSection" class="login-section">
@@ -388,24 +408,6 @@
                         Login
                     </button>
                 </form>
-            </div>
-            
-            <!-- User Info Section (Hidden initially) -->
-            <div id="userInfoSection" class="user-info-section hidden">
-                <div class="user-details">
-                    <h3 id="userDisplayName">Welcome, User</h3>
-                    <p><strong>User ID:</strong> <span id="userIdDisplay"></span></p>
-                    <p><strong>Language Code:</strong> <span id="userLanguageCode"></span></p>
-                    <p><strong>Permission:</strong> <span id="userPermission"></span></p>
-                </div>
-                <div class="annotation-progress">
-                    <div class="progress-number" id="progressNumber">0/0</div>
-                    <div>Items Completed</div>
-                </div>
-                <button id="logoutBtn" class="btn btn-secondary">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </button>
             </div>
             
             <!-- Annotation Section (Hidden initially) -->
