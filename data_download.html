@@ -494,13 +494,13 @@
             
             let data;
             if (selectedCollection === 'annotated_data') {
-                const result = await FirebaseService.getAllAnnotatedData();
+                const result = await FirebaseService.loadFromCollection('annotated_data');
                 if (!result.success) {
                     throw new Error(result.error || 'Failed to fetch annotated data');
                 }
                 data = result.data;
             } else if (selectedCollection === 'modified_data') {
-                const result = await FirebaseService.getAllModifiedData();
+                const result = await FirebaseService.loadFromCollection('modified_data');
                 if (!result.success) {
                     throw new Error(result.error || 'Failed to fetch modified data');
                 }
