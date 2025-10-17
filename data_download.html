@@ -7,6 +7,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -138,16 +145,28 @@
             color: white;
         }
         
-        .annotations .card-icon {
+        .created-annotations .card-icon {
             background: linear-gradient(135deg, #28a745, #20c997);
         }
         
-        .users .card-icon {
+        .modified-annotations .card-icon {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+        }
+        
+        .cultural-topics .card-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .annotated-data .card-icon {
             background: linear-gradient(135deg, #007bff, #6610f2);
         }
         
-        .analytics .card-icon {
-            background: linear-gradient(135deg, #fd7e14, #e83e8c);
+        .user-permissions .card-icon {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+        }
+        
+        .annotators .card-icon {
+            background: linear-gradient(135deg, #17a2b8, #20c997);
         }
         
         .system .card-icon {
@@ -385,75 +404,111 @@
                 Select Data Type
             </h2>
             <div class="download-grid">
-                <div class="download-card annotations" data-type="annotations">
+                <div class="download-card created-annotations" data-collection="cultural_annotations_created">
                     <div class="card-header">
                         <div class="card-icon">
-                            <i class="fas fa-tags"></i>
+                            <i class="fas fa-edit"></i>
                         </div>
-                        <div class="card-title">Annotation Data</div>
+                        <div class="card-title">Created Annotations</div>
                     </div>
                     <div class="card-description">
-                        Export all cultural benchmark annotations including scenarios, questions, answers, and explanations.
+                        Export newly created cultural benchmark annotations with scenarios, questions, answers, and explanations.
                     </div>
                     <ul class="card-features">
-                        <li>Complete annotation records</li>
-                        <li>Cultural context data</li>
-                        <li>User submissions</li>
-                        <li>Quality ratings</li>
+                        <li>Original annotation data</li>
+                        <li>Cultural scenarios</li>
+                        <li>Question-answer pairs</li>
+                        <li>Explanations & context</li>
                     </ul>
                 </div>
                 
-                <div class="download-card users" data-type="users">
+                <div class="download-card modified-annotations" data-collection="cultural_annotations_modified">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-pen"></i>
+                        </div>
+                        <div class="card-title">Modified Annotations</div>
+                    </div>
+                    <div class="card-description">
+                        Export modified and updated cultural benchmark annotations with revision history.
+                    </div>
+                    <ul class="card-features">
+                        <li>Modified annotation records</li>
+                        <li>Revision history</li>
+                        <li>Change tracking</li>
+                        <li>Quality improvements</li>
+                    </ul>
+                </div>
+                
+                <div class="download-card cultural-topics" data-collection="cultural_topics">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="card-title">Cultural Topics</div>
+                    </div>
+                    <div class="card-description">
+                        Export cultural topics and reference materials used for creating benchmark data.
+                    </div>
+                    <ul class="card-features">
+                        <li>Cultural themes</li>
+                        <li>Reference materials</li>
+                        <li>Topic descriptions</li>
+                        <li>Background context</li>
+                    </ul>
+                </div>
+                
+                <div class="download-card annotated-data" data-collection="annotated_data">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="card-title">Annotated Data</div>
+                    </div>
+                    <div class="card-description">
+                        Export pre-annotated datasets and reference data used for multilingual benchmarking.
+                    </div>
+                    <ul class="card-features">
+                        <li>Pre-annotated datasets</li>
+                        <li>Multilingual data</li>
+                        <li>Reference examples</li>
+                        <li>Quality benchmarks</li>
+                    </ul>
+                </div>
+                
+                <div class="download-card user-permissions" data-collection="allowed_users">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <div class="card-title">User Data</div>
+                        <div class="card-title">User Permissions</div>
                     </div>
                     <div class="card-description">
-                        Export user information, activity logs, and contribution statistics.
+                        Export user permission settings, access controls, and role assignments.
                     </div>
                     <ul class="card-features">
-                        <li>User profiles</li>
-                        <li>Activity logs</li>
-                        <li>Contribution stats</li>
-                        <li>Permission levels</li>
+                        <li>User access rights</li>
+                        <li>Role assignments</li>
+                        <li>Language permissions</li>
+                        <li>Data modification rights</li>
                     </ul>
                 </div>
                 
-                <div class="download-card analytics" data-type="analytics">
+                <div class="download-card annotators" data-collection="annotators">
                     <div class="card-header">
                         <div class="card-icon">
-                            <i class="fas fa-chart-bar"></i>
+                            <i class="fas fa-tags"></i>
                         </div>
-                        <div class="card-title">Analytics Reports</div>
+                        <div class="card-title">Annotators</div>
                     </div>
                     <div class="card-description">
-                        Generate comprehensive reports on system usage and data quality metrics.
+                        Export annotator profiles, activity statistics, and contribution records.
                     </div>
                     <ul class="card-features">
-                        <li>Usage statistics</li>
-                        <li>Quality metrics</li>
-                        <li>Performance data</li>
-                        <li>Trend analysis</li>
-                    </ul>
-                </div>
-                
-                <div class="download-card system" data-type="system">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-cogs"></i>
-                        </div>
-                        <div class="card-title">System Logs</div>
-                    </div>
-                    <div class="card-description">
-                        Export system logs, error reports, and administrative audit trails.
-                    </div>
-                    <ul class="card-features">
-                        <li>System logs</li>
-                        <li>Error reports</li>
-                        <li>Audit trails</li>
-                        <li>Security events</li>
+                        <li>Annotator profiles</li>
+                        <li>Activity statistics</li>
+                        <li>Contribution records</li>
+                        <li>Performance metrics</li>
                     </ul>
                 </div>
             </div>
