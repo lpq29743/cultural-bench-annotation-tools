@@ -1624,21 +1624,21 @@
                         <p>${example.language_region || 'N/A'}</p>
                     </div>
                     <div class="example-field">
-                        <label>Scenario:</label>
-                        <p>${example.scenario || example.content || 'No scenario available'}</p>
+                        <label>English Scenario:</label>
+                        <p>${example.english_scenario || example.scenario || example.content || 'No English scenario available'}</p>
                     </div>
                     <div class="example-field">
-                        <label>Question:</label>
-                        <p>${example.question || 'No question available'}</p>
+                        <label>English Question:</label>
+                        <p>${example.english_question || example.question || 'No English question available'}</p>
                     </div>
                     <div class="example-field">
-                        <label>Answer:</label>
-                        <p>${example.answer || 'No answer available'}</p>
+                        <label>English Answer:</label>
+                        <p>${example.english_answer || example.answer || 'No English answer available'}</p>
                     </div>
-                    ${example.explanation ? `
+                    ${(example.english_explanation || example.explanation) ? `
                     <div class="example-field">
-                        <label>Explanation:</label>
-                        <p>${example.explanation}</p>
+                        <label>English Explanation:</label>
+                        <p>${example.english_explanation || example.explanation}</p>
                     </div>
                     ` : ''}
                 `;
