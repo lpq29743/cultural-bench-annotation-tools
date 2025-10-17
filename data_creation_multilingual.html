@@ -1009,20 +1009,6 @@
                         Multilingual Reference Data
                     </h2>
 
-                    <!-- Data Source Information -->
-                    <div class="data-source-selector">
-                        <h4>Cultural Materials Source</h4>
-                        <div class="source-info">
-                            <div class="source-active">
-                                <i class="fas fa-database"></i>
-                                <span>Firebase Annotated Data</span>
-                                <small>Using existing annotated cultural data from Firebase as the only data
-                                    source</small>
-                            </div>
-                        </div>
-                        <div class="firebase-status" id="firebaseStatus"></div>
-                    </div>
-
                     <!-- Navigation Controls -->
                     <div class="data-section">
                         <h3 class="section-title">
@@ -1050,7 +1036,7 @@
                                 </button>
                             </div>
                         </div>
-                        
+
                         <!-- Current Data Display -->
                         <div id="currentDataDisplay" class="topic-example-card" style="margin-top: 1rem;">
                             <div class="example-header">Loading Firebase Data...</div>
@@ -1082,7 +1068,9 @@
                             <i class="fas fa-database"></i> Data Sources
                         </h4>
                         <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #495057;">
-                            <li><strong>Multilingual Data:</strong> Based on the annotated data from other language, could you remind any cultural-related scenarios in your culture? If yes, please create it.</li>
+                            <li><strong>Multilingual Data:</strong> Based on the annotated data from other language,
+                                could you remind any cultural-related scenarios in your culture? If yes, please create
+                                it.</li>
                         </ul>
                     </div>
 
@@ -1126,6 +1114,15 @@
                     </div>
                 </div>
                 <div class="right-panel">
+                    <div
+                        style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                        <p style="margin: 0; color: #0c4a6e; font-size: 1rem; line-height: 1.5;">
+                            Using the provided example as inspiration, can you think of any culturally relevant
+                            scenarios from your own culture? If so, please create one or more examples. If not, feel
+                            free to explore other examples.
+                            Note: If you find the example difficult to understand, it may be because the example makes sense only in its original language and not in the English translation.
+                        </p>
+                    </div>
                     <h2 class="panel-title">
                         <i class="fas fa-edit"></i>
                         Data Creation Form
@@ -1403,14 +1400,14 @@
                 if (result.success && result.data.length > 0) {
                     firebaseAnnotatedData = result.data;
                     multilingualData = result.data; // Use Firebase data as multilingual data
-                    
+
                     // Update navigation controls
                     updateNavigationControls();
-                    
+
                     // Display first item
                     currentDataIndex = 1;
                     displayCurrentData();
-                    
+
                     showFirebaseStatus(`Loaded ${result.data.length} annotated items from Firebase`, 'success');
                 } else {
                     showFirebaseStatus('No annotated data found in Firebase. Please ensure data exists in the annotated_data collection.', 'error');
@@ -1426,13 +1423,13 @@
 
         function displayAnnotatedData(data) {
             const materialList = document.getElementById('materialList');
-            
+
             // Check if materialList element exists
             if (!materialList) {
                 console.warn('materialList element not found in DOM');
                 return;
             }
-            
+
             let html = '';
 
             data.forEach((item, index) => {
@@ -1518,7 +1515,7 @@
         function initializeMultilingualData() {
             // Setup navigation controls first
             setupDataNavigation();
-            
+
             // If no Firebase data loaded yet, show loading message
             if (!multilingualData || multilingualData.length === 0) {
                 const currentDataDisplay = document.getElementById('currentDataDisplay');
@@ -1536,7 +1533,7 @@
             const goToDataBtn = document.getElementById('goToData');
             const prevDataBtn = document.getElementById('prevData');
             const nextDataBtn = document.getElementById('nextData');
-            
+
             if (goToDataBtn) {
                 goToDataBtn.addEventListener('click', () => {
                     const index = parseInt(dataIndexInput.value);
@@ -1585,11 +1582,11 @@
         function updateNavigationControls() {
             const dataIndexInput = document.getElementById('dataIndex');
             const totalItems = document.getElementById('totalItems');
-            
+
             if (dataIndexInput && multilingualData.length > 0) {
                 dataIndexInput.max = multilingualData.length;
             }
-            
+
             if (totalItems) {
                 totalItems.textContent = multilingualData.length;
             }
@@ -1598,7 +1595,7 @@
         // Display current multilingual data example
         function displayCurrentData() {
             const currentDataDisplay = document.getElementById('currentDataDisplay');
-            
+
             if (!multilingualData || multilingualData.length === 0) {
                 if (currentDataDisplay) {
                     currentDataDisplay.innerHTML = `
