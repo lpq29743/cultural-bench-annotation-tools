@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual Data Creation - Cultural Benchmark Annotation Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        /* Additional styles specific to data creation */
+        .login-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .user-info-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            min-height: auto;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .user-details h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        
+        .user-details p {
+            opacity: 0.9;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .user-info-items {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .creation-progress {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .progress-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .progress-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .creation-container {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .left-panel {
+            flex: 1;
+            background-color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .right-panel {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            color: #667eea;
+        }
+        
+        .material-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .material-list li {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+        
+        .material-list li:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .material-list strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .field-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            box-sizing: border-box;
+            font-family: inherit;
+            background-color: white;
+        }
+        
+        .form-input[type="select"], select.form-input {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.5;
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .user-info-notice {
+            background: #e9f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #b3d9ff;
+            color: #0c4a6e;
+        }
+        
+        .user-info-notice strong {
+            color: #0369a1;
+        }
+        
+        .code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            color: #5a67d8;
+        }
+        
+        .back-link:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            background: #10b981;
+        }
+        
+        .toast.error {
+            background: #ef4444;
+        }
+        
+        .toast.info {
+            background: #3b82f6;
+        }
+        
+        /* Data display styles */
+        .data-section {
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: #667eea;
+        }
+        
+        .data-table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .data-table th {
+            background: #f8fafc;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .data-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+        
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+        
+        .scenario-cell {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .topic-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .topic-badge.commerce {
+            background: #10b981;
+        }
+        
+        .topic-badge.travel {
+            background: #3b82f6;
+        }
+        
+        .dataset-stats {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .creation-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .user-details {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .user-info-items {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .user-info-section {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            
+            .user-details {
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .left-panel, .right-panel {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .user-info-items {
+                width: 100%;
+            }
+            
+            .creation-progress {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .btn {
+                border: 2px solid currentColor;
+            }
+            
+            .form-input, .form-textarea {
+                border: 2px solid #000;
+            }
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .btn,
+            .back-link,
+            .toast {
+                transition: none;
+            }
+            
+            .spinner {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+        
+        <header class="header">
+            <h1>Multilingual Data Creation</h1>
+            <p>Create cultural benchmark data by leveraging annotated data from other languages available in <span class="code">data_creation/annotated_data.csv</span>. Annotators can create items one by one by adapting existing multilingual examples.</p>
+        </header>
+        
+        <!-- Login Section -->
+        <div id="loginSection" class="login-section">
+            <h2>Annotator Login</h2>
+            <p>Please enter your User ID to access the data creation interface.</p>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <input type="text" id="userId" name="userId" class="form-input" placeholder="Enter your User ID" required aria-describedby="login-help">
+                    <div id="login-help" class="sr-only">Enter your assigned user ID to access the annotation interface</div>
+                </div>
+                <button type="submit" class="btn btn-primary" aria-describedby="login-button-help">
+                    <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+                    Login
+                </button>
+                <div id="login-help" class="sr-only">Click to authenticate and access the data creation interface</div>
+            </form>
+        </div>
+        
+        <!-- User Info Section (Hidden initially) -->
+        <div id="userInfoSection" class="user-info-section hidden">
+            <div class="user-details">
+                <div>
+                    <h3 id="userDisplayName">Welcome, User</h3>
+                    <p>Multilingual Data Creation</p>
+                </div>
+                <div class="user-info-items">
+                    <div>
+                        <strong>User ID:</strong> <span id="userIdDisplay">-</span>
+                    </div>
+                    <div>
+                        <strong>Language:</strong> <span id="userLanguageCode">-</span>
+                    </div>
+                    <div>
+                        <strong>Permission:</strong> <span id="userPermission">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="creation-progress">
+                <div>
+                    <div class="progress-number" id="progressNumber">0</div>
+                    <div class="progress-label">Items Created</div>
+                </div>
+            </div>
+            <button id="logoutBtn" class="btn btn-secondary">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+        </div>
+        
+        <!-- Data Creation Section (Hidden initially) -->
+        <div id="creationSection" class="hidden" role="main" aria-label="Data creation interface">
+
+            <div class="creation-container">
+                <div class="left-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-globe"></i>
+                        Multilingual Reference Data
+                    </h2>
+                    
+                    <!-- Sample Data Section -->
+                    <div class="data-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-table"></i>
+                            Sample Data from Other Languages
+                        </h3>
+                        <div class="data-table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Language</th>
+                                        <th>Topic</th>
+                                        <th>Scenario</th>
+                                        <th>Question</th>
+                                        <th>Answer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>zh_cn</strong></td>
+                                        <td><span class="topic-badge commerce">Commerce</span></td>
+                                        <td class="scenario-cell">结束了一周忙碌的工作，我打算在我位于天心区的小窝里好好地做顿饭。外面的天气炎热，实在不想出门买菜。其他城市的朋友给我推荐了一个叫朴朴买菜的软件...</td>
+                                        <td>请问朋友最可能的回答是？</td>
+                                        <td>没有</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>zh_cn</strong></td>
+                                        <td><span class="topic-badge commerce">Commerce</span></td>
+                                        <td class="scenario-cell">用户点进了我家的线上超市，逛了一圈后，询问我家客服：你们有没有tree tree的产品</td>
+                                        <td>请问我家客服应该向用户推荐什么？A. 薯片 B. 盆栽 C. 沙拉 D. 果冻</td>
+                                        <td>A</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>zh_cn</strong></td>
+                                        <td><span class="topic-badge travel">Travel</span></td>
+                                        <td class="scenario-cell">这个假期，我打算来个两城游。为了交通方便，想要找两个有地铁连接的城市作为目标。</td>
+                                        <td>请问以下哪个不符合要求？A. 广州-佛山 B. 杭州-绍兴 C. 成都-资阳 D. 北京-天津</td>
+                                        <td>D</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="dataset-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">6,213</span>
+                                <span class="stat-label">Total Items</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">16</span>
+                                <span class="stat-label">Topics</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">Multilingual</span>
+                                <span class="stat-label">Format</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                        <h4 style="margin: 0 0 10px 0; color: #0369a1;">
+                            <i class="fas fa-info-circle"></i> Multilingual Adaptation Guidelines
+                        </h4>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #0c4a6e;">
+                            <li><strong>Cultural Adaptation:</strong> Adapt scenarios from other languages to your local cultural context</li>
+                            <li><strong>Language Specificity:</strong> Ensure scenarios require knowledge specific to your language region</li>
+                            <li><strong>Maintain Structure:</strong> Keep the same question-answer format while adapting content</li>
+                            <li><strong>Local Relevance:</strong> Replace foreign references with locally relevant equivalents</li>
+                            <li><strong>Cultural Accuracy:</strong> Ensure adapted scenarios are culturally accurate and authentic</li>
+                            <li><strong>Clear Translation:</strong> Provide clear, natural language that locals would understand</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="right-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Data Creation Form
+                    </h2>
+                    <form id="dataCreationForm" role="form" aria-label="Data creation form">
+                        <div class="form-group">
+                            <label for="sourceLanguage" class="field-label">Source Language (Reference)</label>
+                            <input type="text" id="sourceLanguage" name="sourceLanguage" class="form-input" placeholder="e.g., zh_cn, en_us" aria-describedby="source-help">
+                            <div id="source-help" class="sr-only">Enter the language code of the source data you're adapting from</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="topic" class="field-label">Topic</label>
+                            <select id="topic" name="topic" class="form-input" required aria-describedby="topic-help">
+                                <option value="">Select a topic...</option>
+                                <option value="Belief">Belief</option>
+                                <option value="Commerce">Commerce</option>
+                                <option value="Education">Education</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Food">Food</option>
+                                <option value="Government">Government</option>
+                                <option value="Habitat">Habitat</option>
+                                <option value="Health">Health</option>
+                                <option value="Heritage">Heritage</option>
+                                <option value="Language">Language</option>
+                                <option value="Pets">Pets</option>
+                                <option value="Science">Science</option>
+                                <option value="Social">Social</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Work">Work</option>
+                            </select>
+                            <div id="topic-help" class="sr-only">Select the most appropriate topic from the predefined list for this cultural benchmark item</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="scenario" class="field-label">Scenario (Adapted from Multilingual Data)</label>
+                            <textarea id="scenario" name="scenario" class="form-textarea" placeholder="Adapt a cultural scenario from the multilingual dataset to your local context..." aria-describedby="scenario-help"></textarea>
+                            <div id="scenario-help" class="sr-only">Describe the cultural scenario adapted from multilingual data</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="question" class="field-label">Question</label>
+                            <textarea id="question" name="question" class="form-textarea" placeholder="Enter the question..." aria-describedby="question-help"></textarea>
+                            <div id="question-help" class="sr-only">Enter the question text for this benchmark item</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="answer" class="field-label">Answer</label>
+                            <textarea id="answer" name="answer" class="form-textarea" placeholder="Provide the answer..." aria-describedby="answer-help"></textarea>
+                            <div id="answer-help" class="sr-only">Provide the correct answer for this question</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="explanation" class="field-label">Explanation</label>
+                            <textarea id="explanation" name="explanation" class="form-textarea" placeholder="Explain the cultural context and why this answer is correct..." aria-describedby="explanation-help"></textarea>
+                            <div id="explanation-help" class="sr-only">Explain the cultural context and why this answer is correct</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success" aria-describedby="submit-help">
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            Submit Data
+                        </button>
+                        <div id="submit-help" class="sr-only">Submit the created data to the system</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="loadingMessage">
+        <div class="loading-content">
+            <div class="spinner" aria-hidden="true"></div>
+            <div id="loadingMessage">Loading...</div>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" role="region" aria-live="polite" aria-label="Notifications"></div>
+    
+    <!-- Scripts -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Application Scripts -->
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        // Data Creation JavaScript
+        // Application state
+        let currentUser = null;
+        let isLoggedIn = false;
+        let createdItemsCount = 0;
+
+        // DOM elements
+        const elements = {
+            // Sections
+            loginSection: document.getElementById('loginSection'),
+            userInfoSection: document.getElementById('userInfoSection'),
+            creationSection: document.getElementById('creationSection'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            
+            // Login form
+            loginForm: document.getElementById('loginForm'),
+            userIdInput: document.getElementById('userId'),
+            
+            // User info display
+            userDisplayName: document.getElementById('userDisplayName'),
+            userIdDisplay: document.getElementById('userIdDisplay'),
+            userLanguageCode: document.getElementById('userLanguageCode'),
+            userPermission: document.getElementById('userPermission'),
+            progressNumber: document.getElementById('progressNumber'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            
+            // Creation form
+            dataCreationForm: document.getElementById('dataCreationForm'),
+            sourceLanguage: document.getElementById('sourceLanguage'),
+            topic: document.getElementById('topic'),
+            scenario: document.getElementById('scenario'),
+            question: document.getElementById('question'),
+            answer: document.getElementById('answer'),
+            explanation: document.getElementById('explanation'),
+            
+            // Loading and messages
+            loadingMessage: document.getElementById('loadingMessage'),
+            toastContainer: document.getElementById('toastContainer')
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Check if Firebase is loaded
+            if (typeof firebase === 'undefined') {
+                showToast('Firebase not loaded. Please refresh the page.', 'error');
+                return;
+            }
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Check for existing user session
+            checkExistingSession();
+        }
+
+        function setupEventListeners() {
+            // Login form
+            if (elements.loginForm) {
+                elements.loginForm.addEventListener('submit', handleLogin);
+            }
+            
+            // Logout button
+            if (elements.logoutBtn) {
+                elements.logoutBtn.addEventListener('click', handleLogout);
+            }
+            
+            // Data creation form
+            if (elements.dataCreationForm) {
+                elements.dataCreationForm.addEventListener('submit', handleDataSubmission);
+            }
+        }
+
+        function checkExistingSession() {
+            const storedUser = localStorage.getItem('dataCreationUser');
+            if (storedUser) {
+                try {
+                    currentUser = JSON.parse(storedUser);
+                    if (currentUser && currentUser.canCreateData) {
+                        isLoggedIn = true;
+                        updateUIAfterLogin();
+                    } else {
+                        localStorage.removeItem('dataCreationUser');
+                    }
+                } catch (error) {
+                    console.error('Error parsing stored user:', error);
+                    localStorage.removeItem('dataCreationUser');
+                }
+            }
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const userId = elements.userIdInput.value.trim();
+            if (!userId) {
+                showToast('Please enter a valid User ID', 'error');
+                return;
+            }
+            
+            try {
+                showLoading('Validating user...');
+                
+                // Validate user with permissions
+                const validation = await FirebaseService.validateUserWithPermissions(userId);
+                
+                if (!validation.success) {
+                    hideLoading();
+                    showToast('User not exist', 'error');
+                    return;
+                }
+                
+                if (!validation.allowed) {
+                    hideLoading();
+                    showToast(validation.message || 'Access denied', 'error');
+                    return;
+                }
+                
+                // Check if user can create data (assuming similar permission structure)
+                const canCreateData = validation.userInfo.canModifyData || validation.userInfo.role === 'admin' || validation.userInfo.role === 'annotator';
+                
+                if (!canCreateData) {
+                    hideLoading();
+                    showToast('No permission to create data', 'error');
+                    return;
+                }
+                
+                // Set current user
+                currentUser = {
+                    userId: validation.userInfo.userId,
+                    role: validation.userInfo.role,
+                    language_region: validation.userInfo.language_region,
+                    canCreateData: canCreateData
+                };
+                
+                // Store user session
+                localStorage.setItem('dataCreationUser', JSON.stringify(currentUser));
+                isLoggedIn = true;
+                
+                updateUIAfterLogin();
+                
+                hideLoading();
+                showToast('Login successful', 'success');
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Login error:', error);
+                showToast('Login failed: ' + error.message, 'error');
+            }
+        }
+
+        function updateUIAfterLogin() {
+            // Hide login section, show user info and creation sections
+            elements.loginSection.classList.add('hidden');
+            elements.userInfoSection.classList.remove('hidden');
+            elements.creationSection.classList.remove('hidden');
+            
+            // Update user info display
+            elements.userDisplayName.textContent = `Welcome, ${currentUser.userId}`;
+            elements.userIdDisplay.textContent = currentUser.userId;
+            
+            // Handle language_region display
+            let languageRegionDisplay = '';
+            if (Array.isArray(currentUser.language_region)) {
+                const codes = currentUser.language_region.filter(code => code !== 'all');
+                if (codes.length > 0) {
+                    languageRegionDisplay = codes.join(', ');
+                } else {
+                    languageRegionDisplay = 'all';
+                }
+            } else {
+                languageRegionDisplay = currentUser.language_region || 'all';
+            }
+            elements.userLanguageCode.textContent = languageRegionDisplay;
+            
+            elements.userPermission.textContent = currentUser.canCreateData ? 'Can Create Data' : 'Read Only';
+            
+            // Update progress
+            updateProgressDisplay();
+        }
+
+        async function handleDataSubmission(event) {
+            event.preventDefault();
+            
+            // Validate form data
+            const formData = {
+                sourceLanguage: elements.sourceLanguage.value.trim(),
+                topic: elements.topic.value.trim(),
+                scenario: elements.scenario.value.trim(),
+                question: elements.question.value.trim(),
+                answer: elements.answer.value.trim(),
+                explanation: elements.explanation.value.trim()
+            };
+            
+            // Check if required fields are filled
+            if (!formData.topic || !formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            try {
+                showLoading('Submitting data...');
+                
+                // Prepare data for submission
+                const submissionData = {
+                    ...formData,
+                    language_region: Array.isArray(currentUser.language_region) ? currentUser.language_region[0] : currentUser.language_region,
+                    created_by: currentUser.userId,
+                    created_at: new Date().toISOString(),
+                    status: 'pending_review',
+                    creation_method: 'multilingual_adaptation'
+                };
+                
+                // Submit to Firebase (you may need to create a specific collection for created data)
+                const result = await FirebaseService.addToCollection('cultural_annotations_created', submissionData);
+                
+                if (result.success) {
+                    hideLoading();
+                    showToast('Data submitted successfully!', 'success');
+                    
+                    // Reset form
+                    elements.dataCreationForm.reset();
+                    
+                    // Update progress
+                    createdItemsCount++;
+                    updateProgressDisplay();
+                } else {
+                    throw new Error(result.error || 'Failed to submit data');
+                }
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Submission error:', error);
+                showToast('Failed to submit data: ' + error.message, 'error');
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('dataCreationUser');
+            currentUser = null;
+            isLoggedIn = false;
+            createdItemsCount = 0;
+            
+            // Reset UI
+            elements.userInfoSection.classList.add('hidden');
+            elements.creationSection.classList.add('hidden');
+            elements.loginSection.classList.remove('hidden');
+            
+            // Clear form
+            elements.dataCreationForm.reset();
+            elements.userIdInput.value = '';
+            
+            showToast('Logged out successfully', 'info');
+        }
+
+        function updateProgressDisplay() {
+            elements.progressNumber.textContent = createdItemsCount;
+        }
+
+        // Utility functions
+        function showLoading(message) {
+            elements.loadingMessage.textContent = message;
+            elements.loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            elements.loadingOverlay.classList.add('hidden');
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            elements.toastContainer.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Debounce function for auto-save (if needed in future)
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>
