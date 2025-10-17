@@ -719,40 +719,39 @@
                     <div class="data-section">
                         <h3 class="section-title">
                             <i class="fas fa-navigation"></i>
-                            Topic Navigation
+                            Data Navigation
                         </h3>
+                        <!-- Current Topic Display Fields -->
+                        <div class="example-field">
+                            <label>Topic:</label>
+                            <p id="currentTopicField">-</p>
+                        </div>
+                        <div class="example-field">
+                            <label>Example:</label>
+                            <p id="currentExampleField">-</p>
+                        </div>
                         <div class="navigation-controls">
                             <div class="nav-input-group">
-                                <label for="topicIndex">Go to Topic #:</label>
+                                <label for="topicIndex">Go to topic:</label>
                                 <input type="number" id="topicIndex" min="1" max="160" value="1" class="form-input"
-                                    style="width: 80px; display: inline-block;">
-                                <button id="goToTopic" class="btn btn-primary" style="margin-left: 10px;">
-                                    <i class="fas fa-arrow-right"></i> Go
-                                </button>
+                                    style="width: 80px;">
+                                <button id="goToTopic" class="btn btn-primary">Go</button>
                             </div>
                             <div class="nav-buttons">
                                 <button id="prevTopic" class="btn btn-secondary">
-                                    <i class="fas fa-chevron-left"></i> Previous
+                                    <i class="fas fa-chevron-left"></i>
+                                    Previous
                                 </button>
-                                <span id="topicCounter" class="topic-counter">Topic 1 of 160</span>
+                                <div class="topic-counter" id="topicCounter">
+                                    Data 1 of 160
+                                </div>
                                 <button id="nextTopic" class="btn btn-secondary">
-                                    Next <i class="fas fa-chevron-right"></i>
+                                    Next
+                                    <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div
-                        style="margin-bottom: 1.5rem; padding: 1rem; background: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
-                        <h3 style="margin: 0 0 0.5rem 0; color: #991b1b; font-size: 1.1rem;">
-                            <i class="fas fa-exclamation-triangle"></i> Important: Please read this first before
-                            creating data
-                        </h3>
-                        <p style="margin: 0; color: #7f1d1d; font-size: 0.9rem; line-height: 1.4;">
-                            Before creating any data, please carefully review all guidelines below to ensure your
-                            annotations meet the quality standards and cultural authenticity requirements.
-                        </p>
-                    </div>
-
                     <h2 class="panel-title">
                         <i class="fas fa-lightbulb"></i>
                         Annotation Guidelines
@@ -765,7 +764,8 @@
                             <i class="fas fa-database"></i> Data Sources
                         </h4>
                         <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #495057;">
-                            <li><strong>Seed Data:</strong> Based on the provided example, could you remind any cultural-related scenarios in your culture? If yes, please create it.</li>
+                            <li><strong>Seed Data:</strong> Based on the provided example, could you remind any
+                                cultural-related scenarios in your culture? If yes, please create it.</li>
                         </ul>
                     </div>
 
@@ -1103,44 +1103,6 @@
         // Topic Navigation and Examples
         let currentTopicIndex = 1;
         let topicExamples = [];
-        // Sample topic data (160 topics with examples)
-        const sampleTopicData = [
-            {
-                topic: "Food",
-                scenario: "Traditional Chinese New Year dinner preparation",
-                question: "What is the most important dish that must be present at a Chinese New Year family dinner?",
-                answer: "Fish (鱼, yú)",
-                explanation: "Fish is essential because the Chinese word for fish (鱼, yú) sounds like the word for surplus or abundance (余, yú), symbolizing prosperity and abundance for the coming year."
-            },
-            {
-                topic: "Heritage",
-                scenario: "Visiting ancient temples during festivals",
-                question: "Why do people burn incense when visiting Buddhist temples?",
-                answer: "To show respect to Buddha and make prayers",
-                explanation: "Burning incense is a traditional way to purify the mind, show devotion, and create a sacred atmosphere for prayer and meditation in Buddhist culture."
-            },
-            {
-                topic: "Social",
-                scenario: "Business card exchange in professional settings",
-                question: "What is the proper way to receive a business card in Chinese business culture?",
-                answer: "Receive with both hands and read it carefully",
-                explanation: "Using both hands shows respect, and taking time to read the card demonstrates that you value the person and their position."
-            },
-            {
-                topic: "Entertainment",
-                scenario: "Traditional opera performance",
-                question: "What does the red face paint represent in Beijing Opera?",
-                answer: "Loyalty and righteousness",
-                explanation: "In Beijing Opera, different face paint colors have symbolic meanings. Red typically represents loyal, brave, and righteous characters."
-            },
-            {
-                topic: "Belief",
-                scenario: "Feng shui considerations in home decoration",
-                question: "Why do many Chinese people avoid placing mirrors directly facing the bed?",
-                answer: "It's believed to bring bad luck and disturb sleep",
-                explanation: "According to feng shui beliefs, mirrors facing the bed can reflect negative energy and disturb the peaceful qi needed for good sleep."
-            }
-        ];
         // Initialize topic examples
         function initializeTopicExamples() {
             displayCurrentTopic();
@@ -1289,6 +1251,13 @@
             if (topicCounter) {
                 topicCounter.textContent = `Topic ${currentTopicIndex} of 160`;
             }
+
+            // Update current topic display fields
+            const currentTopicField = document.getElementById('currentTopicField');
+            const currentExampleField = document.getElementById('currentExampleField');
+            if (currentTopicField) currentTopicField.textContent = example.topic || '-';
+            if (currentExampleField) currentExampleField.textContent = example.scenario || '-';
+
             // Update example display
             const currentTopicName = document.getElementById('currentTopicName');
             const currentExampleScenario = document.getElementById('currentExampleScenario');
