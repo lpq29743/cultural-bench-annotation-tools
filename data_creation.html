@@ -170,6 +170,16 @@
             transition: all 0.2s;
             box-sizing: border-box;
             font-family: inherit;
+            background-color: white;
+        }
+        
+        .form-input[type="select"], select.form-input {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
         }
         
         .form-textarea {
@@ -506,6 +516,30 @@
                     </h2>
                     <form id="dataCreationForm" role="form" aria-label="Data creation form">
                         <div class="form-group">
+                            <label for="topic" class="field-label">Topic</label>
+                            <select id="topic" name="topic" class="form-input" required aria-describedby="topic-help">
+                                <option value="">Select a topic...</option>
+                                <option value="Belief">Belief</option>
+                                <option value="Commerce">Commerce</option>
+                                <option value="Education">Education</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Food">Food</option>
+                                <option value="Government">Government</option>
+                                <option value="Habitat">Habitat</option>
+                                <option value="Health">Health</option>
+                                <option value="Heritage">Heritage</option>
+                                <option value="Language">Language</option>
+                                <option value="Pets">Pets</option>
+                                <option value="Science">Science</option>
+                                <option value="Social">Social</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Work">Work</option>
+                            </select>
+                            <div id="topic-help" class="sr-only">Select the most appropriate topic from the predefined list for this cultural benchmark item</div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="scenario" class="field-label">Scenario</label>
                             <textarea id="scenario" name="scenario" class="form-textarea" placeholder="Describe the cultural scenario..." aria-describedby="scenario-help"></textarea>
                             <div id="scenario-help" class="sr-only">Describe the cultural scenario for this benchmark item</div>
@@ -588,6 +622,7 @@
             
             // Creation form
             dataCreationForm: document.getElementById('dataCreationForm'),
+            topic: document.getElementById('topic'),
             scenario: document.getElementById('scenario'),
             question: document.getElementById('question'),
             answer: document.getElementById('answer'),
@@ -747,6 +782,7 @@
             
             // Validate form data
             const formData = {
+                topic: elements.topic.value.trim(),
                 scenario: elements.scenario.value.trim(),
                 question: elements.question.value.trim(),
                 answer: elements.answer.value.trim(),
@@ -754,7 +790,7 @@
             };
             
             // Check if all fields are filled
-            if (!formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
+            if (!formData.topic || !formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
                 showToast('Please fill in all fields', 'error');
                 return;
             }
