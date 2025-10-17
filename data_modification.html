@@ -575,27 +575,27 @@
             </button>
         </div>
 
-        <div class="main-content">
-            <!-- Login Section -->
-            <div id="loginSection" class="login-section" role="main">
-                <h2><i class="fas fa-user-check" aria-hidden="true"></i> User Authentication</h2>
-                <p>Please enter your User ID to access the data modification tool.</p>
-                
-                <form id="loginForm" class="login-form" role="form" aria-label="Login form">
-                    <div class="form-group">
-                        <label for="userId">User ID</label>
-                        <input type="text" id="userId" class="form-input" placeholder="Enter your User ID" required aria-describedby="userId-help">
-                        <div id="userId-help" class="sr-only">Enter your assigned user ID to access the data modification tool</div>
-                    </div>
-                    <button type="submit" class="btn btn-primary" aria-describedby="login-help">
-                        <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
-                        Login
-                    </button>
-                    <div id="login-help" class="sr-only">Click to authenticate and access the annotation interface</div>
-                </form>
-            </div>
+        <!-- Login Section -->
+        <div id="loginSection" class="login-section" role="main">
+            <h2><i class="fas fa-user-check" aria-hidden="true"></i> User Authentication</h2>
+            <p>Please enter your User ID to access the data modification tool.</p>
             
-            <!-- Annotation Section (Hidden initially) -->
+            <form id="loginForm" class="login-form" role="form" aria-label="Login form">
+                <div class="form-group">
+                    <label for="userId">User ID</label>
+                    <input type="text" id="userId" class="form-input" placeholder="Enter your User ID" required aria-describedby="userId-help">
+                    <div id="userId-help" class="sr-only">Enter your assigned user ID to access the data modification tool</div>
+                </div>
+                <button type="submit" class="btn btn-primary" aria-describedby="login-help">
+                    <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+                    Login
+                </button>
+                <div id="login-help" class="sr-only">Click to authenticate and access the annotation interface</div>
+            </form>
+        </div>
+        
+        <!-- Annotation Section (Hidden initially) -->
+        <div class="main-content">
             <div id="annotationSection" class="hidden" role="main" aria-label="Annotation interface">
                 <!-- Meta Information at the top -->
                 <div class="meta-info-section" role="region" aria-label="Item metadata">
