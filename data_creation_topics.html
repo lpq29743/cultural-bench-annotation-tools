@@ -1217,21 +1217,6 @@
 
                 topicExamples.push(exampleData);
             });
-
-            // If we have fewer than 160 examples, pad with generated ones
-            while (topicExamples.length < 160) {
-                const topics = ["Belief", "Commerce", "Education", "Entertainment", "Finance", "Food", "Government", "Habitat", "Health", "Heritage", "Language", "Pets", "Science", "Social", "Travel", "Work"];
-                const topic = topics[topicExamples.length % topics.length];
-                const exampleNum = Math.floor(topicExamples.length / topics.length) + 1;
-
-                topicExamples.push({
-                    topic: topic,
-                    scenario: `${topic} related cultural scenario example ${exampleNum}`,
-                    question: `What is an important aspect of ${topic.toLowerCase()} in this culture?`,
-                    answer: `Cultural answer related to ${topic.toLowerCase()}`,
-                    explanation: `This relates to traditional cultural ${topic.toLowerCase()} practices and values.`
-                });
-            }
         }
 
         function showFirebaseStatus(message, type) {
