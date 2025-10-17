@@ -1577,14 +1577,21 @@
 
         function showFirebaseStatus(message, type) {
             const statusDiv = document.getElementById('firebaseStatus');
-            statusDiv.className = `firebase-status ${type}`;
-            statusDiv.textContent = message;
-            statusDiv.style.display = 'block';
+            if (statusDiv) {
+                statusDiv.className = `firebase-status ${type}`;
+                statusDiv.textContent = message;
+                statusDiv.style.display = 'block';
+            } else {
+                // Fallback to console logging if status element doesn't exist
+                console.log(`Firebase Status (${type}): ${message}`);
+            }
         }
 
         function hideFirebaseStatus() {
             const statusDiv = document.getElementById('firebaseStatus');
-            statusDiv.style.display = 'none';
+            if (statusDiv) {
+                statusDiv.style.display = 'none';
+            }
         }
 
         async function handleDataSubmission(event) {
