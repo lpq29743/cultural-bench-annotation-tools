@@ -752,6 +752,17 @@
                             </div>
                         </div>
                     </div>
+                    <div
+                        style="margin-bottom: 1.5rem; padding: 1rem; background: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <h3 style="margin: 0 0 0.5rem 0; color: #991b1b; font-size: 1.1rem;">
+                            <i class="fas fa-exclamation-triangle"></i> Important: Please read this first before
+                            creating data
+                        </h3>
+                        <p style="margin: 0; color: #7f1d1d; font-size: 0.9rem; line-height: 1.4;">
+                            Before creating any data, please carefully review all guidelines below to ensure your
+                            annotations meet the quality standards and cultural authenticity requirements.
+                        </p>
+                    </div>
                     <h2 class="panel-title">
                         <i class="fas fa-lightbulb"></i>
                         Annotation Guidelines
@@ -809,35 +820,17 @@
                     </div>
                 </div>
                 <div class="right-panel">
+                    <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                        <p style="margin: 0; color: #0c4a6e; font-size: 1rem; line-height: 1.5;">
+                            Using the provided example as inspiration, can you identify any culturally relevant scenarios from your own culture? If so, please create one or more examples. If not, feel free to explore other examples.
+                        </p>
+                    </div>
+                    
                     <h2 class="panel-title">
                         <i class="fas fa-edit"></i>
                         Data Creation Form
                     </h2>
                     <form id="dataCreationForm" role="form" aria-label="Data creation form">
-                        <div class="form-group">
-                            <label for="topic" class="field-label">Topic</label>
-                            <select id="topic" name="topic" class="form-input" required aria-describedby="topic-help">
-                                <option value="">Select a topic...</option>
-                                <option value="Belief">Belief</option>
-                                <option value="Commerce">Commerce</option>
-                                <option value="Education">Education</option>
-                                <option value="Entertainment">Entertainment</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Food">Food</option>
-                                <option value="Government">Government</option>
-                                <option value="Habitat">Habitat</option>
-                                <option value="Health">Health</option>
-                                <option value="Heritage">Heritage</option>
-                                <option value="Language">Language</option>
-                                <option value="Pets">Pets</option>
-                                <option value="Science">Science</option>
-                                <option value="Social">Social</option>
-                                <option value="Travel">Travel</option>
-                                <option value="Work">Work</option>
-                            </select>
-                            <div id="topic-help" class="sr-only">Select the most appropriate topic from the
-                                predefined list for this cultural benchmark item</div>
-                        </div>
                         <div class="form-group">
                             <label for="scenario" class="field-label">Scenario (Based on Topic Guidelines)</label>
                             <textarea id="scenario" name="scenario" class="form-textarea"
@@ -926,7 +919,6 @@
             logoutBtn: document.getElementById('logoutBtn'),
             // Creation form
             dataCreationForm: document.getElementById('dataCreationForm'),
-            topic: document.getElementById('topic'),
             scenario: document.getElementById('scenario'),
             question: document.getElementById('question'),
             answer: document.getElementById('answer'),
@@ -1057,17 +1049,27 @@
         }
         async function handleDataSubmission(event) {
             event.preventDefault();
+            
+            // Get current topic from displayed data
+            const currentTopic = getCurrentDisplayedTopic();
+            
+            // Get user's language_region
+            const userLanguageRegion = Array.isArray(currentUser.language_region) 
+                ? currentUser.language_region[0] 
+                : currentUser.language_region;
+            
             // Validate form data
             const formData = {
-                topic: elements.topic.value.trim(),
+                topic: currentTopic,
                 scenario: elements.scenario.value.trim(),
                 question: elements.question.value.trim(),
                 answer: elements.answer.value.trim(),
                 explanation: elements.explanation.value.trim()
             };
-            // Check if all fields are filled
-            if (!formData.topic || !formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
-                showToast('Please fill in all fields', 'error');
+            
+            // Check if required fields are filled (explanation is optional)
+            if (!formData.scenario || !formData.question || !formData.answer) {
+                showToast('Please fill in all required fields (scenario, question, answer)', 'error');
                 return;
             }
             try {
@@ -1075,7 +1077,7 @@
                 // Prepare data for submission
                 const submissionData = {
                     ...formData,
-                    language_region: Array.isArray(currentUser.language_region) ? currentUser.language_region[0] : currentUser.language_region,
+                    language_region: userLanguageRegion,
                     created_by: currentUser.userId,
                     created_at: new Date().toISOString(),
                     status: 'pending_review',
@@ -1103,6 +1105,16 @@
         // Topic Navigation and Examples
         let currentTopicIndex = 1;
         let topicExamples = [];
+        
+        // Get current displayed topic
+        function getCurrentDisplayedTopic() {
+            if (topicExamples && topicExamples.length > 0) {
+                const currentExample = topicExamples[currentTopicIndex - 1];
+                return currentExample ? currentExample.topic : 'Unknown Topic';
+            }
+            return 'Unknown Topic';
+        }
+        
         // Initialize topic examples
         function initializeTopicExamples() {
             displayCurrentTopic();
@@ -1228,6 +1240,64 @@
         }
         // Display current topic example
         function displayCurrentTopic() {
+            const topicContainer = document.getElementById('topicExampleContainer');
+            const topicCounter = document.getElementById('topicCounter');
+            const topicIndexInput = document.getElementById('topicIndex');
+            
+            if (!topicContainer) return;
+            
+            // Update counter and input
+            const totalTopics = topicExamples.length || 160;
+            if (topicCounter) {
+                topicCounter.textContent = `Data ${currentTopicIndex} of ${totalTopics}`;
+            }
+            if (topicIndexInput) {
+                topicIndexInput.value = currentTopicIndex;
+                topicIndexInput.max = totalTopics;
+            }
+            
+            // Display current topic example
+            if (topicExamples && topicExamples.length > 0) {
+                const currentExample = topicExamples[currentTopicIndex - 1];
+                if (currentExample) {
+                    topicContainer.innerHTML = `
+                        <div class="topic-example-card">
+                            <div class="example-header">Topic: ${currentExample.topic}</div>
+                            <div class="example-field">
+                                <label>Scenario:</label>
+                                <p>${currentExample.scenario}</p>
+                            </div>
+                            <div class="example-field">
+                                <label>Question:</label>
+                                <p>${currentExample.question}</p>
+                            </div>
+                            <div class="example-field">
+                                <label>Answer:</label>
+                                <p>${currentExample.answer}</p>
+                            </div>
+                            <div class="example-field">
+                                <label>Explanation:</label>
+                                <p>${currentExample.explanation}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    topicContainer.innerHTML = `
+                        <div class="topic-example-card">
+                            <div class="example-header">No Topic Data Available</div>
+                            <p>Loading topic examples...</p>
+                        </div>
+                    `;
+                }
+            } else {
+                topicContainer.innerHTML = `
+                    <div class="topic-example-card">
+                        <div class="example-header">Loading Topics...</div>
+                        <p>Please wait while we load the cultural topics from Firebase.</p>
+                    </div>
+                `;
+            }
+        }
             if (!topicExamples.length) {
                 // Show loading state if no data available
                 const currentTopicField = document.getElementById('currentTopicField');
