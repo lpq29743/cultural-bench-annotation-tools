@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Cultural Benchmark Annotation Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-5px);
+        }
+        
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .admin-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .admin-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .admin-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .user-management .admin-icon {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+        
+        .data-uploader .admin-icon {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        
+        .legacy-tool .admin-icon {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+        
+        .settings .admin-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .admin-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .admin-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .admin-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 25px;
+        }
+        
+        .admin-features li {
+            color: #555;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .admin-features li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8, #6f42c1);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 40px;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+        }
+        
+        .admin-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+        }
+        
+        .admin-warning i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: #ffc107;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .admin-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .admin-card {
+                padding: 30px 20px;
+            }
+            
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 20px;
+                display: inline-flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="main.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Back to Main
+    </a>
+    
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-shield-alt"></i> Admin Panel</h1>
+            <p>Administrative tools for managing the Cultural Benchmark Annotation system. Access restricted to administrators only.</p>
+        </div>
+        
+        <div class="admin-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Administrator Access Required:</strong> These tools require administrative privileges and can affect system-wide settings and user data.
+        </div>
+        
+        <div class="admin-grid">
+            <!-- User Management Tool -->
+            <a href="user_management.html" class="admin-card user-management">
+                <div class="admin-icon">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h3>User Management</h3>
+                <p>Manage user permissions, roles, and access rights for the annotation system.</p>
+                <ul class="admin-features">
+                    <li>User permission management</li>
+                    <li>Role assignment</li>
+                    <li>Access control</li>
+                    <li>Batch user operations</li>
+                    <li>Firebase integration</li>
+                </ul>
+                <span class="btn btn-info">Manage Users</span>
+            </a>
+            
+            <!-- Data Uploader Tool -->
+            <a href="data_uploader.html" class="admin-card data-uploader">
+                <div class="admin-icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h3>Data Uploader</h3>
+                <p>Upload and import large datasets into the cultural benchmark annotation system.</p>
+                <ul class="admin-features">
+                    <li>Bulk data import</li>
+                    <li>CSV/JSON support</li>
+                    <li>Data validation</li>
+                    <li>Progress tracking</li>
+                    <li>Error handling</li>
+                </ul>
+                <span class="btn btn-success">Upload Data</span>
+            </a>
+            
+            <!-- Legacy Tool -->
+            <a href="index.html" class="admin-card legacy-tool">
+                <div class="admin-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h3>Legacy Tool</h3>
+                <p>Access the original comprehensive annotation tool with all features in one interface.</p>
+                <ul class="admin-features">
+                    <li>All-in-one interface</li>
+                    <li>Multiple task modes</li>
+                    <li>File import/export</li>
+                    <li>Advanced filtering</li>
+                    <li>Statistics dashboard</li>
+                </ul>
+                <span class="btn btn-secondary">Use Legacy Tool</span>
+            </a>
+            
+            <!-- System Settings -->
+            <a href="settings.html" class="admin-card settings">
+                <div class="admin-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <h3>System Settings</h3>
+                <p>Configure system-wide settings, preferences, and administrative options.</p>
+                <ul class="admin-features">
+                    <li>System configuration</li>
+                    <li>Database settings</li>
+                    <li>Security options</li>
+                    <li>Backup management</li>
+                    <li>Performance tuning</li>
+                </ul>
+                <span class="btn">Configure Settings</span>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>Cultural Benchmark Annotation Tools - Admin Panel v2.0</p>
+            <p>Restricted Access - Administrator Only</p>
+        </div>
+    </div>
+</body>
+</html>
