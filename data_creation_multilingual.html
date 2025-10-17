@@ -1792,6 +1792,20 @@
             }
         }
 
+        // Get topic from currently displayed data
+        function getCurrentDisplayedTopic() {
+            if (!multilingualData || multilingualData.length === 0) {
+                return 'Unknown Topic';
+            }
+
+            if (currentDataIndex < 1 || currentDataIndex > multilingualData.length) {
+                return 'Unknown Topic';
+            }
+
+            const currentExample = multilingualData[currentDataIndex - 1];
+            return currentExample.topic || 'Unknown Topic';
+        }
+
         // Update progress display
         function updateProgressDisplay() {
             if (elements.progressNumber) {
