@@ -67,7 +67,7 @@ To use this script:
 3. Copy and paste this entire script
 4. Run: setupUsers()
 
-This will create example users in your Firebase 'allowed_users' collection.
+This will create example users in your Firebase 'users' collection.
 `);
 
 // Export for Node.js if needed

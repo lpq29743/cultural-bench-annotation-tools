@@ -29,7 +29,7 @@ const COLLECTIONS = {
     CREATION: 'created_data',
     ASSIGNMENTS: 'task_assignments',
     SESSIONS: 'user_sessions',
-    ALLOWED_USERS: 'users' // Use users collection for permissions
+    USERS: 'users' // Use users collection for permissions
 };
 
 // Firebase service functions
@@ -232,7 +232,7 @@ const FirebaseService = {
     // User validation using Firestore database instead of Storage
     async loadAllowedUsers() {
         try {
-            const snapshot = await db.collection(COLLECTIONS.ALLOWED_USERS).get();
+            const snapshot = await db.collection(COLLECTIONS.USERS).get();
             
             const users = [];
             snapshot.forEach(doc => {
@@ -313,7 +313,7 @@ const FirebaseService = {
                 isActive: true
             };
             
-            const docRef = await db.collection(COLLECTIONS.ALLOWED_USERS).add(userDoc);
+            const docRef = await db.collection(COLLECTIONS.USERS).add(userDoc);
             return { success: true, id: docRef.id };
         } catch (error) {
             console.error('Error adding allowed user:', error);
@@ -571,7 +571,7 @@ const FirebaseService = {
             const batch = db.batch();
             
             usersData.forEach(userData => {
-                const docRef = db.collection(COLLECTIONS.ALLOWED_USERS).doc();
+                const docRef = db.collection(COLLECTIONS.USERS).doc();
                 batch.set(docRef, {
                     userId: userData.userId.trim(),
                     role: userData.role.trim(),
