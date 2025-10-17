@@ -833,6 +833,115 @@
             }
         }
 
+        /* Inspiration Guide Styles */
+        .inspiration-guide {
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 12px;
+            border: 1px solid #0ea5e9;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
+        }
+
+        .guide-header {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .guide-header i {
+            font-size: 1.2rem;
+        }
+
+        .guide-content {
+            padding: 1.5rem;
+        }
+
+        .main-instruction {
+            margin: 0 0 1.25rem 0;
+            color: #0c4a6e;
+            font-size: 1rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .guide-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        .action-item i {
+            color: #0ea5e9;
+            font-size: 1.1rem;
+            min-width: 20px;
+        }
+
+        .action-item span {
+            color: #0c4a6e;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .translation-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(251, 191, 36, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .translation-note i {
+            color: #d97706;
+            font-size: 1rem;
+            margin-top: 0.1rem;
+            min-width: 16px;
+        }
+
+        .translation-note span {
+            color: #92400e;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .guide-header {
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+            }
+
+            .guide-content {
+                padding: 1rem;
+            }
+
+            .action-item {
+                padding: 0.5rem;
+            }
+
+            .action-item span {
+                font-size: 0.85rem;
+            }
+        }
+
         /* Navigation Controls Styles */
         .navigation-controls {
             display: flex;
@@ -1114,14 +1223,30 @@
                     </div>
                 </div>
                 <div class="right-panel">
-                    <div
-                        style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
-                        <p style="margin: 0; color: #0c4a6e; font-size: 1rem; line-height: 1.5;">
-                            Using the provided example as inspiration, can you think of any culturally relevant
-                            scenarios from your own culture? If so, please create one or more examples. If not, feel
-                            free to explore other examples.
-                            Note: If you find the example difficult to understand, it may be because the example makes sense only in its original language and not in the English translation.
-                        </p>
+                    <div class="inspiration-guide">
+                        <div class="guide-header">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Create Your Cultural Example</span>
+                        </div>
+                        <div class="guide-content">
+                            <p class="main-instruction">
+                                Using the example above as inspiration, can you identify culturally relevant scenarios from your own culture?
+                            </p>
+                            <div class="guide-actions">
+                                <div class="action-item">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>Create one or more examples if you find cultural parallels</span>
+                                </div>
+                                <div class="action-item">
+                                    <i class="fas fa-search"></i>
+                                    <span>Explore other examples if this one doesn't resonate</span>
+                                </div>
+                            </div>
+                            <div class="translation-note">
+                                <i class="fas fa-info-circle"></i>
+                                <span>If the example seems unclear, it may be culturally specific to its original language</span>
+                            </div>
+                        </div>
                     </div>
                     <h2 class="panel-title">
                         <i class="fas fa-edit"></i>
