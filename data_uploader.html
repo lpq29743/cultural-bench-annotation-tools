@@ -1163,7 +1163,47 @@
             const workbook = XLSX.read(arrayBuffer, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
+            
+            // Special handling for cultural topics
+            if (currentCollection === 'cultural_topics') {
+                return parseCulturalTopicsExcel(worksheet);
+            }
+            
             return XLSX.utils.sheet_to_json(worksheet);
+        }
+
+        function parseCulturalTopicsExcel(worksheet) {
+            // Convert worksheet to array of arrays (including header)
+            const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            
+            if (rawData.length === 0) return [];
+            
+            const data = [];
+            
+            // Skip header row (first row), process data rows
+            for (let i = 1; i < rawData.length; i++) {
+                const row = rawData[i];
+                if (!row || row.length === 0) continue;
+                
+                const topic = row[0]; // First column is the topic
+                if (!topic || topic.trim() === '') continue;
+                
+                // Each row has a topic with examples in subsequent columns
+                // Create separate items for each example
+                for (let j = 2; j < row.length && j <= 11; j++) { // Columns 2-11 are examples (skip description column)
+                    const example = row[j];
+                    if (example && example.toString().trim()) {
+                        data.push({
+                            topic: topic.toString().trim(),
+                            example: example.toString().trim(),
+                            created_at: new Date().toISOString(),
+                            source: 'excel_upload'
+                        });
+                    }
+                }
+            }
+            
+            return data;
         }
 
         function parseUserPermissions(text) {
@@ -1268,7 +1308,7 @@
         }
 
         // Toast notification system
-        function showToast(title, message, type = 'info', duration = 8000) {
+        function showToast(title, message, type = 'info', duration = 15000) {
             const toastContainer = document.getElementById('toastContainer');
             const toastId = `toast-${++toastCount}`;
             
