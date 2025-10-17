@@ -926,11 +926,11 @@
 
         async function handleUpload() {
             try {
-                showToast('Upload Started', 'Processing your data...', 'info');
+                showToast('Upload Started', 'Processing your data...', 'info', 30000);
                 
                 const data = await prepareData();
                 if (!data) {
-                    showToast('Upload Failed', 'No valid data to upload', 'error');
+                    showToast('Upload Failed', 'No valid data to upload', 'error', 30000);
                     return;
                 }
 
@@ -938,14 +938,14 @@
                 const result = await uploadToFirebase(data, collectionName);
                 
                 if (result.success) {
-                    showToast('Upload Successful', `Uploaded ${data.length} items to ${collectionName}`, 'success');
+                    showToast('Upload Successful', `Uploaded ${data.length} items to ${collectionName}`, 'success', 30000);
                     clearForm();
                 } else {
-                    showToast('Upload Failed', result.error || 'Unknown error occurred', 'error');
+                    showToast('Upload Failed', result.error || 'Unknown error occurred', 'error', 30000);
                 }
             } catch (error) {
                 console.error('Upload error:', error);
-                showToast('Upload Failed', error.message, 'error');
+                showToast('Upload Failed', error.message, 'error', 30000);
             }
         }
 
@@ -1310,6 +1310,15 @@
         // Toast notification system
         function showToast(title, message, type = 'info', duration = 15000) {
             const toastContainer = document.getElementById('toastContainer');
+            
+            // Clear existing toasts of the same type to prevent overlap
+            const existingToasts = toastContainer.querySelectorAll(`.toast.${type}`);
+            existingToasts.forEach(toast => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            });
+            
             const toastId = `toast-${++toastCount}`;
             
             const toast = document.createElement('div');
@@ -1343,6 +1352,8 @@
             setTimeout(() => {
                 closeToast(toastId);
             }, duration);
+            
+            console.log(`Toast created: ${title} - Duration: ${duration}ms`);
         }
 
         function closeToast(toastId) {
