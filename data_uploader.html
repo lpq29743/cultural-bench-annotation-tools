@@ -390,7 +390,8 @@
             top: 20px;
             right: 20px;
             z-index: 1000;
-            max-width: 350px;
+            max-width: 400px;
+            min-width: 300px;
         }
         
         .toast {
@@ -398,11 +399,13 @@
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
             margin-bottom: 1rem;
-            padding: 1rem;
+            padding: 1.5rem;
             border-left: 4px solid #667eea;
             animation: slideInRight 0.3s ease-out;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            word-wrap: break-word;
+            white-space: normal;
         }
         
         .toast.success {
@@ -1180,19 +1183,32 @@
             
             const data = [];
             
-            // Skip header row (first row), process data rows
+            // Skip header row (first row), process data rows starting from row 2
             for (let i = 1; i < rawData.length; i++) {
                 const row = rawData[i];
                 if (!row || row.length === 0) continue;
                 
                 const topic = row[0]; // First column is the topic
-                if (!topic || topic.trim() === '') continue;
+                if (!topic || topic.toString().trim() === '' || topic.toString().trim().toLowerCase() === 'field') {
+                    continue; // Skip empty topics and header row with "Field"
+                }
                 
                 // Each row has a topic with examples in subsequent columns
                 // Create separate items for each example
                 for (let j = 2; j < row.length && j <= 11; j++) { // Columns 2-11 are examples (skip description column)
                     const example = row[j];
-                    if (example && example.toString().trim()) {
+                    if (example && example.toString().trim() && 
+                        example.toString().trim().toLowerCase() !== 'example 1' &&
+                        example.toString().trim().toLowerCase() !== 'example 2' &&
+                        example.toString().trim().toLowerCase() !== 'example 3' &&
+                        example.toString().trim().toLowerCase() !== 'example 4' &&
+                        example.toString().trim().toLowerCase() !== 'example 5' &&
+                        example.toString().trim().toLowerCase() !== 'example 6' &&
+                        example.toString().trim().toLowerCase() !== 'example 7' &&
+                        example.toString().trim().toLowerCase() !== 'example 8' &&
+                        example.toString().trim().toLowerCase() !== 'example 9' &&
+                        example.toString().trim().toLowerCase() !== 'example 10' &&
+                        !example.toString().trim().toLowerCase().startsWith('example ')) {
                         data.push({
                             topic: topic.toString().trim(),
                             example: example.toString().trim(),
