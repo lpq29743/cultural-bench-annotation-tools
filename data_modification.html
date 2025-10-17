@@ -122,6 +122,9 @@
             background: white;
             border: 2px solid #e2e8f0;
             color: #334155;
+            width: 100%;
+            box-sizing: border-box;
+            resize: vertical;
         }
         
         .editable-field:focus {
@@ -189,8 +192,11 @@
             max-height: 400px;
             overflow-y: auto;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             font-family: 'Georgia', serif;
             line-height: 1.6;
+            padding: 1rem;
         }
         
         .right-column {
