@@ -994,8 +994,8 @@
                     creation_method: 'multilingual_adaptation'
                 };
                 
-                // Submit to Firebase (you may need to create a specific collection for created data)
-                const result = await FirebaseService.addToCollection('cultural_annotations_created', submissionData);
+                // Submit to Firebase
+                const result = await FirebaseService.saveAnnotation(submissionData, 'cultural_annotations_created');
                 
                 if (result.success) {
                     hideLoading();
