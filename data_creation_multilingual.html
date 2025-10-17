@@ -1124,6 +1124,11 @@
                             <i class="fas fa-navigation"></i>
                             Data Navigation
                         </h3>
+                        <!-- Current Data Display -->
+                        <div id="currentDataDisplay" class="topic-example-card" style="margin-top: 1rem;">
+                            <div class="example-header">Loading Firebase Data...</div>
+                            <p>Please wait while we load the annotated data from Firebase.</p>
+                        </div>
                         <div class="navigation-controls">
                             <div class="nav-input-group">
                                 <label for="dataIndex">Go to item:</label>
@@ -1144,12 +1149,6 @@
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
-                        </div>
-
-                        <!-- Current Data Display -->
-                        <div id="currentDataDisplay" class="topic-example-card" style="margin-top: 1rem;">
-                            <div class="example-header">Loading Firebase Data...</div>
-                            <p>Please wait while we load the annotated data from Firebase.</p>
                         </div>
                     </div>
 
@@ -1230,7 +1229,8 @@
                         </div>
                         <div class="guide-content">
                             <p class="main-instruction">
-                                Using the example left as inspiration, can you think of culturally relevant scenarios from your own culture?
+                                Using the example left as inspiration, can you think of culturally relevant scenarios
+                                from your own culture?
                             </p>
                             <div class="guide-actions">
                                 <div class="action-item">
@@ -1244,7 +1244,8 @@
                             </div>
                             <div class="translation-note">
                                 <i class="fas fa-info-circle"></i>
-                                <span>If the example seems unclear, it may be culturally specific to its original language</span>
+                                <span>If the example seems unclear, it may be culturally specific to its original
+                                    language</span>
                             </div>
                         </div>
                     </div>
@@ -1563,15 +1564,15 @@
 
         async function handleDataSubmission(event) {
             event.preventDefault();
-            
+
             // Get topic from currently displayed example
             const currentTopic = getCurrentDisplayedTopic();
-            
+
             // Get user's language_region
-            const userLanguageRegion = Array.isArray(currentUser.language_region) 
-                ? currentUser.language_region[0] 
+            const userLanguageRegion = Array.isArray(currentUser.language_region)
+                ? currentUser.language_region[0]
                 : currentUser.language_region;
-            
+
             // Validate form data
             const formData = {
                 scenario: elements.scenario.value.trim(),
@@ -1579,19 +1580,19 @@
                 answer: elements.answer.value.trim(),
                 explanation: elements.explanation.value.trim()
             };
-            
+
             // Check if required fields are filled (explanation is optional)
             if (!formData.scenario || !formData.question || !formData.answer) {
                 showToast('Please fill in all required fields (scenario, question, answer)', 'error');
                 return;
             }
-            
+
             // Check if topic is available from displayed example
             if (!currentTopic || currentTopic === 'Unknown Topic') {
                 showToast('Please select an example from the left panel first', 'error');
                 return;
             }
-            
+
             try {
                 showLoading('Submitting data...');
                 // Prepare data for submission
@@ -1730,7 +1731,6 @@
             // Update current data display
             if (currentDataDisplay) {
                 currentDataDisplay.innerHTML = `
-                    <div class="example-header">Item ${currentDataIndex}: ${example.topic || 'Unknown Topic'}</div>
                     <div class="example-field">
                         <label>Language Region:</label>
                         <p>${example.language_region || 'N/A'}</p>
