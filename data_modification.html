@@ -276,21 +276,23 @@
             outline-offset: 2px;
         }
         
-        .rejection-reason {
-            margin-top: 1rem;
-            display: none;
-        }
-        
-        .rejection-reason.show {
-            display: block;
-        }
-        
-        .rejection-reason select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
+        .upload-notice {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
             border-radius: 8px;
-            background: white;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #0c4a6e;
+        }
+        
+        .upload-notice i {
+            color: #0ea5e9;
+            margin-right: 0.5rem;
+        }
+        
+        .upload-notice p {
+            margin: 0;
+            font-size: 0.9rem;
         }
         
         .navigation-controls {
@@ -729,17 +731,9 @@
                             <div id="reject-help" class="sr-only">Reject the annotation with a reason</div>
                         </div>
                         
-                        <!-- Rejection Reason (Hidden initially) -->
-                        <div id="rejectionReason" class="rejection-reason" role="region" aria-label="Rejection reason selection">
-                            <label class="field-label" for="rejectionSelect">Rejection Reason</label>
-                            <select id="rejectionSelect" class="form-select" aria-describedby="rejection-help">
-                                <option value="">Select a reason...</option>
-                                <option value="incorrect_information">Source excerpt contains incorrect information</option>
-                                <option value="subjective_content">Source excerpt is subjective and not objective</option>
-                                <option value="cannot_revise">Generated sample cannot be reasonably revised</option>
-                                <option value="other">Other reason</option>
-                            </select>
-                            <div id="rejection-help" class="sr-only">Choose the primary reason for rejecting this annotation</div>
+                        <!-- Upload Notice -->
+                        <div class="upload-notice" role="region" aria-label="Upload information">
+                            <p><i class="fas fa-info-circle" aria-hidden="true"></i> <strong>Note:</strong> After clicking Accept, Revise, or Reject, it may take a few seconds to upload your changes to the server.</p>
                         </div>
                         
                         <!-- Form Fields -->
