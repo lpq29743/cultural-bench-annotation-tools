@@ -24,7 +24,9 @@ const COLLECTIONS = {
     USERS: 'annotators',
     ASSIGNMENTS: 'task_assignments',
     SESSIONS: 'user_sessions',
-    ALLOWED_USERS: 'allowed_users' // New collection for user permissions
+    ALLOWED_USERS: 'allowed_users', // New collection for user permissions
+    CULTURAL_TOPICS: 'cultural_topics', // Collection for cultural topics/materials
+    ANNOTATED_DATA: 'annotated_data' // Collection for pre-annotated data
 };
 
 // Firebase service functions
@@ -505,21 +507,29 @@ const FirebaseService = {
             const snapshot = await query.get();
             
             const stats = {
-                total: 0,
-                accepted: 0,
-                revised: 0,
-                rejected: 0,
-                pending: 0
+                total: snapshot.size,
+                byAnnotator: {},
+                byDate: {},
+                byLanguage: {}
             };
             
             snapshot.forEach(doc => {
                 const data = doc.data();
-                stats.total++;
                 
-                if (data.annotationStatus) {
-                    stats[data.annotationStatus]++;
-                } else {
-                    stats.pending++;
+                // Count by annotator
+                if (data.annotatorId) {
+                    stats.byAnnotator[data.annotatorId] = (stats.byAnnotator[data.annotatorId] || 0) + 1;
+                }
+                
+                // Count by date
+                if (data.timestamp) {
+                    const date = data.timestamp.toDate().toDateString();
+                    stats.byDate[date] = (stats.byDate[date] || 0) + 1;
+                }
+                
+                // Count by language
+                if (data.language) {
+                    stats.byLanguage[data.language] = (stats.byLanguage[data.language] || 0) + 1;
                 }
             });
             
@@ -847,6 +857,128 @@ const FirebaseService = {
             console.error('Error getting user stats:', error);
             return { success: false, error: error.message };
         }
+    },
+
+    // Cultural Topics Management Methods
+    async saveCulturalTopic(topicData) {
+        try {
+            const docRef = await db.collection(COLLECTIONS.CULTURAL_TOPICS).add({
+                ...topicData,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                lastModified: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            return { success: true, id: docRef.id };
+        } catch (error) {
+            console.error('Error saving cultural topic:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async loadCulturalTopics() {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.CULTURAL_TOPICS)
+                .orderBy('timestamp', 'desc')
+                .get();
+            
+            const topics = [];
+            snapshot.forEach(doc => {
+                topics.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return { success: true, data: topics };
+        } catch (error) {
+            console.error('Error loading cultural topics:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async saveAllCulturalTopics(topics) {
+        try {
+            const batch = db.batch();
+            
+            topics.forEach(topic => {
+                const docRef = db.collection(COLLECTIONS.CULTURAL_TOPICS).doc();
+                batch.set(docRef, {
+                    ...topic,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastModified: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+            
+            await batch.commit();
+            return { success: true };
+        } catch (error) {
+            console.error('Error saving all cultural topics:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async clearCulturalTopics() {
+        return this.clearCollection(COLLECTIONS.CULTURAL_TOPICS);
+    },
+
+    // Annotated Data Management Methods
+    async saveAnnotatedData(annotationData) {
+        try {
+            const docRef = await db.collection(COLLECTIONS.ANNOTATED_DATA).add({
+                ...annotationData,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                lastModified: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            return { success: true, id: docRef.id };
+        } catch (error) {
+            console.error('Error saving annotated data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async loadAnnotatedData() {
+        try {
+            const snapshot = await db.collection(COLLECTIONS.ANNOTATED_DATA)
+                .orderBy('timestamp', 'desc')
+                .get();
+            
+            const data = [];
+            snapshot.forEach(doc => {
+                data.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return { success: true, data: data };
+        } catch (error) {
+            console.error('Error loading annotated data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async saveAllAnnotatedData(annotatedData) {
+        try {
+            const batch = db.batch();
+            
+            annotatedData.forEach(item => {
+                const docRef = db.collection(COLLECTIONS.ANNOTATED_DATA).doc();
+                batch.set(docRef, {
+                    ...item,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastModified: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+            
+            await batch.commit();
+            return { success: true };
+        } catch (error) {
+            console.error('Error saving all annotated data:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async clearAnnotatedData() {
+        return this.clearCollection(COLLECTIONS.ANNOTATED_DATA);
     }
 };
 

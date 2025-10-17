@@ -260,20 +260,88 @@
             margin: 0.5rem 0;
         }
         
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: #f1f5f9;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 1rem 0;
+        .form-group {
+            margin-bottom: 1.5rem;
         }
         
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s ease;
+        .field-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            box-sizing: border-box;
+            font-family: inherit;
+            background-color: white;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.5;
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: #5a6268;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
         
         .action-buttons {
@@ -394,28 +462,40 @@
             animation: progressBar 5s linear forwards;
         }
         
-        .loading-spinner {
-            display: inline-block;
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid #f3f4f6;
-            border-top: 2px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* Animations */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideOutRight {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
+        }
+        
+        @keyframes progressBar {
+            from { width: 100%; }
+            to { width: 0%; }
         }
         
         /* Responsive Design */
-        @media (max-width: 1024px) {
-            .uploader-container {
-                padding: 1.5rem;
-            }
-            
-            .upload-options {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            }
-        }
-        
         @media (max-width: 768px) {
             .uploader-container {
                 padding: 1rem;
@@ -461,101 +541,6 @@
                 max-width: none;
             }
         }
-        
-        @media (max-width: 480px) {
-            .page-header h1 {
-                font-size: 1.75rem;
-            }
-            
-            .uploader-card {
-                padding: 1rem;
-            }
-            
-            .upload-section {
-                padding: 1.5rem;
-            }
-            
-            .option-card {
-                padding: 1.5rem;
-            }
-        }
-        
-        /* Accessibility improvements */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-        
-        /* High contrast mode support */
-        @media (prefers-contrast: high) {
-            .uploader-card {
-                border: 2px solid #000;
-            }
-            
-            .btn {
-                border: 2px solid currentColor;
-            }
-            
-            .option-card {
-                border: 2px solid #000;
-            }
-        }
-        
-        /* Reduced motion support */
-        @media (prefers-reduced-motion: reduce) {
-            .option-card,
-            .collection-btn,
-            .upload-section,
-            .toast {
-                transition: none;
-                animation: none;
-            }
-            
-            .loading-spinner {
-                animation: none;
-            }
-            
-            .upload-section.dragover {
-                transform: none;
-            }
-            
-            .option-card:hover {
-                transform: none;
-            }
-        }
-        
-        /* Animations */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(100%); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        @keyframes slideOutRight {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(100%); }
-        }
-        
-        @keyframes progressBar {
-            from { width: 100%; }
-            to { width: 0%; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
@@ -592,6 +577,14 @@
                 <button class="collection-btn" data-collection="cultural_annotations_modified" aria-pressed="false">
                     <i class="fas fa-pen" aria-hidden="true"></i>
                     Modified Annotations
+                </button>
+                <button class="collection-btn" data-collection="cultural_topics" aria-pressed="false">
+                    <i class="fas fa-globe" aria-hidden="true"></i>
+                    Cultural Topics
+                </button>
+                <button class="collection-btn" data-collection="annotated_data" aria-pressed="false">
+                    <i class="fas fa-database" aria-hidden="true"></i>
+                    Annotated Data
                 </button>
                 <button class="collection-btn" data-collection="allowed_users" aria-pressed="false">
                     <i class="fas fa-users" aria-hidden="true"></i>
@@ -709,4 +702,609 @@
                     placeholder="Paste your data here..."
                     aria-describedby="text-data-help"
                 ></textarea>
-                <div.div id="text-data-help"
+                <div id="text-data-help" class="sr-only">Enter your data in the selected format</div>
+            </div>
+        </div>
+
+        <!-- Existing File Section -->
+        <div class="uploader-card" id="existingFileSection" style="display: none;">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-folder-open" aria-hidden="true"></i>
+                </div>
+                <h3>Select Existing File</h3>
+            </div>
+            
+            <div class="form-group">
+                <label for="existingFile" class="field-label">Choose File:</label>
+                <select id="existingFile" class="form-select" aria-describedby="existing-file-help">
+                    <option value="">Select a file...</option>
+                    <option value="data_creation/zh_cn_yourid.csv">Chinese Cultural Topics (zh_cn_yourid.csv)</option>
+                </select>
+                <div id="existing-file-help" class="sr-only">Select from available project files</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="uploadBtn" disabled aria-describedby="upload-help">
+                <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
+                Upload to Firebase
+            </button>
+            <button class="btn btn-secondary" id="previewBtn" disabled aria-describedby="preview-help">
+                <i class="fas fa-eye" aria-hidden="true"></i>
+                Preview Data
+            </button>
+            <button class="btn btn-success" id="clearBtn" aria-describedby="clear-help">
+                <i class="fas fa-trash" aria-hidden="true"></i>
+                Clear Collection
+            </button>
+        </div>
+        <div id="upload-help" class="sr-only">Upload the selected data to Firebase</div>
+        <div id="preview-help" class="sr-only">Preview the data before uploading</div>
+        <div id="clear-help" class="sr-only">Clear all data from the selected collection</div>
+
+        <!-- Status Messages -->
+        <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+
+        <!-- Preview Section -->
+        <div class="uploader-card" id="previewSection" style="display: none;">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-eye" aria-hidden="true"></i>
+                </div>
+                <h3>Data Preview</h3>
+            </div>
+            <div id="previewContent" class="preview-section"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-label="Notifications"></div>
+
+    <script>
+        // Global variables
+        let currentCollection = 'cultural_annotations_created';
+        let currentMethod = null;
+        let uploadedData = null;
+        let toastCount = 0;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            updateUI();
+        });
+
+        function initializeEventListeners() {
+            // Collection selection
+            document.querySelectorAll('.collection-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectCollection(this.dataset.collection);
+                });
+            });
+
+            // Upload method selection
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    selectMethod(this.dataset.method);
+                });
+                
+                // Keyboard support
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectMethod(this.dataset.method);
+                    }
+                });
+            });
+
+            // File input
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+            // Text data input
+            document.getElementById('textData').addEventListener('input', handleTextInput);
+
+            // Existing file selection
+            document.getElementById('existingFile').addEventListener('change', handleExistingFileSelect);
+
+            // Action buttons
+            document.getElementById('uploadBtn').addEventListener('click', handleUpload);
+            document.getElementById('previewBtn').addEventListener('click', handlePreview);
+            document.getElementById('clearBtn').addEventListener('click', handleClear);
+
+            // Custom collection input
+            document.getElementById('customCollection').addEventListener('input', function() {
+                updateUI();
+            });
+
+            // Drag and drop
+            const uploadSection = document.querySelector('.upload-section');
+            if (uploadSection) {
+                uploadSection.addEventListener('dragover', handleDragOver);
+                uploadSection.addEventListener('dragleave', handleDragLeave);
+                uploadSection.addEventListener('drop', handleDrop);
+            }
+        }
+
+        function selectCollection(collection) {
+            currentCollection = collection;
+            
+            // Update button states
+            document.querySelectorAll('.collection-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-pressed', 'false');
+            });
+            
+            const selectedBtn = document.querySelector(`[data-collection="${collection}"]`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('active');
+                selectedBtn.setAttribute('aria-pressed', 'true');
+            }
+
+            // Show/hide custom collection input
+            const customGroup = document.getElementById('customCollectionGroup');
+            if (collection === 'custom') {
+                customGroup.style.display = 'block';
+            } else {
+                customGroup.style.display = 'none';
+            }
+
+            updateUI();
+        }
+
+        function selectMethod(method) {
+            currentMethod = method;
+            
+            // Update card states
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const selectedCard = document.querySelector(`[data-method="${method}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+
+            // Show/hide sections
+            document.getElementById('fileUploadSection').style.display = method === 'file' ? 'block' : 'none';
+            document.getElementById('textInputSection').style.display = method === 'text' ? 'block' : 'none';
+            document.getElementById('existingFileSection').style.display = method === 'existing' ? 'block' : 'none';
+
+            updateUI();
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            displayFileList(files);
+            updateUI();
+        }
+
+        function handleTextInput() {
+            updateUI();
+        }
+
+        function handleExistingFileSelect() {
+            updateUI();
+        }
+
+        function displayFileList(files) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            if (files.length === 0) return;
+
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'file-info';
+            
+            let html = '<strong>Selected Files:</strong>';
+            Array.from(files).forEach(file => {
+                html += `<p><i class="fas fa-file"></i> ${file.name} (${formatFileSize(file.size)})</p>`;
+            });
+            
+            fileInfo.innerHTML = html;
+            fileList.appendChild(fileInfo);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function updateUI() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const previewBtn = document.getElementById('previewBtn');
+            
+            let hasData = false;
+            
+            if (currentMethod === 'file') {
+                const files = document.getElementById('fileInput').files;
+                hasData = files.length > 0;
+            } else if (currentMethod === 'text') {
+                const textData = document.getElementById('textData').value.trim();
+                hasData = textData.length > 0;
+            } else if (currentMethod === 'existing') {
+                const selectedFile = document.getElementById('existingFile').value;
+                hasData = selectedFile.length > 0;
+            }
+
+            // Check if custom collection name is provided
+            if (currentCollection === 'custom') {
+                const customName = document.getElementById('customCollection').value.trim();
+                hasData = hasData && customName.length > 0;
+            }
+
+            uploadBtn.disabled = !hasData;
+            previewBtn.disabled = !hasData;
+        }
+
+        async function handleUpload() {
+            try {
+                showToast('Upload Started', 'Processing your data...', 'info');
+                
+                const data = await prepareData();
+                if (!data) {
+                    showToast('Upload Failed', 'No valid data to upload', 'error');
+                    return;
+                }
+
+                const collectionName = getCollectionName();
+                const result = await uploadToFirebase(data, collectionName);
+                
+                if (result.success) {
+                    showToast('Upload Successful', `Uploaded ${data.length} items to ${collectionName}`, 'success');
+                    clearForm();
+                } else {
+                    showToast('Upload Failed', result.error || 'Unknown error occurred', 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast('Upload Failed', error.message, 'error');
+            }
+        }
+
+        async function handlePreview() {
+            try {
+                const data = await prepareData();
+                if (!data) {
+                    showToast('Preview Failed', 'No valid data to preview', 'error');
+                    return;
+                }
+
+                displayPreview(data);
+            } catch (error) {
+                console.error('Preview error:', error);
+                showToast('Preview Failed', error.message, 'error');
+            }
+        }
+
+        async function handleClear() {
+            if (!confirm('Are you sure you want to clear all data from this collection? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const collectionName = getCollectionName();
+                let result;
+
+                if (collectionName === 'cultural_topics') {
+                    result = await FirebaseService.clearCulturalTopics();
+                } else if (collectionName === 'annotated_data') {
+                    result = await FirebaseService.clearAnnotatedData();
+                } else {
+                    result = await FirebaseService.clearCollection(collectionName);
+                }
+
+                if (result.success) {
+                    showToast('Clear Successful', `Cleared all data from ${collectionName}`, 'success');
+                } else {
+                    showToast('Clear Failed', result.error || 'Unknown error occurred', 'error');
+                }
+            } catch (error) {
+                console.error('Clear error:', error);
+                showToast('Clear Failed', error.message, 'error');
+            }
+        }
+
+        async function prepareData() {
+            if (currentMethod === 'file') {
+                return await processFiles();
+            } else if (currentMethod === 'text') {
+                return processTextData();
+            } else if (currentMethod === 'existing') {
+                return await processExistingFile();
+            }
+            return null;
+        }
+
+        async function processFiles() {
+            const files = document.getElementById('fileInput').files;
+            if (files.length === 0) return null;
+
+            let allData = [];
+            
+            for (const file of files) {
+                const data = await readFile(file);
+                if (data) {
+                    allData = allData.concat(data);
+                }
+            }
+            
+            return allData.length > 0 ? allData : null;
+        }
+
+        function processTextData() {
+            const textData = document.getElementById('textData').value.trim();
+            const format = document.getElementById('dataFormat').value;
+            
+            if (!textData) return null;
+
+            try {
+                if (format === 'json') {
+                    const parsed = JSON.parse(textData);
+                    return Array.isArray(parsed) ? parsed : [parsed];
+                } else if (format === 'csv') {
+                    return parseCSV(textData);
+                } else if (format === 'user_permissions') {
+                    return parseUserPermissions(textData);
+                }
+            } catch (error) {
+                throw new Error(`Failed to parse ${format.toUpperCase()} data: ${error.message}`);
+            }
+            
+            return null;
+        }
+
+        async function processExistingFile() {
+            const selectedFile = document.getElementById('existingFile').value;
+            if (!selectedFile) return null;
+
+            try {
+                const response = await fetch(selectedFile);
+                const text = await response.text();
+                
+                if (selectedFile.endsWith('.csv')) {
+                    return parseCSV(text);
+                } else if (selectedFile.endsWith('.json')) {
+                    return JSON.parse(text);
+                }
+            } catch (error) {
+                throw new Error(`Failed to load file ${selectedFile}: ${error.message}`);
+            }
+            
+            return null;
+        }
+
+        function readFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const content = e.target.result;
+                        let data;
+                        
+                        if (file.name.endsWith('.json')) {
+                            data = JSON.parse(content);
+                            data = Array.isArray(data) ? data : [data];
+                        } else if (file.name.endsWith('.csv')) {
+                            data = parseCSV(content);
+                        } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                            data = parseExcel(content);
+                        } else if (file.name.endsWith('.txt')) {
+                            data = content.split('\n').filter(line => line.trim()).map(line => ({ content: line.trim() }));
+                        } else {
+                            throw new Error(`Unsupported file type: ${file.name}`);
+                        }
+                        
+                        resolve(data);
+                    } catch (error) {
+                        reject(new Error(`Failed to parse file ${file.name}: ${error.message}`));
+                    }
+                };
+                
+                reader.onerror = () => reject(new Error(`Failed to read file ${file.name}`));
+                
+                if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                    reader.readAsArrayBuffer(file);
+                } else {
+                    reader.readAsText(file);
+                }
+            });
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            if (lines.length === 0) return [];
+            
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                if (values.length === headers.length) {
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index];
+                    });
+                    data.push(row);
+                }
+            }
+            
+            return data;
+        }
+
+        function parseExcel(arrayBuffer) {
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            return XLSX.utils.sheet_to_json(worksheet);
+        }
+
+        function parseUserPermissions(text) {
+            const lines = text.trim().split('\n');
+            return lines.map(line => {
+                const parts = line.split(',').map(p => p.trim());
+                return {
+                    userId: parts[0],
+                    role: parts[1] || 'annotator',
+                    language_region: parts[2] ? parts[2].split(';') : ['all'],
+                    canModifyData: parts[3] === 'true' || false
+                };
+            });
+        }
+
+        function getCollectionName() {
+            if (currentCollection === 'custom') {
+                return document.getElementById('customCollection').value.trim();
+            }
+            return currentCollection;
+        }
+
+        async function uploadToFirebase(data, collectionName) {
+            try {
+                if (collectionName === 'cultural_topics') {
+                    return await FirebaseService.saveAllCulturalTopics(data);
+                } else if (collectionName === 'annotated_data') {
+                    return await FirebaseService.saveAllAnnotatedData(data);
+                } else {
+                    return await FirebaseService.saveAllToCollection(collectionName, data);
+                }
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function displayPreview(data) {
+            const previewSection = document.getElementById('previewSection');
+            const previewContent = document.getElementById('previewContent');
+            
+            let html = `<strong>Data Preview (${data.length} items):</strong><br><br>`;
+            
+            if (data.length > 0) {
+                // Show first few items
+                const preview = data.slice(0, 5);
+                html += '<pre>' + JSON.stringify(preview, null, 2) + '</pre>';
+                
+                if (data.length > 5) {
+                    html += `<p><em>... and ${data.length - 5} more items</em></p>`;
+                }
+            }
+            
+            previewContent.innerHTML = html;
+            previewSection.style.display = 'block';
+            previewSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearForm() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('textData').value = '';
+            document.getElementById('existingFile').value = '';
+            document.getElementById('customCollection').value = '';
+            document.getElementById('fileList').innerHTML = '';
+            document.getElementById('previewSection').style.display = 'none';
+            
+            // Reset method selection
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            currentMethod = null;
+            
+            // Hide method sections
+            document.getElementById('fileUploadSection').style.display = 'none';
+            document.getElementById('textInputSection').style.display = 'none';
+            document.getElementById('existingFileSection').style.display = 'none';
+            
+            updateUI();
+        }
+
+        // Drag and drop handlers
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                displayFileList(files);
+                selectMethod('file');
+                updateUI();
+            }
+        }
+
+        // Toast notification system
+        function showToast(title, message, type = 'info', duration = 5000) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = `toast-${++toastCount}`;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.id = toastId;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            
+            const iconMap = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <i class="${iconMap[type]} toast-icon"></i>
+                    <span>${title}</span>
+                    <button class="toast-close" onclick="closeToast('${toastId}')" aria-label="Close notification">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="toast-body">${message}</div>
+                <div class="toast-progress"></div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto-remove after duration
+            setTimeout(() => {
+                closeToast(toastId);
+            }, duration);
+        }
+
+        function closeToast(toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.style.animation = 'slideOutRight 0.3s ease-out forwards';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }
+        }
+
+        // Status message display
+        function showStatus(message, type = 'info') {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.className = `status-message ${type}`;
+            statusMessage.textContent = message;
+            statusMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
