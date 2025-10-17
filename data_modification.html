@@ -160,6 +160,14 @@
             border: 1px solid #d1d5db;
         }
         
+        /* Override main-content for data modification page */
+        .main-content {
+            display: block !important;
+            grid-template-columns: none !important;
+            max-width: none !important;
+            width: 100% !important;
+        }
+        
         .main-content-area {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -411,6 +419,80 @@
         
         .back-link:hover {
             color: #5a67d8;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content-area {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .user-details {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .user-info-items {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem !important;
+            }
+            
+            .decision-buttons-top {
+                justify-content: center;
+            }
+            
+            .btn-decision {
+                min-width: 100px;
+                padding: 0.5rem 1rem;
+            }
+            
+            .meta-info-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .navigation-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0.5rem !important;
+            }
+            
+            .login-section,
+            .annotation-item {
+                padding: 1rem;
+            }
+            
+            .decision-buttons-top {
+                flex-direction: column;
+            }
+            
+            .btn-decision {
+                width: 100%;
+            }
         }
         
         .back-link:focus {
