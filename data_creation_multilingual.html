@@ -998,6 +998,157 @@
             // Update progress
             updateProgressDisplay();
             // Initialize multilingual data and navigation
+            initializeDataSources();
+        }
+
+        // Data source management
+        let currentDataSource = 'default';
+        let firebaseTopics = [];
+        let firebaseAnnotatedData = [];
+
+        function selectDataSource(source) {
+            currentDataSource = source;
+            
+            // Update button states
+            document.querySelectorAll('.source-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-source="${source}"]`).classList.add('active');
+
+            // Load data based on source
+            if (source === 'firebase') {
+                loadFirebaseTopics();
+            } else if (source === 'annotated') {
+                loadAnnotatedData();
+            } else {
+                loadDefaultTopics();
+            }
+        }
+
+        function initializeDataSources() {
+            // Set up data source selector if it exists
+            const sourceButtons = document.querySelectorAll('.source-btn');
+            sourceButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectDataSource(btn.dataset.source);
+                });
+            });
+        }
+
+        async function loadFirebaseTopics() {
+            const statusDiv = document.getElementById('firebaseStatus');
+            const materialList = document.getElementById('materialList');
+            
+            try {
+                showFirebaseStatus('Loading cultural topics from Firebase...', 'loading');
+                
+                const result = await FirebaseService.loadCulturalTopics();
+                
+                if (result.success && result.data.length > 0) {
+                    firebaseTopics = result.data;
+                    displayFirebaseTopics(result.data);
+                    showFirebaseStatus(`Loaded ${result.data.length} cultural topics from Firebase`, 'success');
+                } else {
+                    showFirebaseStatus('No cultural topics found in Firebase', 'error');
+                    loadDefaultTopics();
+                }
+            } catch (error) {
+                console.error('Error loading Firebase topics:', error);
+                showFirebaseStatus('Failed to load topics from Firebase', 'error');
+                loadDefaultTopics();
+            }
+        }
+
+        async function loadAnnotatedData() {
+            const statusDiv = document.getElementById('firebaseStatus');
+            const materialList = document.getElementById('materialList');
+            
+            try {
+                showFirebaseStatus('Loading annotated data from Firebase...', 'loading');
+                
+                const result = await FirebaseService.loadAnnotatedData();
+                
+                if (result.success && result.data.length > 0) {
+                    firebaseAnnotatedData = result.data;
+                    displayAnnotatedData(result.data);
+                    showFirebaseStatus(`Loaded ${result.data.length} annotated items from Firebase`, 'success');
+                } else {
+                    showFirebaseStatus('No annotated data found in Firebase', 'error');
+                    loadDefaultTopics();
+                }
+            } catch (error) {
+                console.error('Error loading annotated data:', error);
+                showFirebaseStatus('Failed to load annotated data from Firebase', 'error');
+                loadDefaultTopics();
+            }
+        }
+
+        function loadDefaultTopics() {
+            const materialList = document.getElementById('materialList');
+            materialList.innerHTML = `
+                <li><strong>Traditional Festivals:</strong> Spring Festival, Mid-Autumn Festival, Dragon Boat Festival</li>
+                <li><strong>Cultural Symbols:</strong> Dragon, Phoenix, Great Wall, Terracotta Warriors</li>
+                <li><strong>Philosophy:</strong> Confucianism, Taoism, Buddhism concepts</li>
+                <li><strong>Arts:</strong> Calligraphy, Traditional Painting, Opera</li>
+                <li><strong>Cuisine:</strong> Regional dishes, Tea culture, Dining etiquette</li>
+                <li><strong>Social Customs:</strong> Family values, Respect for elders, Gift-giving</li>
+            `;
+            hideFirebaseStatus();
+        }
+
+        function displayFirebaseTopics(topics) {
+            const materialList = document.getElementById('materialList');
+            let html = '';
+            
+            topics.forEach((topic, index) => {
+                if (index < 10) { // Show first 10 topics
+                    html += `<li><strong>${topic.title || topic.topic || 'Topic'}:</strong> ${topic.description || topic.content || JSON.stringify(topic).substring(0, 100) + '...'}</li>`;
+                }
+            });
+            
+            if (topics.length > 10) {
+                html += `<li><em>... and ${topics.length - 10} more topics available</em></li>`;
+            }
+            
+            materialList.innerHTML = html;
+        }
+
+        function displayAnnotatedData(data) {
+            const materialList = document.getElementById('materialList');
+            let html = '';
+            
+            data.forEach((item, index) => {
+                if (index < 10) { // Show first 10 items
+                    const topic = item.topic || 'Unknown';
+                    const scenario = item.scenario || item.content || 'No scenario';
+                    const question = item.question || 'No question';
+                    
+                    html += `<li><strong>${topic}:</strong> ${scenario.substring(0, 100)}${scenario.length > 100 ? '...' : ''}<br>
+                            <em>Q: ${question.substring(0, 80)}${question.length > 80 ? '...' : ''}</em></li>`;
+                }
+            });
+            
+            if (data.length > 10) {
+                html += `<li><em>... and ${data.length - 10} more items available</em></li>`;
+            }
+            
+            materialList.innerHTML = html;
+        }
+
+        function showFirebaseStatus(message, type) {
+            const statusDiv = document.getElementById('firebaseStatus');
+            statusDiv.className = `firebase-status ${type}`;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+        }
+
+        function hideFirebaseStatus() {
+            const statusDiv = document.getElementById('firebaseStatus');
+            statusDiv.style.display = 'none';
+        }
+
+        // Make selectDataSource globally available
+        window.selectDataSource = selectDataSource;
             initializeMultilingualData();
         }
         async function handleDataSubmission(event) {
