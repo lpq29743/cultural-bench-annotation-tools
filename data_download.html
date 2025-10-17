@@ -11,6 +11,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <!-- Firebase Configuration -->
     <script src="firebase-config.js"></script>
     
@@ -519,33 +522,24 @@
             
             // Generate and download file
             const filename = `${selectedCollection}_${new Date().toISOString().split('T')[0]}.${selectedFormat}`;
-            let fileContent;
-            let mimeType;
-            
-            if (selectedFormat === 'json') {
-                fileContent = JSON.stringify(data, null, 2);
-                mimeType = 'application/json';
-            } else if (selectedFormat === 'csv') {
-                fileContent = convertToCSV(data);
-                mimeType = 'text/csv';
-            } else if (selectedFormat === 'xlsx') {
-                // For Excel format, we'll use CSV for now
-                fileContent = convertToCSV(data);
-                mimeType = 'text/csv';
-            }
             
             updateProgress('Preparing download...', 100);
             
-            // Create and trigger download
-            const blob = new Blob([fileContent], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            if (selectedFormat === 'json') {
+                const fileContent = JSON.stringify(data, null, 2);
+                const blob = new Blob([fileContent], { type: 'application/json' });
+                downloadFile(blob, filename);
+            } else if (selectedFormat === 'csv') {
+                const fileContent = convertToCSV(data);
+                const blob = new Blob([fileContent], { type: 'text/csv' });
+                downloadFile(blob, filename);
+            } else if (selectedFormat === 'xlsx') {
+                // Generate real Excel file using SheetJS
+                const workbook = convertToExcel(data);
+                const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+                const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                downloadFile(blob, filename);
+            }
         }
         
         // Convert data to CSV format
@@ -576,6 +570,81 @@
             });
             
             return csvRows.join('\n');
+        }
+        
+        // Convert data to Excel format using SheetJS
+        function convertToExcel(data) {
+            if (!data || data.length === 0) {
+                // Create empty workbook if no data
+                const workbook = XLSX.utils.book_new();
+                const worksheet = XLSX.utils.aoa_to_sheet([['No data available']]);
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+                return workbook;
+            }
+            
+            // Get all unique keys from all objects to ensure consistent columns
+            const allKeys = new Set();
+            data.forEach(item => {
+                Object.keys(item).forEach(key => allKeys.add(key));
+            });
+            
+            const headers = Array.from(allKeys);
+            
+            // Prepare data for Excel - convert to array of arrays
+            const excelData = [];
+            
+            // Add headers
+            excelData.push(headers);
+            
+            // Add data rows
+            data.forEach(item => {
+                const row = headers.map(header => {
+                    const value = item[header];
+                    if (value === null || value === undefined) return '';
+                    if (typeof value === 'object') {
+                        // Convert objects/arrays to JSON strings for Excel
+                        return JSON.stringify(value);
+                    }
+                    return value;
+                });
+                excelData.push(row);
+            });
+            
+            // Create workbook and worksheet
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+            
+            // Auto-size columns for better readability
+            const colWidths = headers.map(header => {
+                const maxLength = Math.max(
+                    header.length,
+                    ...data.map(item => {
+                        const value = item[header];
+                        if (value === null || value === undefined) return 0;
+                        return String(value).length;
+                    })
+                );
+                return { wch: Math.min(maxLength + 2, 50) }; // Cap at 50 characters
+            });
+            worksheet['!cols'] = colWidths;
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+            
+            return workbook;
+        }
+        
+        // Helper function to download file
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
         
         // Update progress bar
