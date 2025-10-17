@@ -252,6 +252,214 @@
             z-index: 1000;
         }
         
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            transform: translateX(100%);
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            background: #10b981;
+        }
+        
+        .toast.error {
+            background: #ef4444;
+        }
+        
+        .toast.info {
+            background: #3b82f6;
+        }
+        
+        .data-source-selector {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .data-source-selector h4 {
+            margin: 0 0 0.5rem 0;
+            color: #374151;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .source-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .source-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .source-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .source-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .firebase-status {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            display: none;
+        }
+        
+        .firebase-status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        
+        .firebase-status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        
+        .firebase-status.loading {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .data-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .topic-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .topic-badge.commerce {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .topic-badge.travel {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .topic-badge.food {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .topic-badge.heritage {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+        
+        .topic-badge.social {
+            background: #fce7f3;
+            color: #be185d;
+        }
+        
+        .scenario-cell {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .dataset-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+            z-index: 1000;
+        }
+        
         .data-source-selector {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -688,11 +896,67 @@
                         <i class="fas fa-globe"></i>
                         Multilingual Reference Data
                     </h2>
+                    
+                    <!-- Data Source Selector -->
+                    <div class="data-source-selector">
+                        <h4>Cultural Materials Source</h4>
+                        <div class="source-buttons">
+                            <button class="source-btn active" data-source="default">Default Topics</button>
+                            <button class="source-btn" data-source="firebase">Firebase Topics</button>
+                            <button class="source-btn" data-source="annotated">Annotated Data</button>
+                        </div>
+                        <div class="firebase-status" id="firebaseStatus"></div>
+                    </div>
                     <!-- Sample Data Section -->
                     <div class="data-section">
                         <h3 class="section-title">
                             <i class="fas fa-table"></i>
                             Sample Data from Other Languages
+                        </h3>
+                        <!-- Material List Container -->
+                        <ul class="material-list" id="materialList">
+                            <li><strong>Traditional Festivals:</strong> Spring Festival, Mid-Autumn Festival, Dragon Boat Festival</li>
+                            <li><strong>Cultural Symbols:</strong> Dragon, Phoenix, Great Wall, Terracotta Warriors</li>
+                            <li><strong>Philosophy:</strong> Confucianism, Taoism, Buddhism concepts</li>
+                            <li><strong>Arts:</strong> Calligraphy, Traditional Painting, Opera</li>
+                            <li><strong>Cuisine:</strong> Regional dishes, Tea culture, Dining etiquette</li>
+                            <li><strong>Social Customs:</strong> Family values, Respect for elders, Gift-giving</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Navigation Controls -->
+                    <div class="data-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-navigation"></i>
+                            Data Navigation
+                        </h3>
+                        <div class="navigation-controls">
+                            <div class="nav-input-group">
+                                <label for="dataIndex">Go to item:</label>
+                                <input type="number" id="dataIndex" min="1" max="100" value="1" class="form-input" style="width: 80px;">
+                                <button id="goToData" class="btn btn-primary">Go</button>
+                            </div>
+                            <div class="nav-buttons">
+                                <button id="prevData" class="btn btn-secondary">
+                                    <i class="fas fa-chevron-left"></i>
+                                    Previous
+                                </button>
+                                <div class="topic-counter">
+                                    Item <span id="currentItemNumber">1</span> of 100
+                                </div>
+                                <button id="nextData" class="btn btn-secondary">
+                                    Next
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sample Data Table -->
+                    <div class="data-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-table"></i>
+                            Sample Multilingual Data
                         </h3>
                         <div class="data-table-container">
                             <table class="data-table">
@@ -999,6 +1263,7 @@
             updateProgressDisplay();
             // Initialize multilingual data and navigation
             initializeDataSources();
+            initializeMultilingualData();
         }
 
         // Data source management
@@ -1019,7 +1284,7 @@
             if (source === 'firebase') {
                 loadFirebaseTopics();
             } else if (source === 'annotated') {
-                FirebaseService.loadFromCollection('annotated_data')();
+                loadAnnotatedData();
             } else {
                 loadDefaultTopics();
             }
@@ -1059,14 +1324,14 @@
             }
         }
 
-        async function FirebaseService.loadFromCollection('annotated_data')() {
+        async function loadAnnotatedData() {
             const statusDiv = document.getElementById('firebaseStatus');
             const materialList = document.getElementById('materialList');
             
             try {
                 showFirebaseStatus('Loading annotated data from Firebase...', 'loading');
                 
-                const result = await FirebaseService.FirebaseService.loadFromCollection('annotated_data')();
+                const result = await FirebaseService.loadFromCollection('annotated_data');
                 
                 if (result.success && result.data.length > 0) {
                     firebaseAnnotatedData = result.data;
@@ -1149,8 +1414,6 @@
 
         // Make selectDataSource globally available
         window.selectDataSource = selectDataSource;
-            initializeMultilingualData();
-        }
         async function handleDataSubmission(event) {
             event.preventDefault();
             // Validate form data
@@ -1261,6 +1524,7 @@
             data.push(...sampleMultilingualData);
             // Generate additional examples to reach 100
             for (let i = sampleMultilingualData.length; i < 100; i++) {
+                const topicIndex = i % topics.length;
                 const topic = topics[topicIndex];
                 const exampleNum = Math.floor(i / topics.length) + 1;
                 data.push({
@@ -1290,9 +1554,121 @@
             const nextDataBtn = document.getElementById('nextData');
             if (goToDataBtn) {
                 goToDataBtn.addEventListener('click', () => {
-                                               const index = parseInt(dataIndexInput.value);
-if (index >= 1 && index <= 100) {
-currentDataIndex = index;
-displayCurrentData();
-} else {
-showToast('Please
+                    const index = parseInt(dataIndexInput.value);
+                    if (index >= 1 && index <= 100) {
+                        currentDataIndex = index;
+                        displayCurrentData();
+                    } else {
+                        showToast('Please enter a number between 1 and 100', 'error');
+                    }
+                });
+            }
+
+            if (prevDataBtn) {
+                prevDataBtn.addEventListener('click', () => {
+                    if (currentDataIndex > 1) {
+                        currentDataIndex--;
+                        displayCurrentData();
+                        if (dataIndexInput) dataIndexInput.value = currentDataIndex;
+                    }
+                });
+            }
+
+            if (nextDataBtn) {
+                nextDataBtn.addEventListener('click', () => {
+                    if (currentDataIndex < 100) {
+                        currentDataIndex++;
+                        displayCurrentData();
+                        if (dataIndexInput) dataIndexInput.value = currentDataIndex;
+                    }
+                });
+            }
+
+            // Allow Enter key in input field
+            if (dataIndexInput) {
+                dataIndexInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        goToDataBtn.click();
+                    }
+                });
+            }
+        }
+
+        // Display current multilingual data example
+        function displayCurrentData() {
+            if (currentDataIndex < 1 || currentDataIndex > multilingualData.length) {
+                return;
+            }
+
+            const example = multilingualData[currentDataIndex - 1];
+            
+            // Update table with current example
+            const tableBody = document.querySelector('.data-table tbody');
+            if (tableBody) {
+                const row = tableBody.querySelector('tr');
+                if (row) {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 5) {
+                        cells[0].innerHTML = `<strong>${example.language_region}</strong>`;
+                        cells[1].innerHTML = `<span class="topic-badge ${example.topic.toLowerCase()}">${example.topic}</span>`;
+                        cells[2].textContent = example.scenario.substring(0, 100) + (example.scenario.length > 100 ? '...' : '');
+                        cells[3].textContent = example.question;
+                        cells[4].textContent = example.answer;
+                    }
+                }
+            }
+
+            // Update current item number display
+            const currentItemNumber = document.getElementById('currentItemNumber');
+            if (currentItemNumber) {
+                currentItemNumber.textContent = currentDataIndex;
+            }
+
+            // Update input field
+            const dataIndexInput = document.getElementById('dataIndex');
+            if (dataIndexInput) {
+                dataIndexInput.value = currentDataIndex;
+            }
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            if (elements.progressNumber) {
+                elements.progressNumber.textContent = createdItemsCount;
+            }
+        }
+
+        // Utility functions
+        function showLoading(message) {
+            if (elements.loadingMessage) elements.loadingMessage.textContent = message;
+            if (elements.loadingOverlay) elements.loadingOverlay.classList.remove("hidden");
+        }
+
+        function hideLoading() {
+            if (elements.loadingOverlay) elements.loadingOverlay.classList.add("hidden");
+        }
+
+        function showToast(message, type = "info") {
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            elements.toastContainer.appendChild(toast);
+            setTimeout(() => toast.classList.add("show"), 100);
+            setTimeout(() => {
+                toast.classList.remove("show");
+                setTimeout(() => elements.toastContainer.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("dataCreationUser");
+            currentUser = null;
+            isLoggedIn = false;
+            elements.loginSection.classList.remove("hidden");
+            elements.userInfoSection.classList.add("hidden");
+            elements.creationSection.classList.add("hidden");
+            elements.loginForm.reset();
+        }
+    </script>
+</body>
+</html>
