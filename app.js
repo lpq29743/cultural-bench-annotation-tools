@@ -1327,7 +1327,7 @@ async function saveToFirebase() {
         
         // Determine which collection to save to based on current task mode
         const collectionName = currentTaskMode === 'modification' 
-            ? 'cultural_annotations_modified' 
+            ? 'modified_data' 
             : 'cultural_annotations_created';
         
         // Save all annotations to Firebase

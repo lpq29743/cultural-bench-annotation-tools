@@ -227,8 +227,8 @@ async function loadAnnotationData() {
     try {
         showLoading('Loading annotation data...');
         
-        // Step 5: Read cultural_annotations_modified, return all the data with operation is empty and language_region matches user's language_region
-        const result = await FirebaseService.loadFromCollection('cultural_annotations_modified');
+        // Step 5: Read modified_data, return all the data with operation is empty and language_region matches user's language_region
+        const result = await FirebaseService.loadFromCollection('modified_data');
         
         if (!result.success) {
             throw new Error(result.error || 'Failed to load annotation data');
@@ -352,7 +352,7 @@ async function handleDecision(decision) {
         const result = await FirebaseService.updateAnnotation(
             currentItem.id, 
             updateData, 
-            'cultural_annotations_modified'
+            'modified_data'
         );
         
         if (!result.success) {

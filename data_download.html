@@ -31,7 +31,7 @@
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -145,32 +145,12 @@
             color: white;
         }
         
-        .created-annotations .card-icon {
+        .created-data .card-icon {
             background: linear-gradient(135deg, #28a745, #20c997);
         }
         
-        .modified-annotations .card-icon {
+        .modified-data .card-icon {
             background: linear-gradient(135deg, #ffc107, #fd7e14);
-        }
-        
-        .cultural-topics .card-icon {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-        
-        .annotated-data .card-icon {
-            background: linear-gradient(135deg, #007bff, #6610f2);
-        }
-        
-        .user-permissions .card-icon {
-            background: linear-gradient(135deg, #dc3545, #e83e8c);
-        }
-        
-        .annotators .card-icon {
-            background: linear-gradient(135deg, #17a2b8, #20c997);
-        }
-        
-        .system .card-icon {
-            background: linear-gradient(135deg, #6c757d, #495057);
         }
         
         .card-title {
@@ -202,41 +182,6 @@
             position: absolute;
             left: 0;
             color: #17a2b8;
-        }
-        
-        .filters-section {
-            margin-bottom: 30px;
-        }
-        
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .filter-label {
-            font-weight: 500;
-            margin-bottom: 5px;
-            color: #333;
-        }
-        
-        .filter-input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-        
-        .filter-input:focus {
-            outline: none;
-            border-color: #17a2b8;
-            box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.1);
         }
         
         .actions-section {
@@ -362,10 +307,6 @@
                 grid-template-columns: 1fr;
             }
             
-            .filters-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .actions-section {
                 flex-direction: column;
                 align-items: stretch;
@@ -394,7 +335,7 @@
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-download"></i> Data Download Center</h1>
-            <p>Export and download annotation data, user reports, and system analytics in various formats.</p>
+            <p>Download created and modified annotation data from Firebase.</p>
         </div>
         
         <!-- Data Type Selection -->
@@ -404,7 +345,7 @@
                 Select Data Type
             </h2>
             <div class="download-grid">
-                <div class="download-card created-annotations" data-collection="cultural_annotations_created">
+                <div class="download-card created-data" data-collection="annotated_data">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-edit"></i>
@@ -412,7 +353,7 @@
                         <div class="card-title">Created Annotations</div>
                     </div>
                     <div class="card-description">
-                        Export newly created cultural benchmark annotations with scenarios, questions, answers, and explanations.
+                        Download newly created cultural benchmark annotations with scenarios, questions, answers, and explanations.
                     </div>
                     <ul class="card-features">
                         <li>Original annotation data</li>
@@ -422,7 +363,7 @@
                     </ul>
                 </div>
                 
-                <div class="download-card modified-annotations" data-collection="cultural_annotations_modified">
+                <div class="download-card modified-data" data-collection="modified_data">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-pen"></i>
@@ -430,7 +371,7 @@
                         <div class="card-title">Modified Annotations</div>
                     </div>
                     <div class="card-description">
-                        Export modified and updated cultural benchmark annotations with revision history.
+                        Download modified and updated cultural benchmark annotations with revision history.
                     </div>
                     <ul class="card-features">
                         <li>Modified annotation records</li>
@@ -438,115 +379,6 @@
                         <li>Change tracking</li>
                         <li>Quality improvements</li>
                     </ul>
-                </div>
-                
-                <div class="download-card cultural-topics" data-collection="cultural_topics">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-globe"></i>
-                        </div>
-                        <div class="card-title">Cultural Topics</div>
-                    </div>
-                    <div class="card-description">
-                        Export cultural topics and reference materials used for creating benchmark data.
-                    </div>
-                    <ul class="card-features">
-                        <li>Cultural themes</li>
-                        <li>Reference materials</li>
-                        <li>Topic descriptions</li>
-                        <li>Background context</li>
-                    </ul>
-                </div>
-                
-                <div class="download-card annotated-data" data-collection="annotated_data">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <div class="card-title">Annotated Data</div>
-                    </div>
-                    <div class="card-description">
-                        Export pre-annotated datasets and reference data used for multilingual benchmarking.
-                    </div>
-                    <ul class="card-features">
-                        <li>Pre-annotated datasets</li>
-                        <li>Multilingual data</li>
-                        <li>Reference examples</li>
-                        <li>Quality benchmarks</li>
-                    </ul>
-                </div>
-                
-                <div class="download-card user-permissions" data-collection="users">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="card-title">User Permissions</div>
-                    </div>
-                    <div class="card-description">
-                        Export user permission settings, access controls, and role assignments.
-                    </div>
-                    <ul class="card-features">
-                        <li>User access rights</li>
-                        <li>Role assignments</li>
-                        <li>Language permissions</li>
-                        <li>Data modification rights</li>
-                    </ul>
-                </div>
-                
-                <div class="download-card annotators" data-collection="annotators">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-tags"></i>
-                        </div>
-                        <div class="card-title">Annotators</div>
-                    </div>
-                    <div class="card-description">
-                        Export annotator profiles, activity statistics, and contribution records.
-                    </div>
-                    <ul class="card-features">
-                        <li>Annotator profiles</li>
-                        <li>Activity statistics</li>
-                        <li>Contribution records</li>
-                        <li>Performance metrics</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Filters Section -->
-        <div class="download-section filters-section">
-            <h2 class="section-title">
-                <i class="fas fa-filter"></i>
-                Filter Options
-            </h2>
-            <div class="filters-grid">
-                <div class="filter-group">
-                    <label class="filter-label">Date Range (From)</label>
-                    <input type="date" class="filter-input" id="dateFrom">
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Date Range (To)</label>
-                    <input type="date" class="filter-input" id="dateTo">
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Language/Region</label>
-                    <select class="filter-input" id="languageFilter">
-                        <option value="">All Languages</option>
-                        <option value="en_us">English (US)</option>
-                        <option value="zh_cn">Chinese (CN)</option>
-                        <option value="ja_jp">Japanese (JP)</option>
-                        <option value="ko_kr">Korean (KR)</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">User Role</label>
-                    <select class="filter-input" id="roleFilter">
-                        <option value="">All Roles</option>
-                        <option value="admin">Administrator</option>
-                        <option value="annotator">Annotator</option>
-                        <option value="reviewer">Reviewer</option>
-                    </select>
                 </div>
             </div>
         </div>
@@ -582,12 +414,15 @@
         
         <div class="footer">
             <p>Cultural Benchmark Annotation Tools - Data Download Center</p>
-            <p>Administrator Access Required</p>
         </div>
     </div>
 
     <script>
-        // Data type selection
+        // Global variables
+        let selectedCollection = '';
+        let selectedFormat = 'csv';
+        
+        // DOM elements
         const downloadCards = document.querySelectorAll('.download-card');
         const downloadBtn = document.getElementById('downloadBtn');
         const formatBtns = document.querySelectorAll('.format-btn');
@@ -596,15 +431,19 @@
         const progressText = document.getElementById('progressText');
         const statusMessage = document.getElementById('statusMessage');
         
-        let selectedDataType = '';
-        let selectedFormat = 'csv';
+        // Initialize Firebase check
+        window.addEventListener('load', function() {
+            if (typeof FirebaseService === 'undefined') {
+                showStatus('Firebase Error: FirebaseService not available. Please check your connection.', 'error');
+            }
+        });
         
         // Handle data type selection
         downloadCards.forEach(card => {
             card.addEventListener('click', () => {
                 downloadCards.forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
-                selectedDataType = card.dataset.type;
+                selectedCollection = card.dataset.collection;
                 downloadBtn.disabled = false;
             });
         });
@@ -620,7 +459,7 @@
         
         // Handle download
         downloadBtn.addEventListener('click', async () => {
-            if (!selectedDataType) {
+            if (!selectedCollection) {
                 showStatus('Please select a data type first.', 'error');
                 return;
             }
@@ -630,9 +469,10 @@
             statusMessage.style.display = 'none';
             
             try {
-                await simulateDownload();
+                await downloadFromFirebase();
                 showStatus('Download completed successfully!', 'success');
             } catch (error) {
+                console.error('Download error:', error);
                 showStatus('Download failed: ' + error.message, 'error');
             } finally {
                 downloadBtn.disabled = false;
@@ -642,26 +482,62 @@
             }
         });
         
-        // Simulate download process
-        async function simulateDownload() {
-            const steps = [
-                'Validating permissions...',
-                'Querying database...',
-                'Processing data...',
-                'Applying filters...',
-                'Generating file...',
-                'Preparing download...'
-            ];
+        // Download data from Firebase
+        async function downloadFromFirebase() {
+            updateProgress('Connecting to Firebase...', 10);
             
-            for (let i = 0; i < steps.length; i++) {
-                progressText.textContent = steps[i];
-                progressFill.style.width = ((i + 1) / steps.length * 100) + '%';
-                await new Promise(resolve => setTimeout(resolve, 800));
+            if (typeof FirebaseService === 'undefined') {
+                throw new Error('FirebaseService is not available');
             }
             
-            // Simulate file download
-            const filename = `${selectedDataType}_export_${new Date().toISOString().split('T')[0]}.${selectedFormat}`;
-            const blob = new Blob(['Sample data for ' + selectedDataType], { type: 'text/plain' });
+            updateProgress('Fetching data from Firebase...', 30);
+            
+            let data;
+            if (selectedCollection === 'annotated_data') {
+                const result = await FirebaseService.getAllAnnotatedData();
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to fetch annotated data');
+                }
+                data = result.data;
+            } else if (selectedCollection === 'modified_data') {
+                const result = await FirebaseService.getAllModifiedData();
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to fetch modified data');
+                }
+                data = result.data;
+            } else {
+                throw new Error('Invalid collection selected');
+            }
+            
+            updateProgress('Processing data...', 60);
+            
+            if (!data || data.length === 0) {
+                throw new Error('No data found in the selected collection');
+            }
+            
+            updateProgress('Generating file...', 80);
+            
+            // Generate and download file
+            const filename = `${selectedCollection}_${new Date().toISOString().split('T')[0]}.${selectedFormat}`;
+            let fileContent;
+            let mimeType;
+            
+            if (selectedFormat === 'json') {
+                fileContent = JSON.stringify(data, null, 2);
+                mimeType = 'application/json';
+            } else if (selectedFormat === 'csv') {
+                fileContent = convertToCSV(data);
+                mimeType = 'text/csv';
+            } else if (selectedFormat === 'xlsx') {
+                // For Excel format, we'll use CSV for now
+                fileContent = convertToCSV(data);
+                mimeType = 'text/csv';
+            }
+            
+            updateProgress('Preparing download...', 100);
+            
+            // Create and trigger download
+            const blob = new Blob([fileContent], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -672,19 +548,48 @@
             URL.revokeObjectURL(url);
         }
         
+        // Convert data to CSV format
+        function convertToCSV(data) {
+            if (!data || data.length === 0) return '';
+            
+            // Get all unique keys from all objects
+            const allKeys = new Set();
+            data.forEach(item => {
+                Object.keys(item).forEach(key => allKeys.add(key));
+            });
+            
+            const headers = Array.from(allKeys);
+            const csvRows = [];
+            
+            // Add header row
+            csvRows.push(headers.map(header => `"${header}"`).join(','));
+            
+            // Add data rows
+            data.forEach(item => {
+                const row = headers.map(header => {
+                    const value = item[header];
+                    if (value === null || value === undefined) return '""';
+                    if (typeof value === 'object') return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
+                    return `"${String(value).replace(/"/g, '""')}"`;
+                });
+                csvRows.push(row.join(','));
+            });
+            
+            return csvRows.join('\n');
+        }
+        
+        // Update progress bar
+        function updateProgress(text, percentage) {
+            progressText.textContent = text;
+            progressFill.style.width = percentage + '%';
+        }
+        
         // Show status message
         function showStatus(message, type) {
             statusMessage.textContent = message;
             statusMessage.className = `status-message status-${type}`;
             statusMessage.style.display = 'block';
         }
-        
-        // Set default date range (last 30 days)
-        const today = new Date();
-        const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
-        
-        document.getElementById('dateTo').value = today.toISOString().split('T')[0];
-        document.getElementById('dateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
     </script>
 </body>
 </html>
