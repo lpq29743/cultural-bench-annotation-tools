@@ -1141,33 +1141,10 @@
                 explanation: "According to feng shui beliefs, mirrors facing the bed can reflect negative energy and disturb the peaceful qi needed for good sleep."
             }
         ];
-        // Generate more sample data to reach 160 topics
-        function generateTopicExamples() {
-            const topics = ["Belief", "Commerce", "Education", "Entertainment", "Finance", "Food", "Government", "Habitat", "Health", "Heritage", "Language", "Pets", "Science", "Social", "Travel", "Work"];
-            const examples = [];
-            // Add the predefined examples
-            examples.push(...sampleTopicData);
-            // Generate additional examples to reach 160
-            for (let i = sampleTopicData.length; i < 160; i++) {
-                const topic = topics[topicIndex];
-                const exampleNum = Math.floor(i / topics.length) + 1;
-                examples.push({
-                    topic: topic,
-                    scenario: `${topic} related cultural scenario example ${exampleNum}`,
-                    question: `What is an important aspect of ${topic.toLowerCase()} in Chinese culture?`,
-                    answer: `Cultural answer related to ${topic.toLowerCase()}`,
-                    explanation: `This relates to traditional Chinese ${topic.toLowerCase()} practices and cultural values.`
-                });
-            }
-            return examples;
-        }
         // Initialize topic examples
         function initializeTopicExamples() {
-            topicExamples = generateTopicExamples();
             displayCurrentTopic();
             setupTopicNavigation();
-            setupDataSourceSelector();
-            // Load Firebase data by default
             loadFirebaseTopics();
         }
 
@@ -1175,30 +1152,6 @@
         let currentDataSource = 'firebase';
         let firebaseTopicsData = [];
         let firebaseAnnotatedData = [];
-
-        function setupDataSourceSelector() {
-            const sourceButtons = document.querySelectorAll('.source-btn');
-            sourceButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Update active state
-                    sourceButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-
-                    // Update current source
-                    currentDataSource = btn.dataset.source;
-
-                    // Load appropriate data
-                    if (currentDataSource === 'firebase') {
-                        loadFirebaseTopics();
-                    } else {
-                        // Use local sample data
-                        topicExamples = generateTopicExamples();
-                        displayCurrentTopic();
-                        showFirebaseStatus('Using local sample data', 'success');
-                    }
-                });
-            });
-        }
 
         async function loadFirebaseTopics() {
             try {
@@ -1226,8 +1179,6 @@
             } catch (error) {
                 console.error('Error loading Firebase topics:', error);
                 showFirebaseStatus('Failed to load from Firebase, using local data', 'error');
-                // Fallback to local data
-                topicExamples = generateTopicExamples();
                 displayCurrentTopic();
             }
         }
