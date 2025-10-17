@@ -503,22 +503,3 @@ function debounce(func, wait) {
     };
 }
 
-// Handle rejection button click to show reason dropdown
-if (elements.rejectBtn) {
-    elements.rejectBtn.addEventListener('click', function() {
-        elements.rejectionReason.classList.add('show');
-    });
-}
-
-// Hide rejection reason when other buttons are clicked
-if (elements.acceptBtn) {
-    elements.acceptBtn.addEventListener('click', function() {
-        elements.rejectionReason.classList.remove('show');
-    });
-}
-
-if (elements.reviseBtn) {
-    elements.reviseBtn.addEventListener('click', function() {
-        elements.rejectionReason.classList.remove('show');
-    });
-}
