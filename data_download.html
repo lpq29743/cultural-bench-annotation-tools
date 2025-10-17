@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Download - Cultural Benchmark Annotation Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-5px);
+        }
+        
+        .download-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #17a2b8;
+        }
+        
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .download-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .download-card:hover {
+            border-color: #17a2b8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .download-card.selected {
+            border-color: #17a2b8;
+            background: rgba(23, 162, 184, 0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .annotations .card-icon {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        .users .card-icon {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+        }
+        
+        .analytics .card-icon {
+            background: linear-gradient(135deg, #fd7e14, #e83e8c);
+        }
+        
+        .system .card-icon {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+        
+        .card-title {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .card-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        
+        .card-features {
+            list-style: none;
+            font-size: 0.85rem;
+            color: #555;
+        }
+        
+        .card-features li {
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .card-features li:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #17a2b8;
+        }
+        
+        .filters-section {
+            margin-bottom: 30px;
+        }
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .filter-input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: #17a2b8;
+            box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.1);
+        }
+        
+        .actions-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .format-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .format-btn {
+            padding: 8px 16px;
+            border: 2px solid #17a2b8;
+            background: white;
+            color: #17a2b8;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .format-btn.active,
+        .format-btn:hover {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .download-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .download-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-section {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .status-message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .download-section {
+                padding: 25px;
+            }
+            
+            .download-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .format-selector {
+                justify-content: center;
+            }
+            
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 20px;
+                display: inline-flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="admin.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Back to Admin Panel
+    </a>
+    
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-download"></i> Data Download Center</h1>
+            <p>Export and download annotation data, user reports, and system analytics in various formats.</p>
+        </div>
+        
+        <!-- Data Type Selection -->
+        <div class="download-section">
+            <h2 class="section-title">
+                <i class="fas fa-database"></i>
+                Select Data Type
+            </h2>
+            <div class="download-grid">
+                <div class="download-card annotations" data-type="annotations">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="card-title">Annotation Data</div>
+                    </div>
+                    <div class="card-description">
+                        Export all cultural benchmark annotations including scenarios, questions, answers, and explanations.
+                    </div>
+                    <ul class="card-features">
+                        <li>Complete annotation records</li>
+                        <li>Cultural context data</li>
+                        <li>User submissions</li>
+                        <li>Quality ratings</li>
+                    </ul>
+                </div>
+                
+                <div class="download-card users" data-type="users">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="card-title">User Data</div>
+                    </div>
+                    <div class="card-description">
+                        Export user information, activity logs, and contribution statistics.
+                    </div>
+                    <ul class="card-features">
+                        <li>User profiles</li>
+                        <li>Activity logs</li>
+                        <li>Contribution stats</li>
+                        <li>Permission levels</li>
+                    </ul>
+                </div>
+                
+                <div class="download-card analytics" data-type="analytics">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="card-title">Analytics Reports</div>
+                    </div>
+                    <div class="card-description">
+                        Generate comprehensive reports on system usage and data quality metrics.
+                    </div>
+                    <ul class="card-features">
+                        <li>Usage statistics</li>
+                        <li>Quality metrics</li>
+                        <li>Performance data</li>
+                        <li>Trend analysis</li>
+                    </ul>
+                </div>
+                
+                <div class="download-card system" data-type="system">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="card-title">System Logs</div>
+                    </div>
+                    <div class="card-description">
+                        Export system logs, error reports, and administrative audit trails.
+                    </div>
+                    <ul class="card-features">
+                        <li>System logs</li>
+                        <li>Error reports</li>
+                        <li>Audit trails</li>
+                        <li>Security events</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filters Section -->
+        <div class="download-section filters-section">
+            <h2 class="section-title">
+                <i class="fas fa-filter"></i>
+                Filter Options
+            </h2>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Date Range (From)</label>
+                    <input type="date" class="filter-input" id="dateFrom">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Date Range (To)</label>
+                    <input type="date" class="filter-input" id="dateTo">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Language/Region</label>
+                    <select class="filter-input" id="languageFilter">
+                        <option value="">All Languages</option>
+                        <option value="en_us">English (US)</option>
+                        <option value="zh_cn">Chinese (CN)</option>
+                        <option value="ja_jp">Japanese (JP)</option>
+                        <option value="ko_kr">Korean (KR)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">User Role</label>
+                    <select class="filter-input" id="roleFilter">
+                        <option value="">All Roles</option>
+                        <option value="admin">Administrator</option>
+                        <option value="annotator">Annotator</option>
+                        <option value="reviewer">Reviewer</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Download Actions -->
+        <div class="download-section">
+            <h2 class="section-title">
+                <i class="fas fa-file-export"></i>
+                Export Settings
+            </h2>
+            <div class="actions-section">
+                <div class="format-selector">
+                    <span style="font-weight: 500; margin-right: 10px;">Format:</span>
+                    <button class="format-btn active" data-format="csv">CSV</button>
+                    <button class="format-btn" data-format="json">JSON</button>
+                    <button class="format-btn" data-format="xlsx">Excel</button>
+                </div>
+                <button class="download-btn" id="downloadBtn" disabled>
+                    <i class="fas fa-download"></i>
+                    Download Data
+                </button>
+            </div>
+            
+            <div class="progress-section" id="progressSection">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Preparing download...</div>
+            </div>
+            
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+        
+        <div class="footer">
+            <p>Cultural Benchmark Annotation Tools - Data Download Center</p>
+            <p>Administrator Access Required</p>
+        </div>
+    </div>
+
+    <script>
+        // Data type selection
+        const downloadCards = document.querySelectorAll('.download-card');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const formatBtns = document.querySelectorAll('.format-btn');
+        const progressSection = document.getElementById('progressSection');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        let selectedDataType = '';
+        let selectedFormat = 'csv';
+        
+        // Handle data type selection
+        downloadCards.forEach(card => {
+            card.addEventListener('click', () => {
+                downloadCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedDataType = card.dataset.type;
+                downloadBtn.disabled = false;
+            });
+        });
+        
+        // Handle format selection
+        formatBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                formatBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedFormat = btn.dataset.format;
+            });
+        });
+        
+        // Handle download
+        downloadBtn.addEventListener('click', async () => {
+            if (!selectedDataType) {
+                showStatus('Please select a data type first.', 'error');
+                return;
+            }
+            
+            downloadBtn.disabled = true;
+            progressSection.style.display = 'block';
+            statusMessage.style.display = 'none';
+            
+            try {
+                await simulateDownload();
+                showStatus('Download completed successfully!', 'success');
+            } catch (error) {
+                showStatus('Download failed: ' + error.message, 'error');
+            } finally {
+                downloadBtn.disabled = false;
+                setTimeout(() => {
+                    progressSection.style.display = 'none';
+                }, 2000);
+            }
+        });
+        
+        // Simulate download process
+        async function simulateDownload() {
+            const steps = [
+                'Validating permissions...',
+                'Querying database...',
+                'Processing data...',
+                'Applying filters...',
+                'Generating file...',
+                'Preparing download...'
+            ];
+            
+            for (let i = 0; i < steps.length; i++) {
+                progressText.textContent = steps[i];
+                progressFill.style.width = ((i + 1) / steps.length * 100) + '%';
+                await new Promise(resolve => setTimeout(resolve, 800));
+            }
+            
+            // Simulate file download
+            const filename = `${selectedDataType}_export_${new Date().toISOString().split('T')[0]}.${selectedFormat}`;
+            const blob = new Blob(['Sample data for ' + selectedDataType], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.style.display = 'block';
+        }
+        
+        // Set default date range (last 30 days)
+        const today = new Date();
+        const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+        
+        document.getElementById('dateTo').value = today.toISOString().split('T')[0];
+        document.getElementById('dateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
+    </script>
+</body>
+</html>
