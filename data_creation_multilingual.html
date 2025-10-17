@@ -1254,37 +1254,6 @@
                     </h2>
                     <form id="dataCreationForm" role="form" aria-label="Data creation form">
                         <div class="form-group">
-                            <label for="sourceLanguage" class="field-label">Source Language (Reference)</label>
-                            <input type="text" id="sourceLanguage" name="sourceLanguage" class="form-input"
-                                placeholder="e.g., zh_cn, en_us" aria-describedby="source-help">
-                            <div id="source-help" class="sr-only">Enter the language code of the source data you're
-                                adapting from</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="topic" class="field-label">Topic</label>
-                            <select id="topic" name="topic" class="form-input" required aria-describedby="topic-help">
-                                <option value="">Select a topic...</option>
-                                <option value="Belief">Belief</option>
-                                <option value="Commerce">Commerce</option>
-                                <option value="Education">Education</option>
-                                <option value="Entertainment">Entertainment</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Food">Food</option>
-                                <option value="Government">Government</option>
-                                <option value="Habitat">Habitat</option>
-                                <option value="Health">Health</option>
-                                <option value="Heritage">Heritage</option>
-                                <option value="Language">Language</option>
-                                <option value="Pets">Pets</option>
-                                <option value="Science">Science</option>
-                                <option value="Social">Social</option>
-                                <option value="Travel">Travel</option>
-                                <option value="Work">Work</option>
-                            </select>
-                            <div id="topic-help" class="sr-only">Select the most appropriate topic from the predefined
-                                list for this cultural benchmark item</div>
-                        </div>
-                        <div class="form-group">
                             <label for="scenario" class="field-label">Scenario (Adapted from Multilingual Data)</label>
                             <textarea id="scenario" name="scenario" class="form-textarea"
                                 placeholder="Adapt a cultural scenario from the multilingual dataset to your local context..."
@@ -1372,8 +1341,6 @@
             logoutBtn: document.getElementById('logoutBtn'),
             // Creation form
             dataCreationForm: document.getElementById('dataCreationForm'),
-            sourceLanguage: document.getElementById('sourceLanguage'),
-            topic: document.getElementById('topic'),
             scenario: document.getElementById('scenario'),
             question: document.getElementById('question'),
             answer: document.getElementById('answer'),
@@ -1596,26 +1563,42 @@
 
         async function handleDataSubmission(event) {
             event.preventDefault();
+            
+            // Get topic from currently displayed example
+            const currentTopic = getCurrentDisplayedTopic();
+            
+            // Get user's language_region
+            const userLanguageRegion = Array.isArray(currentUser.language_region) 
+                ? currentUser.language_region[0] 
+                : currentUser.language_region;
+            
             // Validate form data
             const formData = {
-                sourceLanguage: elements.sourceLanguage.value.trim(),
-                topic: elements.topic.value.trim(),
                 scenario: elements.scenario.value.trim(),
                 question: elements.question.value.trim(),
                 answer: elements.answer.value.trim(),
                 explanation: elements.explanation.value.trim()
             };
-            // Check if required fields are filled
-            if (!formData.topic || !formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
-                showToast('Please fill in all required fields', 'error');
+            
+            // Check if required fields are filled (explanation is optional)
+            if (!formData.scenario || !formData.question || !formData.answer) {
+                showToast('Please fill in all required fields (scenario, question, answer)', 'error');
                 return;
             }
+            
+            // Check if topic is available from displayed example
+            if (!currentTopic || currentTopic === 'Unknown Topic') {
+                showToast('Please select an example from the left panel first', 'error');
+                return;
+            }
+            
             try {
                 showLoading('Submitting data...');
                 // Prepare data for submission
                 const submissionData = {
                     ...formData,
-                    language_region: Array.isArray(currentUser.language_region) ? currentUser.language_region[0] : currentUser.language_region,
+                    topic: currentTopic,
+                    language_region: userLanguageRegion,
                     created_by: currentUser.userId,
                     created_at: new Date().toISOString(),
                     status: 'pending_review',
