@@ -581,6 +581,115 @@
             color: #17a2b8;
         }
 
+        /* Inspiration Guide Styles */
+        .inspiration-guide {
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 12px;
+            border: 1px solid #0ea5e9;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
+        }
+
+        .guide-header {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .guide-header i {
+            font-size: 1.2rem;
+        }
+
+        .guide-content {
+            padding: 1.5rem;
+        }
+
+        .main-instruction {
+            margin: 0 0 1.25rem 0;
+            color: #0c4a6e;
+            font-size: 1rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .guide-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        .action-item i {
+            color: #0ea5e9;
+            font-size: 1.1rem;
+            min-width: 20px;
+        }
+
+        .action-item span {
+            color: #0c4a6e;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .translation-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(251, 191, 36, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .translation-note i {
+            color: #d97706;
+            font-size: 1rem;
+            margin-top: 0.1rem;
+            min-width: 16px;
+        }
+
+        .translation-note span {
+            color: #92400e;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .guide-header {
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+            }
+
+            .guide-content {
+                padding: 1rem;
+            }
+
+            .action-item {
+                padding: 0.5rem;
+            }
+
+            .action-item span {
+                font-size: 0.85rem;
+            }
+        }
+
         /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
 
@@ -815,7 +924,8 @@
                         </div>
                         <div class="guide-content">
                             <p class="main-instruction">
-                                Using the example left as inspiration, can you think of culturally relevant scenarios from your own culture?
+                                Using the example left as inspiration, can you think of culturally relevant scenarios
+                                from your own culture?
                             </p>
                             <div class="guide-actions">
                                 <div class="action-item">
@@ -829,7 +939,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <h2 class="panel-title">
                         <i class="fas fa-edit"></i>
                         Data Creation Form
@@ -1053,15 +1163,15 @@
         }
         async function handleDataSubmission(event) {
             event.preventDefault();
-            
+
             // Get current topic from displayed data
             const currentTopic = getCurrentDisplayedTopic();
-            
+
             // Get user's language_region
-            const userLanguageRegion = Array.isArray(currentUser.language_region) 
-                ? currentUser.language_region[0] 
+            const userLanguageRegion = Array.isArray(currentUser.language_region)
+                ? currentUser.language_region[0]
                 : currentUser.language_region;
-            
+
             // Validate form data
             const formData = {
                 topic: currentTopic,
@@ -1070,7 +1180,7 @@
                 answer: elements.answer.value.trim(),
                 explanation: elements.explanation.value.trim()
             };
-            
+
             // Check if required fields are filled (explanation is optional)
             if (!formData.scenario || !formData.question || !formData.answer) {
                 showToast('Please fill in all required fields (scenario, question, answer)', 'error');
@@ -1109,7 +1219,7 @@
         // Topic Navigation and Examples
         let currentTopicIndex = 1;
         let topicExamples = [];
-        
+
         // Get current displayed topic
         function getCurrentDisplayedTopic() {
             if (topicExamples && topicExamples.length > 0) {
@@ -1118,7 +1228,7 @@
             }
             return 'Unknown Topic';
         }
-        
+
         // Initialize topic examples
         function initializeTopicExamples() {
             displayCurrentTopic();
@@ -1247,11 +1357,11 @@
             const topicContainer = document.getElementById('topicExampleContainer');
             const topicCounter = document.getElementById('topicCounter');
             const topicIndexInput = document.getElementById('topicIndex');
-            
+
             // Update Data Navigation fields
             const currentTopicField = document.getElementById('currentTopicField');
             const currentExampleField = document.getElementById('currentExampleField');
-            
+
             // Update counter and input
             const totalTopics = topicExamples.length || 160;
             if (topicCounter) {
@@ -1261,7 +1371,7 @@
                 topicIndexInput.value = currentTopicIndex;
                 topicIndexInput.max = totalTopics;
             }
-            
+
             // Display current topic example
             if (topicExamples && topicExamples.length > 0) {
                 const currentExample = topicExamples[currentTopicIndex - 1];
@@ -1273,7 +1383,7 @@
                     if (currentExampleField) {
                         currentExampleField.textContent = currentExample.scenario || 'No example available';
                     }
-                    
+
                     // Update detailed example container if it exists
                     if (topicContainer) {
                         topicContainer.innerHTML = `
@@ -1306,7 +1416,7 @@
                     if (currentExampleField) {
                         currentExampleField.textContent = 'Loading topic examples...';
                     }
-                    
+
                     if (topicContainer) {
                         topicContainer.innerHTML = `
                             <div class="topic-example-card">
@@ -1324,7 +1434,7 @@
                 if (currentExampleField) {
                     currentExampleField.textContent = 'Please wait while we load the cultural topics from Firebase.';
                 }
-                
+
                 if (topicContainer) {
                     topicContainer.innerHTML = `
                         <div class="topic-example-card">
