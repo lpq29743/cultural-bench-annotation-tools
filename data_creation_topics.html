@@ -513,6 +513,53 @@
                 animation: none;
             }
         }
+        
+        /* Navigation Controls Styles */
+        .navigation-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .nav-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-input-group label {
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .topic-counter {
+            font-weight: 600;
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            background: #f0f9ff;
+            border-radius: 6px;
+            border: 1px solid #e0f2fe;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .nav-input-group {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 
@@ -586,32 +633,58 @@
                         Topic Reference & Examples
                     </h2>
                     
-                    <!-- Topic Examples Section -->
+                    <!-- Navigation Controls -->
+                    <div class="data-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-navigation"></i>
+                            Topic Navigation
+                        </h3>
+                        <div class="navigation-controls">
+                            <div class="nav-input-group">
+                                <label for="topicIndex">Go to Topic #:</label>
+                                <input type="number" id="topicIndex" min="1" max="160" value="1" class="form-input" style="width: 80px; display: inline-block;">
+                                <button id="goToTopic" class="btn btn-primary" style="margin-left: 10px;">
+                                    <i class="fas fa-arrow-right"></i> Go
+                                </button>
+                            </div>
+                            <div class="nav-buttons">
+                                <button id="prevTopic" class="btn btn-secondary">
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </button>
+                                <span id="topicCounter" class="topic-counter">Topic 1 of 160</span>
+                                <button id="nextTopic" class="btn btn-secondary">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Topic Example -->
                     <div class="data-section">
                         <h3 class="section-title">
                             <i class="fas fa-lightbulb"></i>
-                            Example Topic Structure
+                            Current Topic Example
                         </h3>
-                        <div class="topic-example-card">
+                        <div id="currentTopicExample" class="topic-example-card">
                             <div class="example-header">
-                                <strong>Topic:</strong> Cultural Traditions
+                                <strong>Topic:</strong> <span id="currentTopicName">Loading...</span>
                             </div>
                             <div class="example-content">
                                 <div class="example-field">
-                                    <label>Scenario:</label>
-                                    <p>Spring Festival Celebration</p>
+                                    <label>Example Scenario:</label>
+                                    <p id="currentExampleScenario">Loading...</p>
                                 </div>
                                 <div class="example-field">
-                                    <label>Question:</label>
-                                    <p>What is the most important traditional activity during Chinese New Year?</p>
+                                    <label>Example Question:</label>
+                                    <p id="currentExampleQuestion">Loading...</p>
                                 </div>
                                 <div class="example-field">
-                                    <label>Answer:</label>
-                                    <p>Family reunion dinner on New Year's Eve</p>
+                                    <label>Example Answer:</label>
+                                    <p id="currentExampleAnswer">Loading...</p>
                                 </div>
                                 <div class="example-field">
-                                    <label>Explanation:</label>
-                                    <p>The reunion dinner (Nian Ye Fan) is considered the most significant tradition as it symbolizes family unity and marks the beginning of the new year celebrations.</p>
+                                    <label>Example Explanation:</label>
+                                    <p id="currentExampleExplanation">Loading...</p>
                                 </div>
                             </div>
                         </div>
@@ -917,6 +990,9 @@
             
             // Update progress
             updateProgressDisplay();
+            
+            // Initialize topic examples and navigation
+            initializeTopicExamples();
         }
 
         async function handleDataSubmission(event) {
@@ -972,6 +1048,239 @@
                 console.error('Submission error:', error);
                 showToast('Failed to submit data: ' + error.message, 'error');
             }
+        }
+
+        // Topic Navigation and Examples
+        let currentTopicIndex = 1;
+        let topicExamples = [];
+
+        // Sample topic data (160 topics with examples)
+        const sampleTopicData = [
+            {
+                topic: "Food",
+                scenario: "Traditional Chinese New Year dinner preparation",
+                question: "What is the most important dish that must be present at a Chinese New Year family dinner?",
+                answer: "Fish (鱼, yú)",
+                explanation: "Fish is essential because the Chinese word for fish (鱼, yú) sounds like the word for surplus or abundance (余, yú), symbolizing prosperity and abundance for the coming year."
+            },
+            {
+                topic: "Heritage",
+                scenario: "Visiting ancient temples during festivals",
+                question: "Why do people burn incense when visiting Buddhist temples?",
+                answer: "To show respect to Buddha and make prayers",
+                explanation: "Burning incense is a traditional way to purify the mind, show devotion, and create a sacred atmosphere for prayer and meditation in Buddhist culture."
+            },
+            {
+                topic: "Social",
+                scenario: "Business card exchange in professional settings",
+                question: "What is the proper way to receive a business card in Chinese business culture?",
+                answer: "Receive with both hands and read it carefully",
+                explanation: "Using both hands shows respect, and taking time to read the card demonstrates that you value the person and their position."
+            },
+            {
+                topic: "Entertainment",
+                scenario: "Traditional opera performance",
+                question: "What does the red face paint represent in Beijing Opera?",
+                answer: "Loyalty and righteousness",
+                explanation: "In Beijing Opera, different face paint colors have symbolic meanings. Red typically represents loyal, brave, and righteous characters."
+            },
+            {
+                topic: "Belief",
+                scenario: "Feng shui considerations in home decoration",
+                question: "Why do many Chinese people avoid placing mirrors directly facing the bed?",
+                answer: "It's believed to bring bad luck and disturb sleep",
+                explanation: "According to feng shui beliefs, mirrors facing the bed can reflect negative energy and disturb the peaceful qi needed for good sleep."
+            }
+        ];
+
+        // Generate more sample data to reach 160 topics
+        function generateTopicExamples() {
+            const topics = ["Belief", "Commerce", "Education", "Entertainment", "Finance", "Food", "Government", "Habitat", "Health", "Heritage", "Language", "Pets", "Science", "Social", "Travel", "Work"];
+            const examples = [];
+            
+            // Add the predefined examples
+            examples.push(...sampleTopicData);
+            
+            // Generate additional examples to reach 160
+            for (let i = sampleTopicData.length; i < 160; i++) {
+                const topicIndex = i % topics.length;
+                const topic = topics[topicIndex];
+                const exampleNum = Math.floor(i / topics.length) + 1;
+                
+                examples.push({
+                    topic: topic,
+                    scenario: `${topic} related cultural scenario example ${exampleNum}`,
+                    question: `What is an important aspect of ${topic.toLowerCase()} in Chinese culture?`,
+                    answer: `Cultural answer related to ${topic.toLowerCase()}`,
+                    explanation: `This relates to traditional Chinese ${topic.toLowerCase()} practices and cultural values.`
+                });
+            }
+            
+            return examples;
+        }
+
+        // Initialize topic examples
+        function initializeTopicExamples() {
+            topicExamples = generateTopicExamples();
+            displayCurrentTopic();
+            setupTopicNavigation();
+        }
+
+        // Setup topic navigation event listeners
+        function setupTopicNavigation() {
+            const topicIndexInput = document.getElementById('topicIndex');
+            const goToTopicBtn = document.getElementById('goToTopic');
+            const prevTopicBtn = document.getElementById('prevTopic');
+            const nextTopicBtn = document.getElementById('nextTopic');
+
+            if (goToTopicBtn) {
+                goToTopicBtn.addEventListener('click', () => {
+                    const index = parseInt(topicIndexInput.value);
+                    if (index >= 1 && index <= 160) {
+                        currentTopicIndex = index;
+                        displayCurrentTopic();
+                    } else {
+                        showToast('Please enter a number between 1 and 160', 'error');
+                    }
+                });
+            }
+
+            if (prevTopicBtn) {
+                prevTopicBtn.addEventListener('click', () => {
+                    if (currentTopicIndex > 1) {
+                        currentTopicIndex--;
+                        displayCurrentTopic();
+                        topicIndexInput.value = currentTopicIndex;
+                    }
+                });
+            }
+
+            if (nextTopicBtn) {
+                nextTopicBtn.addEventListener('click', () => {
+                    if (currentTopicIndex < 160) {
+                        currentTopicIndex++;
+                        displayCurrentTopic();
+                        topicIndexInput.value = currentTopicIndex;
+                    }
+                });
+            }
+
+            // Allow Enter key in input field
+            if (topicIndexInput) {
+                topicIndexInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        goToTopicBtn.click();
+                    }
+                });
+            }
+        }
+
+        // Display current topic example
+        function displayCurrentTopic() {
+            if (currentTopicIndex < 1 || currentTopicIndex > topicExamples.length) {
+                return;
+            }
+
+            const example = topicExamples[currentTopicIndex - 1];
+            
+            // Update topic counter
+            const topicCounter = document.getElementById('topicCounter');
+            if (topicCounter) {
+                topicCounter.textContent = `Topic ${currentTopicIndex} of 160`;
+            }
+
+            // Update example display
+            const currentTopicName = document.getElementById('currentTopicName');
+            const currentExampleScenario = document.getElementById('currentExampleScenario');
+            const currentExampleQuestion = document.getElementById('currentExampleQuestion');
+            const currentExampleAnswer = document.getElementById('currentExampleAnswer');
+            const currentExampleExplanation = document.getElementById('currentExampleExplanation');
+
+            if (currentTopicName) currentTopicName.textContent = example.topic;
+            if (currentExampleScenario) currentExampleScenario.textContent = example.scenario;
+            if (currentExampleQuestion) currentExampleQuestion.textContent = example.question;
+            if (currentExampleAnswer) currentExampleAnswer.textContent = example.answer;
+            if (currentExampleExplanation) currentExampleExplanation.textContent = example.explanation;
+
+            // Update navigation buttons state
+            const prevBtn = document.getElementById('prevTopic');
+            const nextBtn = document.getElementById('nextTopic');
+            
+            if (prevBtn) {
+                prevBtn.disabled = currentTopicIndex <= 1;
+                prevBtn.style.opacity = currentTopicIndex <= 1 ? '0.5' : '1';
+            }
+            
+            if (nextBtn) {
+                nextBtn.disabled = currentTopicIndex >= 160;
+                nextBtn.style.opacity = currentTopicIndex >= 160 ? '0.5' : '1';
+            }
+        }
+
+        // Clear form fields after submission
+        function clearFormFields() {
+            elements.scenario.value = '';
+            elements.question.value = '';
+            elements.answer.value = '';
+            elements.explanation.value = '';
+            // Keep topic selection as it might be related to current example
+        }
+
+        // Override the original handleDataSubmission to include form clearing
+        async function handleDataSubmission(event) {
+            event.preventDefault();
+            
+            // Validate form data
+            const formData = {
+                topic: elements.topic.value.trim(),
+                scenario: elements.scenario.value.trim(),
+                question: elements.question.value.trim(),
+                answer: elements.answer.value.trim(),
+                explanation: elements.explanation.value.trim()
+            };
+            
+            // Check if all fields are filled
+            if (!formData.topic || !formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+            
+            try {
+                showLoading('Submitting data...');
+                
+                // Prepare data for submission
+                const submissionData = {
+                    ...formData,
+                    language_region: Array.isArray(currentUser.language_region) ? currentUser.language_region[0] : currentUser.language_region,
+                    created_by: currentUser.userId,
+                    created_at: new Date().toISOString(),
+                    status: 'pending_review',
+                    creation_method: 'topic_based'
+                };
+                
+                // Submit to Firebase
+                const result = await FirebaseService.saveAnnotation(submissionData, 'cultural_annotations_created');
+                
+                if (result.success) {
+                    hideLoading();
+                    showToast('Data submitted successfully!', 'success');
+                    
+                    // Clear form fields (scenario, question, answer, explanation)
+                    clearFormFields();
+                    
+                    // Update progress
+                    createdItemsCount++;
+                    updateProgressDisplay();
+                } else {
+                    throw new Error(result.error || 'Failed to submit data');
+                }
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Submission error:', error);
+                showToast('Failed to submit data: ' + error.message, 'error');
+            }
+        }
         }
 
         function handleLogout() {

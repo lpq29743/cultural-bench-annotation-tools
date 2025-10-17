@@ -541,6 +541,109 @@
                 animation: none;
             }
         }
+        
+        /* Navigation Controls Styles */
+        .navigation-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .nav-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-input-group label {
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .topic-counter {
+            font-weight: 600;
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            background: #f0f9ff;
+            border-radius: 6px;
+            border: 1px solid #e0f2fe;
+        }
+        
+        /* Data display styles */
+        .data-section {
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: #667eea;
+        }
+        
+        .topic-example-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .example-header {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .example-field {
+            margin-bottom: 0.75rem;
+        }
+        
+        .example-field label {
+            font-weight: 600;
+            color: #374151;
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .example-field p {
+            margin: 0;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .nav-input-group {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 
@@ -673,18 +776,18 @@
                     </div>
                     
                     <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
-                        <h4 style="margin: 0 0 10px 0; color: #0369a1;">
-                            <i class="fas fa-info-circle"></i> Multilingual Adaptation Guidelines
-                        </h4>
-                        <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #0c4a6e;">
-                            <li><strong>Cultural Adaptation:</strong> Adapt scenarios from other languages to your local cultural context</li>
-                            <li><strong>Language Specificity:</strong> Ensure scenarios require knowledge specific to your language region</li>
-                            <li><strong>Maintain Structure:</strong> Keep the same question-answer format while adapting content</li>
-                            <li><strong>Local Relevance:</strong> Replace foreign references with locally relevant equivalents</li>
-                            <li><strong>Cultural Accuracy:</strong> Ensure adapted scenarios are culturally accurate and authentic</li>
-                            <li><strong>Clear Translation:</strong> Provide clear, natural language that locals would understand</li>
-                        </ul>
-                    </div>
+    <h4 style="margin: 0 0 10px 0; color: #0369a1;">
+        <i class="fas fa-info-circle"></i> Multilingual Creation Guidelines
+    </h4>
+    <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #0c4a6e;">
+        <li><strong>Cross-cultural Adaptation:</strong> Use existing data from other languages as inspiration</li>
+        <li><strong>Cultural Relevance:</strong> Adapt scenarios to be relevant to your target culture</li>
+        <li><strong>Language Specificity:</strong> Ensure questions require knowledge specific to your language/region</li>
+        <li><strong>Quality Standards:</strong> Maintain the same quality standards as the reference data</li>
+        <li><strong>Original Content:</strong> Create new content inspired by, not copied from, reference data</li>
+        <li><strong>Cultural Context:</strong> Provide explanations that reflect local cultural understanding</li>
+    </ul>
+</div>
                 </div>
 
                 <div class="right-panel">
@@ -960,6 +1063,9 @@
             
             // Update progress
             updateProgressDisplay();
+            
+            // Initialize multilingual data and navigation
+            initializeMultilingualData();
         }
 
         async function handleDataSubmission(event) {
@@ -1003,6 +1109,258 @@
                     
                     // Reset form
                     elements.dataCreationForm.reset();
+                    
+                    // Update progress
+                    createdItemsCount++;
+                    updateProgressDisplay();
+                } else {
+                    throw new Error(result.error || 'Failed to submit data');
+                }
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Submission error:', error);
+                showToast('Failed to submit data: ' + error.message, 'error');
+            }
+        }
+
+        // Multilingual Data Navigation and Examples
+        let currentDataIndex = 1;
+        let multilingualData = [];
+
+        // Sample multilingual data based on annotated_data.csv structure
+        const sampleMultilingualData = [
+            {
+                language: "zh",
+                region: "cn", 
+                language_region: "zh_cn",
+                topic: "Commerce",
+                scenario: "结束了一周忙碌的工作，我打算在我位于天心区的小窝里好好地做顿饭。外面的天气炎热，实在不想出门买菜。其他城市的朋友给我推荐了一个叫朴朴买菜的软件，说在上面买菜很方便。我问我这也有吗？朋友上网看了一下。",
+                question: "请问朋友最可能的回答是？",
+                answer: "没有",
+                explanation: "朴朴买菜只在成都市，东莞市，佛山市，福州市，广州市，泉州市，深圳市，武汉市，厦门市提供服务。天心区位于长沙市，暂时不受支持"
+            },
+            {
+                language: "zh",
+                region: "cn",
+                language_region: "zh_cn", 
+                topic: "Commerce",
+                scenario: "用户点进了我家的线上超市，逛了一圈后，询问我家客服：你们有没有tree tree的产品",
+                question: "请问我家客服应该向用户推荐什么？",
+                answer: "薯片",
+                explanation: "Tree Tree是一个薯片品牌，以其独特的包装和口味在中国市场受到欢迎"
+            },
+            {
+                language: "zh",
+                region: "cn",
+                language_region: "zh_cn",
+                topic: "Food",
+                scenario: "春节期间，家人聚在一起准备年夜饭。奶奶说一定要准备一道特别的菜，寓意年年有余。",
+                question: "奶奶最可能准备什么菜？",
+                answer: "鱼",
+                explanation: "在中国传统文化中，鱼象征着'年年有余'，是年夜饭必备的吉祥菜肴"
+            },
+            {
+                language: "zh",
+                region: "cn", 
+                language_region: "zh_cn",
+                topic: "Heritage",
+                scenario: "小明第一次去寺庙参拜，看到很多人在烧香。他不知道应该怎么做。",
+                question: "小明应该如何正确地烧香？",
+                answer: "双手合十，虔诚祈祷，然后将香插入香炉",
+                explanation: "烧香是中国传统的祈福方式，需要保持虔诚的心态，双手合十表示尊敬"
+            },
+            {
+                language: "zh",
+                region: "cn",
+                language_region: "zh_cn",
+                topic: "Social",
+                scenario: "在商务场合，张先生要和新客户交换名片。",
+                question: "张先生应该如何递交名片？",
+                answer: "双手递交，名片正面朝向对方",
+                explanation: "在中国商务礼仪中，双手递交名片表示尊重，名片正面朝向对方便于阅读"
+            }
+        ];
+
+        // Generate more sample data to reach 100 items
+        function generateMultilingualData() {
+            const data = [];
+            const topics = ["Commerce", "Food", "Heritage", "Social", "Entertainment", "Education", "Health", "Travel", "Work", "Government"];
+            
+            // Add the predefined examples
+            data.push(...sampleMultilingualData);
+            
+            // Generate additional examples to reach 100
+            for (let i = sampleMultilingualData.length; i < 100; i++) {
+                const topicIndex = i % topics.length;
+                const topic = topics[topicIndex];
+                const exampleNum = Math.floor(i / topics.length) + 1;
+                
+                data.push({
+                    language: "zh",
+                    region: "cn",
+                    language_region: "zh_cn",
+                    topic: topic,
+                    scenario: `${topic}相关的文化场景示例 ${exampleNum}`,
+                    question: `关于${topic}的文化问题是什么？`,
+                    answer: `与${topic}相关的文化答案`,
+                    explanation: `这涉及到中国传统的${topic}文化实践和价值观念。`
+                });
+            }
+            
+            return data;
+        }
+
+        // Initialize multilingual data
+        function initializeMultilingualData() {
+            multilingualData = generateMultilingualData();
+            displayCurrentData();
+            setupDataNavigation();
+        }
+
+        // Setup data navigation event listeners
+        function setupDataNavigation() {
+            const dataIndexInput = document.getElementById('dataIndex');
+            const goToDataBtn = document.getElementById('goToData');
+            const prevDataBtn = document.getElementById('prevData');
+            const nextDataBtn = document.getElementById('nextData');
+
+            if (goToDataBtn) {
+                goToDataBtn.addEventListener('click', () => {
+                    const index = parseInt(dataIndexInput.value);
+                    if (index >= 1 && index <= 100) {
+                        currentDataIndex = index;
+                        displayCurrentData();
+                    } else {
+                        showToast('Please enter a number between 1 and 100', 'error');
+                    }
+                });
+            }
+
+            if (prevDataBtn) {
+                prevDataBtn.addEventListener('click', () => {
+                    if (currentDataIndex > 1) {
+                        currentDataIndex--;
+                        displayCurrentData();
+                        dataIndexInput.value = currentDataIndex;
+                    }
+                });
+            }
+
+            if (nextDataBtn) {
+                nextDataBtn.addEventListener('click', () => {
+                    if (currentDataIndex < 100) {
+                        currentDataIndex++;
+                        displayCurrentData();
+                        dataIndexInput.value = currentDataIndex;
+                    }
+                });
+            }
+
+            // Allow Enter key in input field
+            if (dataIndexInput) {
+                dataIndexInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        goToDataBtn.click();
+                    }
+                });
+            }
+        }
+
+        // Display current data example
+        function displayCurrentData() {
+            if (currentDataIndex < 1 || currentDataIndex > multilingualData.length) {
+                return;
+            }
+
+            const data = multilingualData[currentDataIndex - 1];
+            
+            // Update data counter
+            const dataCounter = document.getElementById('dataCounter');
+            if (dataCounter) {
+                dataCounter.textContent = `Item ${currentDataIndex} of 100`;
+            }
+
+            // Update example display
+            const currentLanguage = document.getElementById('currentLanguage');
+            const currentDataTopic = document.getElementById('currentDataTopic');
+            const currentDataScenario = document.getElementById('currentDataScenario');
+            const currentDataQuestion = document.getElementById('currentDataQuestion');
+            const currentDataAnswer = document.getElementById('currentDataAnswer');
+            const currentDataExplanation = document.getElementById('currentDataExplanation');
+
+            if (currentLanguage) currentLanguage.textContent = `${data.language}_${data.region}`;
+            if (currentDataTopic) currentDataTopic.textContent = data.topic;
+            if (currentDataScenario) currentDataScenario.textContent = data.scenario;
+            if (currentDataQuestion) currentDataQuestion.textContent = data.question;
+            if (currentDataAnswer) currentDataAnswer.textContent = data.answer;
+            if (currentDataExplanation) currentDataExplanation.textContent = data.explanation;
+
+            // Update navigation buttons state
+            const prevBtn = document.getElementById('prevData');
+            const nextBtn = document.getElementById('nextData');
+            
+            if (prevBtn) {
+                prevBtn.disabled = currentDataIndex <= 1;
+                prevBtn.style.opacity = currentDataIndex <= 1 ? '0.5' : '1';
+            }
+            
+            if (nextBtn) {
+                nextBtn.disabled = currentDataIndex >= 100;
+                nextBtn.style.opacity = currentDataIndex >= 100 ? '0.5' : '1';
+            }
+        }
+
+        // Clear form fields after submission
+        function clearFormFields() {
+            elements.scenario.value = '';
+            elements.question.value = '';
+            elements.answer.value = '';
+            elements.explanation.value = '';
+            // Keep topic selection as it might be related to current example
+        }
+
+        // Override the original handleDataSubmission to include form clearing
+        async function handleDataSubmission(event) {
+            event.preventDefault();
+            
+            // Validate form data
+            const formData = {
+                topic: elements.topic.value.trim(),
+                scenario: elements.scenario.value.trim(),
+                question: elements.question.value.trim(),
+                answer: elements.answer.value.trim(),
+                explanation: elements.explanation.value.trim()
+            };
+            
+            // Check if all fields are filled
+            if (!formData.topic || !formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+            
+            try {
+                showLoading('Submitting data...');
+                
+                // Prepare data for submission
+                const submissionData = {
+                    ...formData,
+                    language_region: Array.isArray(currentUser.language_region) ? currentUser.language_region[0] : currentUser.language_region,
+                    created_by: currentUser.userId,
+                    created_at: new Date().toISOString(),
+                    status: 'pending_review',
+                    creation_method: 'multilingual_adaptation'
+                };
+                
+                // Submit to Firebase
+                const result = await FirebaseService.saveAnnotation(submissionData, 'cultural_annotations_created');
+                
+                if (result.success) {
+                    hideLoading();
+                    showToast('Data submitted successfully!', 'success');
+                    
+                    // Clear form fields (scenario, question, answer, explanation)
+                    clearFormFields();
                     
                     // Update progress
                     createdItemsCount++;
