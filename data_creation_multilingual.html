@@ -1401,16 +1401,33 @@
                     showFirebaseStatus(`Loaded ${result.data.length} annotated items from Firebase`, 'success');
                 } else {
                     showFirebaseStatus('No annotated data found in Firebase. Please ensure data exists in the annotated_data collection.', 'error');
+                    
+                    // If materialList exists, show a fallback message
+                    if (materialList) {
+                        materialList.innerHTML = '<li><strong>No Data:</strong> No annotated data available from Firebase.</li>';
+                    }
                 }
             } catch (error) {
                 console.error('Error loading annotated data:', error);
                 showFirebaseStatus('Failed to load annotated data from Firebase: ' + error.message, 'error');
+                
+                // If materialList exists, show an error message
+                if (materialList) {
+                    materialList.innerHTML = '<li><strong>Error:</strong> Failed to load data from Firebase. Please check your connection and try again.</li>';
+                }
             }
         }
 
 
         function displayAnnotatedData(data) {
             const materialList = document.getElementById('materialList');
+            
+            // Check if materialList element exists
+            if (!materialList) {
+                console.warn('materialList element not found in DOM');
+                return;
+            }
+            
             let html = '';
 
             data.forEach((item, index) => {
