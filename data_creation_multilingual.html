@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,10 +19,12 @@
             margin-bottom: 2rem;
             text-align: center;
         }
+
         .login-form {
             max-width: 400px;
             margin: 0 auto;
         }
+
         .user-info-section {
             color: white;
             border-radius: 12px;
@@ -35,6 +38,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
+
         .user-details {
             display: flex;
             align-items: center;
@@ -42,21 +46,25 @@
             flex: 1;
             min-width: 0;
         }
+
         .user-details h3 {
             margin: 0;
             font-size: 1.1rem;
         }
+
         .user-details p {
             opacity: 0.9;
             margin: 0;
             font-size: 0.9rem;
         }
+
         .user-info-items {
             display: flex;
             gap: 1.5rem;
             align-items: center;
             flex-wrap: wrap;
         }
+
         .creation-progress {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 6px;
@@ -67,20 +75,24 @@
             align-items: center;
             gap: 0.5rem;
         }
+
         .progress-number {
             font-size: 1.2rem;
             font-weight: 700;
             margin: 0;
         }
+
         .progress-label {
             font-size: 0.8rem;
             opacity: 0.9;
         }
+
         .creation-container {
             display: flex;
             gap: 2rem;
             margin-top: 2rem;
         }
+
         .left-panel {
             flex: 1;
             background-color: #f8fafc;
@@ -88,6 +100,7 @@
             border-radius: 8px;
             border: 1px solid #e2e8f0;
         }
+
         .right-panel {
             flex: 1;
             background-color: #ffffff;
@@ -96,6 +109,7 @@
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
         .panel-title {
             font-size: 1.5rem;
             font-weight: 600;
@@ -105,13 +119,16 @@
             align-items: center;
             gap: 10px;
         }
+
         .panel-title i {
             color: #667eea;
         }
+
         .material-list {
             list-style: none;
             padding: 0;
         }
+
         .material-list li {
             margin-bottom: 15px;
             padding: 15px;
@@ -120,24 +137,30 @@
             border: 1px solid #e2e8f0;
             transition: all 0.2s;
         }
+
         .material-list li:hover {
             border-color: #667eea;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
+
         .material-list strong {
             color: #667eea;
             font-weight: 600;
         }
+
         .form-group {
             margin-bottom: 1.5rem;
         }
+
         .field-label {
             font-weight: 600;
             color: #374151;
             margin-bottom: 0.5rem;
             display: block;
         }
-        .form-input, .form-textarea {
+
+        .form-input,
+        .form-textarea {
             padding: 12px;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
@@ -147,23 +170,29 @@
             font-family: inherit;
             background-color: white;
         }
-        .form-input[type="select"], select.form-input {
+
+        .form-input[type="select"],
+        select.form-input {
             cursor: pointer;
             background-position: right 12px center;
             background-repeat: no-repeat;
             background-size: 16px;
             padding-right: 40px;
         }
+
         .form-textarea {
             resize: vertical;
             min-height: 100px;
             line-height: 1.5;
         }
-        .form-input:focus, .form-textarea:focus {
+
+        .form-input:focus,
+        .form-textarea:focus {
             border-color: #667eea;
             outline: none;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+
         .btn {
             padding: 12px 24px;
             border: none;
@@ -177,30 +206,37 @@
             text-decoration: none;
             font-size: 14px;
         }
+
         .btn-primary {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
         }
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
+
         .btn-secondary {
             background: #6c757d;
             color: white;
         }
+
         .btn-secondary:hover {
             background: #5a6268;
         }
+
         .btn-success {
             background: #28a745;
             color: white;
         }
+
         .btn-success:hover {
             background: #218838;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
+
         .user-info-notice {
             background: #e9f4ff;
             padding: 15px;
@@ -209,9 +245,11 @@
             border: 1px solid #b3d9ff;
             color: #0c4a6e;
         }
+
         .user-info-notice strong {
             color: #0369a1;
         }
+
         .code {
             background-color: #f8f9fa;
             padding: 2px 6px;
@@ -220,9 +258,11 @@
             font-size: 0.9em;
             color: #e83e8c;
         }
+
         .hidden {
             display: none !important;
         }
+
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -232,13 +272,16 @@
             margin-bottom: 2rem;
             font-weight: 500;
         }
+
         .back-link:hover {
             color: #5a67d8;
         }
+
         .back-link:focus {
             outline: 2px solid #667eea;
             outline-offset: 2px;
         }
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -251,14 +294,14 @@
             justify-content: center;
             z-index: 1000;
         }
-        
+
         .loading-content {
             background: white;
             padding: 2rem;
             border-radius: 12px;
             text-align: center;
         }
-        
+
         .spinner {
             border: 3px solid #f3f4f6;
             border-top: 3px solid #667eea;
@@ -268,12 +311,17 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         .toast {
             position: fixed;
             top: 20px;
@@ -286,23 +334,23 @@
             transition: transform 0.3s ease;
             transform: translateX(100%);
         }
-        
+
         .toast.show {
             transform: translateX(0);
         }
-        
+
         .toast.success {
             background: #10b981;
         }
-        
+
         .toast.error {
             background: #ef4444;
         }
-        
+
         .toast.info {
             background: #3b82f6;
         }
-        
+
         .data-source-selector {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -310,20 +358,20 @@
             padding: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         .data-source-selector h4 {
             margin: 0 0 0.5rem 0;
             color: #374151;
             font-size: 1rem;
             font-weight: 600;
         }
-        
+
         .source-buttons {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
-        
+
         .source-btn {
             padding: 0.5rem 1rem;
             border: 1px solid #d1d5db;
@@ -334,18 +382,18 @@
             font-size: 0.875rem;
             transition: all 0.2s;
         }
-        
+
         .source-btn:hover {
             border-color: #667eea;
             color: #667eea;
         }
-        
+
         .source-btn.active {
             background: #667eea;
             color: white;
             border-color: #667eea;
         }
-        
+
         .firebase-status {
             margin-top: 0.5rem;
             padding: 0.5rem;
@@ -353,44 +401,44 @@
             font-size: 0.875rem;
             display: none;
         }
-        
+
         .firebase-status.success {
             background: #d1fae5;
             color: #065f46;
             border: 1px solid #10b981;
         }
-        
+
         .firebase-status.error {
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid #ef4444;
         }
-        
+
         .firebase-status.loading {
             background: #dbeafe;
             color: #1e40af;
             border: 1px solid #3b82f6;
         }
-        
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
         }
-        
+
         .data-table th,
         .data-table td {
             padding: 0.75rem;
             text-align: left;
             border-bottom: 1px solid #e2e8f0;
         }
-        
+
         .data-table th {
             background: #f8fafc;
             font-weight: 600;
             color: #374151;
         }
-        
+
         .topic-badge {
             display: inline-block;
             padding: 0.25rem 0.5rem;
@@ -399,39 +447,39 @@
             font-weight: 500;
             text-transform: uppercase;
         }
-        
+
         .topic-badge.commerce {
             background: #dbeafe;
             color: #1e40af;
         }
-        
+
         .topic-badge.travel {
             background: #d1fae5;
             color: #065f46;
         }
-        
+
         .topic-badge.food {
             background: #fef3c7;
             color: #92400e;
         }
-        
+
         .topic-badge.heritage {
             background: #e0e7ff;
             color: #3730a3;
         }
-        
+
         .topic-badge.social {
             background: #fce7f3;
             color: #be185d;
         }
-        
+
         .scenario-cell {
             max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        
+
         .dataset-stats {
             display: flex;
             gap: 1rem;
@@ -440,26 +488,24 @@
             background: #f8fafc;
             border-radius: 8px;
         }
-        
+
         .stat-item {
             text-align: center;
             flex: 1;
         }
-        
+
         .stat-number {
             display: block;
             font-size: 1.5rem;
             font-weight: 700;
             color: #667eea;
         }
-        
+
         .stat-label {
             font-size: 0.875rem;
             color: #6b7280;
         }
-            z-index: 1000;
-        }
-        
+
         .data-source-selector {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -467,20 +513,20 @@
             padding: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         .data-source-selector h4 {
             margin: 0 0 0.5rem 0;
             color: #374151;
             font-size: 1rem;
             font-weight: 600;
         }
-        
+
         .source-buttons {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
-        
+
         .source-btn {
             padding: 0.5rem 1rem;
             border: 1px solid #d1d5db;
@@ -491,18 +537,18 @@
             font-size: 0.875rem;
             transition: all 0.2s;
         }
-        
+
         .source-btn:hover {
             border-color: #667eea;
             color: #667eea;
         }
-        
+
         .source-btn.active {
             background: #667eea;
             color: white;
             border-color: #667eea;
         }
-        
+
         .firebase-status {
             margin-top: 0.5rem;
             padding: 0.5rem;
@@ -510,30 +556,32 @@
             font-size: 0.875rem;
             display: none;
         }
-        
+
         .firebase-status.success {
             background: #d1fae5;
             color: #065f46;
             border: 1px solid #10b981;
         }
-        
+
         .firebase-status.error {
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid #ef4444;
         }
-        
+
         .firebase-status.loading {
             background: #dbeafe;
             color: #1e40af;
             border: 1px solid #3b82f6;
         }
+
         .loading-content {
             background: white;
             padding: 2rem;
             border-radius: 12px;
             text-align: center;
         }
+
         .spinner {
             border: 3px solid #f3f4f6;
             border-top: 3px solid #667eea;
@@ -542,8 +590,9 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
-        @keyframes spin {
-        }
+
+        @keyframes spin {}
+
         .toast {
             position: fixed;
             top: 20px;
@@ -555,18 +604,23 @@
             z-index: 1001;
             transition: transform 0.3s ease;
         }
+
         .toast.show {
             transform: translateX(0);
         }
+
         .toast.success {
             background: #10b981;
         }
+
         .toast.error {
             background: #ef4444;
         }
+
         .toast.info {
             background: #3b82f6;
         }
+
         /* Data display styles */
         .data-section {
             margin-bottom: 2rem;
@@ -575,6 +629,7 @@
             padding: 1.5rem;
             border: 1px solid #e2e8f0;
         }
+
         .section-title {
             font-size: 1.2rem;
             font-weight: 600;
@@ -584,19 +639,23 @@
             align-items: center;
             gap: 0.5rem;
         }
+
         .section-title i {
             color: #667eea;
         }
+
         .data-table-container {
             overflow-x: auto;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
             margin-bottom: 1rem;
         }
+
         .data-table {
             border-collapse: collapse;
             font-size: 0.9rem;
         }
+
         .data-table th {
             background: #f8fafc;
             padding: 0.75rem;
@@ -605,20 +664,24 @@
             color: #374151;
             border-bottom: 1px solid #e2e8f0;
         }
+
         .data-table td {
             padding: 0.75rem;
             border-bottom: 1px solid #f1f5f9;
             vertical-align: top;
         }
+
         .data-table tr:hover {
             background: #f8fafc;
         }
+
         .scenario-cell {
             max-width: 300px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
         .topic-badge {
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
@@ -626,12 +689,15 @@
             font-weight: 500;
             color: white;
         }
+
         .topic-badge.commerce {
             background: #10b981;
         }
+
         .topic-badge.travel {
             background: #3b82f6;
         }
+
         .dataset-stats {
             display: flex;
             gap: 2rem;
@@ -641,62 +707,75 @@
             border-radius: 8px;
             margin-top: 1rem;
         }
+
         .stat-item {
             text-align: center;
         }
+
         .stat-number {
             display: block;
             font-size: 1.5rem;
             font-weight: 700;
             color: #667eea;
         }
+
         .stat-label {
             display: block;
             font-size: 0.8rem;
             color: #6b7280;
             margin-top: 0.25rem;
         }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .creation-container {
                 flex-direction: column;
                 gap: 1.5rem;
             }
+
             .user-details {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
             }
+
             .user-info-items {
                 flex-direction: column;
                 gap: 0.5rem;
                 align-items: flex-start;
             }
         }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
             }
+
             .user-info-section {
                 flex-direction: column;
                 align-items: stretch;
                 text-align: center;
             }
+
             .user-details {
                 justify-content: center;
                 text-align: center;
             }
-            .left-panel, .right-panel {
+
+            .left-panel,
+            .right-panel {
                 padding: 1rem;
             }
         }
+
         @media (max-width: 480px) {
-            .user-info-items {
-            }
+            .user-info-items {}
+
             .creation-progress {
                 justify-content: center;
             }
         }
+
         /* Accessibility improvements */
         .sr-only {
             position: absolute;
@@ -709,15 +788,19 @@
             white-space: nowrap;
             border: 0;
         }
+
         /* High contrast mode support */
         @media (prefers-contrast: high) {
             .btn {
                 border: 2px solid currentColor;
             }
-            .form-input, .form-textarea {
+
+            .form-input,
+            .form-textarea {
                 border: 2px solid #000;
             }
         }
+
         /* Field description styles */
         .field-description {
             margin-top: 0.5rem;
@@ -729,43 +812,52 @@
             color: #495057;
             line-height: 1.4;
         }
+
         .field-description strong {
             color: #17a2b8;
         }
+
         /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
+
             .btn,
             .back-link,
             .toast {
                 transition: none;
             }
+
             .spinner {
                 animation: none;
             }
         }
+
         /* Navigation Controls Styles */
         .navigation-controls {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
+
         .nav-input-group {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
+
         .nav-input-group label {
             font-weight: 600;
             color: #374151;
             white-space: nowrap;
         }
+
         .nav-buttons {
             display: flex;
             align-items: center;
             gap: 1rem;
             justify-content: center;
         }
+
         .topic-counter {
             font-weight: 600;
             color: #667eea;
@@ -774,6 +866,7 @@
             border-radius: 6px;
             border: 1px solid #e0f2fe;
         }
+
         /* Data display styles */
         .data-section {
             margin-bottom: 2rem;
@@ -782,6 +875,7 @@
             padding: 1.5rem;
             border: 1px solid #e2e8f0;
         }
+
         .section-title {
             font-size: 1.2rem;
             font-weight: 600;
@@ -791,9 +885,11 @@
             align-items: center;
             gap: 0.5rem;
         }
+
         .section-title i {
             color: #667eea;
         }
+
         .topic-example-card {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -801,15 +897,18 @@
             padding: 1rem;
             margin-bottom: 1rem;
         }
+
         .example-header {
             font-weight: 600;
             color: #667eea;
             margin-bottom: 0.75rem;
             font-size: 1.1rem;
         }
+
         .example-field {
             margin-bottom: 0.75rem;
         }
+
         .example-field label {
             font-weight: 600;
             color: #374151;
@@ -817,22 +916,26 @@
             margin-bottom: 0.25rem;
             font-size: 0.9rem;
         }
+
         .example-field p {
             margin: 0;
             color: #6b7280;
             line-height: 1.5;
         }
+
         @media (max-width: 768px) {
             .nav-buttons {
                 flex-direction: column;
                 gap: 0.5rem;
             }
+
             .nav-input-group {
                 justify-content: center;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -853,8 +956,10 @@
             <p>Please enter your User ID to access the data creation interface.</p>
             <form id="loginForm" class="login-form">
                 <div class="form-group">
-                    <input type="text" id="userId" name="userId" class="form-input" placeholder="Enter your User ID" required aria-describedby="login-help">
-                    <div id="login-help" class="sr-only">Enter your assigned user ID to access the annotation interface</div>
+                    <input type="text" id="userId" name="userId" class="form-input" placeholder="Enter your User ID"
+                        required aria-describedby="login-help">
+                    <div id="login-help" class="sr-only">Enter your assigned user ID to access the annotation interface
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary" aria-describedby="login-button-help">
                     <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
@@ -901,7 +1006,7 @@
                         <i class="fas fa-globe"></i>
                         Multilingual Reference Data
                     </h2>
-                    
+
                     <!-- Data Source Information -->
                     <div class="data-source-selector">
                         <h4>Cultural Materials Source</h4>
@@ -909,7 +1014,8 @@
                             <div class="source-active">
                                 <i class="fas fa-database"></i>
                                 <span>Firebase Annotated Data</span>
-                                <small>Using existing annotated cultural data from Firebase as the only data source</small>
+                                <small>Using existing annotated cultural data from Firebase as the only data
+                                    source</small>
                             </div>
                         </div>
                         <div class="firebase-status" id="firebaseStatus"></div>
@@ -922,7 +1028,8 @@
                         </h3>
                         <!-- Material List Container -->
                         <ul class="material-list" id="materialList">
-                            <li><strong>Traditional Festivals:</strong> Spring Festival, Mid-Autumn Festival, Dragon Boat Festival</li>
+                            <li><strong>Traditional Festivals:</strong> Spring Festival, Mid-Autumn Festival, Dragon
+                                Boat Festival</li>
                             <li><strong>Cultural Symbols:</strong> Dragon, Phoenix, Great Wall, Terracotta Warriors</li>
                             <li><strong>Philosophy:</strong> Confucianism, Taoism, Buddhism concepts</li>
                             <li><strong>Arts:</strong> Calligraphy, Traditional Painting, Opera</li>
@@ -930,7 +1037,7 @@
                             <li><strong>Social Customs:</strong> Family values, Respect for elders, Gift-giving</li>
                         </ul>
                     </div>
-                    
+
                     <!-- Navigation Controls -->
                     <div class="data-section">
                         <h3 class="section-title">
@@ -940,7 +1047,8 @@
                         <div class="navigation-controls">
                             <div class="nav-input-group">
                                 <label for="dataIndex">Go to item:</label>
-                                <input type="number" id="dataIndex" min="1" max="100" value="1" class="form-input" style="width: 80px;">
+                                <input type="number" id="dataIndex" min="1" max="100" value="1" class="form-input"
+                                    style="width: 80px;">
                                 <button id="goToData" class="btn btn-primary">Go</button>
                             </div>
                             <div class="nav-buttons">
@@ -980,7 +1088,9 @@
                                     <tr>
                                         <td><strong>zh_cn</strong></td>
                                         <td><span class="topic-badge commerce">Commerce</span></td>
-                                        <td class="scenario-cell">结束了一周忙碌的工作，我打算在我位于天心区的小窝里好好地做顿饭。外面的天气炎热，实在不想出门买菜。其他城市的朋友给我推荐了一个叫朴朴买菜的软件...</td>
+                                        <td class="scenario-cell">
+                                            结束了一周忙碌的工作，我打算在我位于天心区的小窝里好好地做顿饭。外面的天气炎热，实在不想出门买菜。其他城市的朋友给我推荐了一个叫朴朴买菜的软件...
+                                        </td>
                                         <td>请问朋友最可能的回答是？</td>
                                         <td>没有</td>
                                     </tr>
@@ -1016,7 +1126,8 @@
                             </div>
                         </div>
                     </div>
-                    <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                    <div
+                        style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
                         <h4 style="margin: 0 0 10px 0; color: #856404;">
                             <i class="fas fa-exclamation-triangle"></i> Make It Challenging!
                         </h4>
@@ -1024,10 +1135,87 @@
                             <strong>Create questions that are as challenging as possible for AI models:</strong>
                         </p>
                         <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #856404;">
-                            <li><strong>Long-Tail Swap:</strong> Replace common entities with rarer, more specific ones (e.g., "Hong Kong" → "MacLehose Trail")</li>
-                            <li><strong>More Context:</strong> Add situational details requiring conditional, multi-step reasoning (e.g., visa requirements with prior conditions)</li>
-                            <li><strong>Less Context:</strong> Remove unnecessary hints that could help LLMs guess the answer</li>
-                            <li><strong>Compositional Example:</strong> Combine two independent knowledge points into a single query (e.g., entry requirements for both Hong Kong and Bangkok)</li>
+                            <li><strong>Long-Tail Swap:</strong> Replace common entities with rarer, more specific ones
+                                (e.g., "Hong Kong" → "MacLehose Trail")</li>
+                            <li><strong>More Context:</strong> Add situational details requiring conditional, multi-step
+                                reasoning (e.g., visa requirements with prior conditions)</li>
+                            <li><strong>Less Context:</strong> Remove unnecessary hints that could help LLMs guess the
+                                answer</li>
+                            <li><strong>Compositional Example:</strong> Combine two independent knowledge points into a
+                                single query (e.g., entry requirements for both Hong Kong and Bangkok)</li>
+                        </ul>
+                    </div>
+                    <div
+                        style="margin-bottom: 1.5rem; padding: 1rem; background: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <h3 style="margin: 0 0 0.5rem 0; color: #991b1b; font-size: 1.1rem;">
+                            <i class="fas fa-exclamation-triangle"></i> Important: Please read this first before
+                            creating data
+                        </h3>
+                        <p style="margin: 0; color: #7f1d1d; font-size: 0.9rem; line-height: 1.4;">
+                            Before creating any data, please carefully review all guidelines below to ensure your
+                            annotations meet the quality standards and cultural authenticity requirements.
+                        </p>
+                    </div>
+
+                    <h2 class="panel-title">
+                        <i class="fas fa-lightbulb"></i>
+                        Personal Experience Guidelines
+                    </h2>
+
+                    <!-- Data Sources Section -->
+                    <div
+                        style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #6c757d;">
+                        <h4 style="margin: 0 0 10px 0; color: #495057;">
+                            <i class="fas fa-database"></i> Data Sources
+                        </h4>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #495057;">
+                            <li><strong>First-hand Knowledge:</strong> Utilize your direct experiences, such as cultural
+                                practices, traditions, or encounters you've personally participated in.</li>
+                            <li><strong>Local Online Forums:</strong> Gather insights from community discussions on
+                                platforms like Reddit, local Q&A sites, social media groups, or regional forums.</li>
+                            <li><strong>Community Observations:</strong> Reflect on interactions or practices you've
+                                observed within your community, workplace, or social environments.</li>
+                            <li><strong>Cultural Events:</strong> Draw from festivals, ceremonies, or traditions you've
+                                attended or have a deep understanding of.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Core Guidelines: Sources & Quality -->
+                    <div
+                        style="margin-bottom: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                        <h4 style="margin: 0 0 10px 0; color: #0369a1;">
+                            <i class="fas fa-compass"></i> Creating Authentic Cultural Data
+                        </h4>
+                        <div style="font-size: 0.9em; color: #0c4a6e;">
+                            <p style="margin: 0 0 10px 0;"><strong>Draw from authentic sources:</strong> Personal
+                                experiences, local forums (Reddit, community Q&A), cultural events you've attended, and
+                                community observations.</p>
+                            <p style="margin: 0 0 10px 0;"><strong>Ensure cultural authenticity:</strong> Use specific
+                                local details (places, customs, terminology) that only locals would know, avoiding
+                                stereotypes and generic scenarios.</p>
+                            <p style="margin: 0;"><strong>Create clear, unambiguous questions:</strong> Each scenario
+                                should have one definitive, culturally-informed answer with sufficient context to feel
+                                realistic.</p>
+                        </div>
+                    </div>
+
+                    <!-- AI Challenge Techniques -->
+                    <div
+                        style="margin-bottom: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <h4 style="margin: 0 0 10px 0; color: #856404;">
+                            <i class="fas fa-brain"></i> Making It Challenging for AI
+                        </h4>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #856404;">
+                            <li><strong>Use specific entities:</strong> Replace generic terms with local places, brands,
+                                or cultural-specific terminology</li>
+                            <li><strong>Include implicit knowledge:</strong> Reference cultural norms understood locally
+                                but not explicitly stated</li>
+                            <li><strong>Add temporal context:</strong> Include seasonal, holiday, or time-sensitive
+                                cultural references</li>
+                            <li><strong>Incorporate social nuances:</strong> Use subtle social dynamics, hierarchies, or
+                                etiquette rules</li>
+                            <li><strong>Require multi-step reasoning:</strong> Create scenarios needing conditional
+                                cultural logic</li>
                         </ul>
                     </div>
                 </div>
@@ -1039,8 +1227,10 @@
                     <form id="dataCreationForm" role="form" aria-label="Data creation form">
                         <div class="form-group">
                             <label for="sourceLanguage" class="field-label">Source Language (Reference)</label>
-                            <input type="text" id="sourceLanguage" name="sourceLanguage" class="form-input" placeholder="e.g., zh_cn, en_us" aria-describedby="source-help">
-                            <div id="source-help" class="sr-only">Enter the language code of the source data you're adapting from</div>
+                            <input type="text" id="sourceLanguage" name="sourceLanguage" class="form-input"
+                                placeholder="e.g., zh_cn, en_us" aria-describedby="source-help">
+                            <div id="source-help" class="sr-only">Enter the language code of the source data you're
+                                adapting from</div>
                         </div>
                         <div class="form-group">
                             <label for="topic" class="field-label">Topic</label>
@@ -1063,30 +1253,42 @@
                                 <option value="Travel">Travel</option>
                                 <option value="Work">Work</option>
                             </select>
-                            <div id="topic-help" class="sr-only">Select the most appropriate topic from the predefined list for this cultural benchmark item</div>
+                            <div id="topic-help" class="sr-only">Select the most appropriate topic from the predefined
+                                list for this cultural benchmark item</div>
                         </div>
                         <div class="form-group">
                             <label for="scenario" class="field-label">Scenario (Adapted from Multilingual Data)</label>
-                            <textarea id="scenario" name="scenario" class="form-textarea" placeholder="Adapt a cultural scenario from the multilingual dataset to your local context..." aria-describedby="scenario-help"></textarea>
-                            <div id="scenario-help" class="sr-only">Describe the cultural scenario adapted from multilingual data</div>
+                            <textarea id="scenario" name="scenario" class="form-textarea"
+                                placeholder="Adapt a cultural scenario from the multilingual dataset to your local context..."
+                                aria-describedby="scenario-help"></textarea>
+                            <div id="scenario-help" class="sr-only">Describe the cultural scenario adapted from
+                                multilingual data</div>
                         </div>
                         <div class="form-group">
                             <label for="question" class="field-label">Question</label>
-                            <textarea id="question" name="question" class="form-textarea" placeholder="Enter the question..." aria-describedby="question-help"></textarea>
-                            <div id="question-help" class="sr-only">Enter the question text for this benchmark item</div>
+                            <textarea id="question" name="question" class="form-textarea"
+                                placeholder="Enter the question..." aria-describedby="question-help"></textarea>
+                            <div id="question-help" class="sr-only">Enter the question text for this benchmark item
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="answer" class="field-label">Answer</label>
-                            <textarea id="answer" name="answer" class="form-textarea" placeholder="Provide the answer..." aria-describedby="answer-help"></textarea>
+                            <textarea id="answer" name="answer" class="form-textarea"
+                                placeholder="Provide the answer..." aria-describedby="answer-help"></textarea>
                             <div id="answer-help" class="sr-only">Provide the correct answer for this question</div>
                             <div class="field-description">
-                                <strong>Answer Guidelines:</strong> Answers should be objective and as brief as possible. If an objective free-form answer is impractical, convert the question to a four-option multiple-choice format (A–D) and return only the chosen letter.
+                                <strong>Answer Guidelines:</strong> Answers should be objective and as brief as
+                                possible. If an objective free-form answer is impractical, convert the question to a
+                                four-option multiple-choice format (A–D) and return only the chosen letter.
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="explanation" class="field-label">Explanation</label>
-                            <textarea id="explanation" name="explanation" class="form-textarea" placeholder="Explain the cultural context and why this answer is correct (optional)..." aria-describedby="explanation-help"></textarea>
-                            <div id="explanation-help" class="sr-only">Explain the cultural context and why this answer is correct</div>
+                            <textarea id="explanation" name="explanation" class="form-textarea"
+                                placeholder="Explain the cultural context and why this answer is correct (optional)..."
+                                aria-describedby="explanation-help"></textarea>
+                            <div id="explanation-help" class="sr-only">Explain the cultural context and why this answer
+                                is correct</div>
                             <div class="field-description">
                                 <strong>Note:</strong> Explanation can be empty if not applicable.
                             </div>
@@ -1102,7 +1304,8 @@
         </div>
     </div>
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="loadingMessage">
+    <div id="loadingOverlay" class="loading-overlay hidden" role="dialog" aria-modal="true"
+        aria-labelledby="loadingMessage">
         <div class="loading-content">
             <div class="spinner" aria-hidden="true"></div>
             <div id="loadingMessage">Loading...</div>
@@ -1152,7 +1355,7 @@
             toastContainer: document.getElementById('toastContainer')
         };
         // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             initializeApp();
         });
         function initializeApp() {
@@ -1286,12 +1489,12 @@
         async function loadAnnotatedData() {
             const statusDiv = document.getElementById('firebaseStatus');
             const materialList = document.getElementById('materialList');
-            
+
             try {
                 showFirebaseStatus('Loading annotated data from Firebase...', 'loading');
-                
+
                 const result = await FirebaseService.getAllAnnotatedData();
-                
+
                 if (result.success && result.data.length > 0) {
                     firebaseAnnotatedData = result.data;
                     displayAnnotatedData(result.data);
@@ -1309,22 +1512,22 @@
         function displayAnnotatedData(data) {
             const materialList = document.getElementById('materialList');
             let html = '';
-            
+
             data.forEach((item, index) => {
                 if (index < 10) { // Show first 10 items
                     const topic = item.topic || 'Unknown';
                     const scenario = item.scenario || item.content || 'No scenario';
                     const question = item.question || 'No question';
-                    
+
                     html += `<li><strong>${topic}:</strong> ${scenario.substring(0, 100)}${scenario.length > 100 ? '...' : ''}<br>
                             <em>Q: ${question.substring(0, 80)}${question.length > 80 ? '...' : ''}</em></li>`;
                 }
             });
-            
+
             if (data.length > 10) {
                 html += `<li><em>... and ${data.length - 10} more items available</em></li>`;
             }
-            
+
             materialList.innerHTML = html;
         }
 
@@ -1393,7 +1596,7 @@
         const sampleMultilingualData = [
             {
                 language: "zh",
-                region: "cn", 
+                region: "cn",
                 language_region: "zh_cn",
                 topic: "Commerce",
                 scenario: "结束了一周忙碌的工作，我打算在我位于天心区的小窝里好好地做顿饭。外面的天气炎热，实在不想出门买菜。其他城市的朋友给我推荐了一个叫朴朴买菜的软件，说在上面买菜很方便。我问我这也有吗？朋友上网看了一下。",
@@ -1404,7 +1607,7 @@
             {
                 language: "zh",
                 region: "cn",
-                language_region: "zh_cn", 
+                language_region: "zh_cn",
                 topic: "Commerce",
                 scenario: "用户点进了我家的线上超市，逛了一圈后，询问我家客服：你们有没有tree tree的产品",
                 question: "请问我家客服应该向用户推荐什么？",
@@ -1423,7 +1626,7 @@
             },
             {
                 language: "zh",
-                region: "cn", 
+                region: "cn",
                 language_region: "zh_cn",
                 topic: "Heritage",
                 scenario: "小明第一次去寺庙参拜，看到很多人在烧香。他不知道应该怎么做。",
@@ -1527,7 +1730,7 @@
             }
 
             const example = multilingualData[currentDataIndex - 1];
-            
+
             // Update table with current example
             const tableBody = document.querySelector('.data-table tbody');
             if (tableBody) {
@@ -1597,4 +1800,5 @@
         }
     </script>
 </body>
+
 </html>

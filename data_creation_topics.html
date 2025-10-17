@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,10 +19,12 @@
             margin-bottom: 2rem;
             text-align: center;
         }
+
         .login-form {
             max-width: 400px;
             margin: 0 auto;
         }
+
         .user-info-section {
             color: white;
             border-radius: 12px;
@@ -35,6 +38,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
+
         .user-details {
             display: flex;
             align-items: center;
@@ -42,21 +46,25 @@
             flex: 1;
             min-width: 0;
         }
+
         .user-details h3 {
             margin: 0;
             font-size: 1.1rem;
         }
+
         .user-details p {
             opacity: 0.9;
             margin: 0;
             font-size: 0.9rem;
         }
+
         .user-info-items {
             display: flex;
             gap: 1.5rem;
             align-items: center;
             flex-wrap: wrap;
         }
+
         .creation-progress {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 6px;
@@ -67,20 +75,24 @@
             align-items: center;
             gap: 0.5rem;
         }
+
         .progress-number {
             font-size: 1.2rem;
             font-weight: 700;
             margin: 0;
         }
+
         .progress-label {
             font-size: 0.8rem;
             opacity: 0.9;
         }
+
         .creation-container {
             display: flex;
             gap: 2rem;
             margin-top: 2rem;
         }
+
         .left-panel {
             flex: 1;
             background-color: #f8fafc;
@@ -88,6 +100,7 @@
             border-radius: 8px;
             border: 1px solid #e2e8f0;
         }
+
         .right-panel {
             flex: 1;
             background-color: #ffffff;
@@ -96,6 +109,7 @@
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
         .panel-title {
             font-size: 1.5rem;
             font-weight: 600;
@@ -105,13 +119,16 @@
             align-items: center;
             gap: 10px;
         }
+
         .panel-title i {
             color: #667eea;
         }
+
         .material-list {
             list-style: none;
             padding: 0;
         }
+
         .material-list li {
             margin-bottom: 15px;
             padding: 15px;
@@ -120,24 +137,30 @@
             border: 1px solid #e2e8f0;
             transition: all 0.2s;
         }
+
         .material-list li:hover {
             border-color: #667eea;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
+
         .material-list strong {
             color: #667eea;
             font-weight: 600;
         }
+
         .form-group {
             margin-bottom: 1.5rem;
         }
+
         .field-label {
             font-weight: 600;
             color: #374151;
             margin-bottom: 0.5rem;
             display: block;
         }
-        .form-input, .form-textarea {
+
+        .form-input,
+        .form-textarea {
             padding: 12px;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
@@ -147,23 +170,29 @@
             font-family: inherit;
             background-color: white;
         }
-        .form-input[type="select"], select.form-input {
+
+        .form-input[type="select"],
+        select.form-input {
             cursor: pointer;
             background-position: right 12px center;
             background-repeat: no-repeat;
             background-size: 16px;
             padding-right: 40px;
         }
+
         .form-textarea {
             resize: vertical;
             min-height: 100px;
             line-height: 1.5;
         }
-        .form-input:focus, .form-textarea:focus {
+
+        .form-input:focus,
+        .form-textarea:focus {
             border-color: #667eea;
             outline: none;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
+
         .btn {
             padding: 12px 24px;
             border: none;
@@ -177,30 +206,37 @@
             text-decoration: none;
             font-size: 14px;
         }
+
         .btn-primary {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
         }
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
+
         .btn-secondary {
             background: #6c757d;
             color: white;
         }
+
         .btn-secondary:hover {
             background: #5a6268;
         }
+
         .btn-success {
             background: #28a745;
             color: white;
         }
+
         .btn-success:hover {
             background: #218838;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
+
         .user-info-notice {
             background: #e9f4ff;
             padding: 15px;
@@ -209,9 +245,11 @@
             border: 1px solid #b3d9ff;
             color: #0c4a6e;
         }
+
         .user-info-notice strong {
             color: #0369a1;
         }
+
         .code {
             background-color: #f8f9fa;
             padding: 2px 6px;
@@ -220,9 +258,11 @@
             font-size: 0.9em;
             color: #e83e8c;
         }
+
         .hidden {
             display: none !important;
         }
+
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -232,13 +272,16 @@
             margin-bottom: 2rem;
             font-weight: 500;
         }
+
         .back-link:hover {
             color: #5a67d8;
         }
+
         .back-link:focus {
             outline: 2px solid #667eea;
             outline-offset: 2px;
         }
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -251,7 +294,7 @@
             justify-content: center;
             z-index: 1000;
         }
-        
+
         .data-source-selector {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -259,20 +302,20 @@
             padding: 1rem;
             margin-bottom: 1rem;
         }
-        
+
         .data-source-selector h4 {
             margin: 0 0 0.5rem 0;
             color: #374151;
             font-size: 1rem;
             font-weight: 600;
         }
-        
+
         .source-buttons {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
-        
+
         .source-btn {
             padding: 0.5rem 1rem;
             border: 1px solid #d1d5db;
@@ -283,18 +326,18 @@
             font-size: 0.875rem;
             transition: all 0.2s;
         }
-        
+
         .source-btn:hover {
             border-color: #667eea;
             color: #667eea;
         }
-        
+
         .source-btn.active {
             background: #667eea;
             color: white;
             border-color: #667eea;
         }
-        
+
         .firebase-status {
             margin-top: 0.5rem;
             padding: 0.5rem;
@@ -302,30 +345,32 @@
             font-size: 0.875rem;
             display: none;
         }
-        
+
         .firebase-status.success {
             background: #d1fae5;
             color: #065f46;
             border: 1px solid #10b981;
         }
-        
+
         .firebase-status.error {
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid #ef4444;
         }
-        
+
         .firebase-status.loading {
             background: #dbeafe;
             color: #1e40af;
             border: 1px solid #3b82f6;
         }
+
         .loading-content {
             background: white;
             padding: 2rem;
             border-radius: 12px;
             text-align: center;
         }
+
         .spinner {
             border: 3px solid #f3f4f6;
             border-top: 3px solid #667eea;
@@ -334,8 +379,9 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
-        @keyframes spin {
-        }
+
+        @keyframes spin {}
+
         .toast {
             position: fixed;
             top: 20px;
@@ -347,18 +393,23 @@
             z-index: 1001;
             transition: transform 0.3s ease;
         }
+
         .toast.show {
             transform: translateX(0);
         }
+
         .toast.success {
             background: #10b981;
         }
+
         .toast.error {
             background: #ef4444;
         }
+
         .toast.info {
             background: #3b82f6;
         }
+
         /* Data display styles */
         .data-section {
             margin-bottom: 2rem;
@@ -367,6 +418,7 @@
             padding: 1.5rem;
             border: 1px solid #e2e8f0;
         }
+
         .section-title {
             font-size: 1.2rem;
             font-weight: 600;
@@ -376,9 +428,11 @@
             align-items: center;
             gap: 0.5rem;
         }
+
         .section-title i {
             color: #667eea;
         }
+
         .topic-example-card {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -386,15 +440,18 @@
             padding: 1rem;
             margin-bottom: 1rem;
         }
+
         .example-header {
             font-weight: 600;
             color: #667eea;
             margin-bottom: 0.75rem;
             font-size: 1.1rem;
         }
+
         .example-field {
             margin-bottom: 0.75rem;
         }
+
         .example-field label {
             font-weight: 600;
             color: #374151;
@@ -402,17 +459,20 @@
             margin-bottom: 0.25rem;
             font-size: 0.9rem;
         }
+
         .example-field p {
             margin: 0;
             color: #6b7280;
             line-height: 1.5;
         }
+
         .topics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 0.5rem;
             margin-top: 1rem;
         }
+
         .topic-tag {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -423,50 +483,61 @@
             font-weight: 500;
             transition: transform 0.2s;
         }
+
         .topic-tag:hover {
             transform: translateY(-2px);
         }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .creation-container {
                 flex-direction: column;
                 gap: 1.5rem;
             }
+
             .user-details {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
             }
+
             .user-info-items {
                 flex-direction: column;
                 gap: 0.5rem;
                 align-items: flex-start;
             }
         }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
             }
+
             .user-info-section {
                 flex-direction: column;
                 align-items: stretch;
                 text-align: center;
             }
+
             .user-details {
                 justify-content: center;
                 text-align: center;
             }
-            .left-panel, .right-panel {
+
+            .left-panel,
+            .right-panel {
                 padding: 1rem;
             }
         }
+
         @media (max-width: 480px) {
-            .user-info-items {
-            }
+            .user-info-items {}
+
             .creation-progress {
                 justify-content: center;
             }
         }
+
         /* Accessibility improvements */
         .sr-only {
             position: absolute;
@@ -479,15 +550,19 @@
             white-space: nowrap;
             border: 0;
         }
+
         /* High contrast mode support */
         @media (prefers-contrast: high) {
             .btn {
                 border: 2px solid currentColor;
             }
-            .form-input, .form-textarea {
+
+            .form-input,
+            .form-textarea {
                 border: 2px solid #000;
             }
         }
+
         /* Field description styles */
         .field-description {
             margin-top: 0.5rem;
@@ -499,43 +574,52 @@
             color: #495057;
             line-height: 1.4;
         }
+
         .field-description strong {
             color: #17a2b8;
         }
+
         /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
+
             .btn,
             .back-link,
             .toast {
                 transition: none;
             }
+
             .spinner {
                 animation: none;
             }
         }
+
         /* Navigation Controls Styles */
         .navigation-controls {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
+
         .nav-input-group {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
+
         .nav-input-group label {
             font-weight: 600;
             color: #374151;
             white-space: nowrap;
         }
+
         .nav-buttons {
             display: flex;
             align-items: center;
             gap: 1rem;
             justify-content: center;
         }
+
         .topic-counter {
             font-weight: 600;
             color: #667eea;
@@ -544,17 +628,20 @@
             border-radius: 6px;
             border: 1px solid #e0f2fe;
         }
+
         @media (max-width: 768px) {
             .nav-buttons {
                 flex-direction: column;
                 gap: 0.5rem;
             }
+
             .nav-input-group {
                 justify-content: center;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -575,8 +662,10 @@
             <p>Please enter your User ID to access the data creation interface.</p>
             <form id="loginForm" class="login-form">
                 <div class="form-group">
-                    <input type="text" id="userId" name="userId" class="form-input" placeholder="Enter your User ID" required aria-describedby="login-help">
-                    <div id="login-help" class="sr-only">Enter your assigned user ID to access the annotation interface</div>
+                    <input type="text" id="userId" name="userId" class="form-input" placeholder="Enter your User ID"
+                        required aria-describedby="login-help">
+                    <div id="login-help" class="sr-only">Enter your assigned user ID to access the annotation interface
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary" aria-describedby="login-button-help">
                     <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
@@ -623,16 +712,7 @@
                         <i class="fas fa-tags"></i>
                         Topic Reference & Examples
                     </h2>
-                    
-                    <!-- Data Source Selector -->
-                    <div class="data-source-selector">
-                        <h4>Cultural Materials Source</h4>
-                        <div class="source-buttons">
-                            <button class="source-btn active" data-source="firebase">Firebase Data</button>
-                            <button class="source-btn" data-source="local">Local Files</button>
-                        </div>
-                        <div class="firebase-status" id="firebaseStatus"></div>
-                    </div>
+
                     <!-- Navigation Controls -->
                     <div class="data-section">
                         <h3 class="section-title">
@@ -642,7 +722,8 @@
                         <div class="navigation-controls">
                             <div class="nav-input-group">
                                 <label for="topicIndex">Go to Topic #:</label>
-                                <input type="number" id="topicIndex" min="1" max="160" value="1" class="form-input" style="width: 80px; display: inline-block;">
+                                <input type="number" id="topicIndex" min="1" max="160" value="1" class="form-input"
+                                    style="width: 80px; display: inline-block;">
                                 <button id="goToTopic" class="btn btn-primary" style="margin-left: 10px;">
                                     <i class="fas fa-arrow-right"></i> Go
                                 </button>
@@ -658,676 +739,688 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Current Topic Example -->
-                    <div class="data-section">
-                        <h3 class="section-title">
-                            <i class="fas fa-lightbulb"></i>
-                            Current Topic Example
+                    <div
+                        style="margin-bottom: 1.5rem; padding: 1rem; background: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <h3 style="margin: 0 0 0.5rem 0; color: #991b1b; font-size: 1.1rem;">
+                            <i class="fas fa-exclamation-triangle"></i> Important: Please read this first before
+                            creating data
                         </h3>
-                        <div id="currentTopicExample" class="topic-example-card">
-                            <div class="example-header">
-                                <strong>Topic:</strong> <span id="currentTopicName">Loading...</span>
-                            </div>
-                            <div class="example-content">
-                                <div class="example-field">
-                                    <label>Example Scenario:</label>
-                                    <p id="currentExampleScenario">Loading...</p>
-                                </div>
-                                <div class="example-field">
-                                    <label>Example Question:</label>
-                                    <p id="currentExampleQuestion">Loading...</p>
-                                </div>
-                                <div class="example-field">
-                                    <label>Example Answer:</label>
-                                    <p id="currentExampleAnswer">Loading...</p>
-                                </div>
-                                <div class="example-field">
-                                    <label>Example Explanation:</label>
-                                    <p id="currentExampleExplanation">Loading...</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="topics-grid">
-                            <div class="topic-tag">Belief</div>
-                            <div class="topic-tag">Commerce</div>
-                            <div class="topic-tag">Education</div>
-                            <div class="topic-tag">Entertainment</div>
-                            <div class="topic-tag">Finance</div>
-                            <div class="topic-tag">Food</div>
-                            <div class="topic-tag">Government</div>
-                            <div class="topic-tag">Habitat</div>
-                            <div class="topic-tag">Health</div>
-                            <div class="topic-tag">Heritage</div>
-                            <div class="topic-tag">Language</div>
-                            <div class="topic-tag">Pets</div>
-                            <div class="topic-tag">Science</div>
-                            <div class="topic-tag">Social</div>
-                            <div class="topic-tag">Travel</div>
-                            <div class="topic-tag">Work</div>
-                        </div>
+                        <p style="margin: 0; color: #7f1d1d; font-size: 0.9rem; line-height: 1.4;">
+                            Before creating any data, please carefully review all guidelines below to ensure your
+                            annotations meet the quality standards and cultural authenticity requirements.
+                        </p>
                     </div>
-                    <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
-                        <h4 style="margin: 0 0 10px 0; color: #0369a1;">
-                            <i class="fas fa-info-circle"></i> Topic-Based Creation Guidelines
-                        </h4>
-                        <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #0c4a6e;">
-                            <li><strong>Follow Topic Structure:</strong> Refer to the predefined topics and examples in <span class="code">cultural_topics.xlsx</span></li>
-                            <li><strong>Cultural Specificity:</strong> Ensure scenarios require local cultural knowledge to answer correctly</li>
-                            <li><strong>Topic Consistency:</strong> Keep scenarios aligned with the selected topic category</li>
-                            <li><strong>Clear Questions:</strong> Make questions unambiguous and directly related to the scenario</li>
-                            <li><strong>Objective Answers:</strong> Provide factual, verifiable answers when possible</li>
-                            <li><strong>Informative Explanations:</strong> Include cultural context that supports the answer</li>
-                        </ul>
-                        <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
-                            <h4 style="margin: 0 0 10px 0; color: #856404;">
-                                <i class="fas fa-exclamation-triangle"></i> Make It Challenging!
-                            </h4>
-                            <p style="margin: 0 0 10px 0; font-size: 0.9em; color: #856404;">
-                                <strong>Create questions that are as challenging as possible for AI models:</strong>
-                            </p>
-                            <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #856404;">
-                                <li><strong>Long-Tail Swap:</strong> Replace common entities with rarer, more specific ones (e.g., "Hong Kong" → "MacLehose Trail")</li>
-                                <li><strong>More Context:</strong> Add situational details requiring conditional, multi-step reasoning (e.g., visa requirements with prior conditions)</li>
-                                <li><strong>Less Context:</strong> Remove unnecessary hints that could help LLMs guess the answer</li>
-                                <li><strong>Compositional Example:</strong> Combine two independent knowledge points into a single query (e.g., entry requirements for both Hong Kong and Bangkok)</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="right-panel">
+
                     <h2 class="panel-title">
-                        <i class="fas fa-edit"></i>
-                        Data Creation Form
+                        <i class="fas fa-lightbulb"></i>
+                        Personal Experience Guidelines
                     </h2>
-                    <form id="dataCreationForm" role="form" aria-label="Data creation form">
-                        <div class="form-group">
-                            <label for="topic" class="field-label">Topic</label>
-                            <select id="topic" name="topic" class="form-input" required aria-describedby="topic-help">
-                                <option value="">Select a topic...</option>
-                                <option value="Belief">Belief</option>
-                                <option value="Commerce">Commerce</option>
-                                <option value="Education">Education</option>
-                                <option value="Entertainment">Entertainment</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Food">Food</option>
-                                <option value="Government">Government</option>
-                                <option value="Habitat">Habitat</option>
-                                <option value="Health">Health</option>
-                                <option value="Heritage">Heritage</option>
-                                <option value="Language">Language</option>
-                                <option value="Pets">Pets</option>
-                                <option value="Science">Science</option>
-                                <option value="Social">Social</option>
-                                <option value="Travel">Travel</option>
-                                <option value="Work">Work</option>
-                            </select>
-                            <div id="topic-help" class="sr-only">Select the most appropriate topic from the predefined list for this cultural benchmark item</div>
+
+                    <!-- Data Sources Section -->
+                    <div
+                        style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #6c757d;">
+                        <h4 style="margin: 0 0 10px 0; color: #495057;">
+                            <i class="fas fa-database"></i> Data Sources
+                        </h4>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #495057;">
+                            <li><strong>First-hand Knowledge:</strong> Utilize your direct experiences, such as cultural
+                                practices, traditions, or encounters you've personally participated in.</li>
+                            <li><strong>Local Online Forums:</strong> Gather insights from community discussions on
+                                platforms like Reddit, local Q&A sites, social media groups, or regional forums.</li>
+                            <li><strong>Community Observations:</strong> Reflect on interactions or practices you've
+                                observed within your community, workplace, or social environments.</li>
+                            <li><strong>Cultural Events:</strong> Draw from festivals, ceremonies, or traditions you've
+                                attended or have a deep understanding of.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Core Guidelines: Sources & Quality -->
+                    <div
+                        style="margin-bottom: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                        <h4 style="margin: 0 0 10px 0; color: #0369a1;">
+                            <i class="fas fa-compass"></i> Creating Authentic Cultural Data
+                        </h4>
+                        <div style="font-size: 0.9em; color: #0c4a6e;">
+                            <p style="margin: 0 0 10px 0;"><strong>Draw from authentic sources:</strong> Personal
+                                experiences, local forums (Reddit, community Q&A), cultural events you've attended, and
+                                community observations.</p>
+                            <p style="margin: 0 0 10px 0;"><strong>Ensure cultural authenticity:</strong> Use specific
+                                local details (places, customs, terminology) that only locals would know, avoiding
+                                stereotypes and generic scenarios.</p>
+                            <p style="margin: 0;"><strong>Create clear, unambiguous questions:</strong> Each scenario
+                                should have one definitive, culturally-informed answer with sufficient context to feel
+                                realistic.</p>
                         </div>
-                        <div class="form-group">
-                            <label for="scenario" class="field-label">Scenario (Based on Topic Guidelines)</label>
-                            <textarea id="scenario" name="scenario" class="form-textarea" placeholder="Describe a cultural scenario following the topic guidelines from cultural_topics.xlsx..." aria-describedby="scenario-help"></textarea>
-                            <div id="scenario-help" class="sr-only">Describe the cultural scenario for this benchmark item following topic guidelines</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="question" class="field-label">Question</label>
-                            <textarea id="question" name="question" class="form-textarea" placeholder="Enter the question..." aria-describedby="question-help"></textarea>
-                            <div id="question-help" class="sr-only">Enter the question text for this benchmark item</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="answer" class="field-label">Answer</label>
-                            <textarea id="answer" name="answer" class="form-textarea" placeholder="Provide the answer..." aria-describedby="answer-help"></textarea>
-                            <div id="answer-help" class="sr-only">Provide the correct answer for this question</div>
-                            <div class="field-description">
-                                <strong>Answer Guidelines:</strong> Answers should be objective and as brief as possible. If an objective free-form answer is impractical, convert the question to a four-option multiple-choice format (A–D) and return only the chosen letter.
+                    </div>
+
+                    <!-- AI Challenge Techniques -->
+                    <div
+                        style="margin-bottom: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <h4 style="margin: 0 0 10px 0; color: #856404;">
+                            <i class="fas fa-brain"></i> Making It Challenging for AI
+                        </h4>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #856404;">
+                            <li><strong>Use specific entities:</strong> Replace generic terms with local places, brands,
+                                or cultural-specific terminology</li>
+                            <li><strong>Include implicit knowledge:</strong> Reference cultural norms understood locally
+                                but not explicitly stated</li>
+                            <li><strong>Add temporal context:</strong> Include seasonal, holiday, or time-sensitive
+                                cultural references</li>
+                            <li><strong>Incorporate social nuances:</strong> Use subtle social dynamics, hierarchies, or
+                                etiquette rules</li>
+                            <li><strong>Require multi-step reasoning:</strong> Create scenarios needing conditional
+                                cultural logic</li>
+                        </ul>
+                    </div>
+                    <div class="right-panel">
+                        <h2 class="panel-title">
+                            <i class="fas fa-edit"></i>
+                            Data Creation Form
+                        </h2>
+                        <form id="dataCreationForm" role="form" aria-label="Data creation form">
+                            <div class="form-group">
+                                <label for="topic" class="field-label">Topic</label>
+                                <select id="topic" name="topic" class="form-input" required
+                                    aria-describedby="topic-help">
+                                    <option value="">Select a topic...</option>
+                                    <option value="Belief">Belief</option>
+                                    <option value="Commerce">Commerce</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Food">Food</option>
+                                    <option value="Government">Government</option>
+                                    <option value="Habitat">Habitat</option>
+                                    <option value="Health">Health</option>
+                                    <option value="Heritage">Heritage</option>
+                                    <option value="Language">Language</option>
+                                    <option value="Pets">Pets</option>
+                                    <option value="Science">Science</option>
+                                    <option value="Social">Social</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Work">Work</option>
+                                </select>
+                                <div id="topic-help" class="sr-only">Select the most appropriate topic from the
+                                    predefined list for this cultural benchmark item</div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="explanation" class="field-label">Explanation</label>
-                            <textarea id="explanation" name="explanation" class="form-textarea" placeholder="Explain the cultural context and why this answer is correct (optional)..." aria-describedby="explanation-help"></textarea>
-                            <div id="explanation-help" class="sr-only">Explain the cultural context and why this answer is correct</div>
-                            <div class="field-description">
-                                <strong>Note:</strong> Explanation can be empty if not applicable.
+                            <div class="form-group">
+                                <label for="scenario" class="field-label">Scenario (Based on Topic Guidelines)</label>
+                                <textarea id="scenario" name="scenario" class="form-textarea"
+                                    placeholder="Describe a cultural scenario following the topic guidelines from cultural_topics.xlsx..."
+                                    aria-describedby="scenario-help"></textarea>
+                                <div id="scenario-help" class="sr-only">Describe the cultural scenario for this
+                                    benchmark item following topic guidelines</div>
                             </div>
-                        </div>
-                        <button type="submit" class="btn btn-success" aria-describedby="submit-help">
-                            <i class="fas fa-save" aria-hidden="true"></i>
-                            Submit Data
-                        </button>
-                        <div id="submit-help" class="sr-only">Submit the created data to the system</div>
-                    </form>
+                            <div class="form-group">
+                                <label for="question" class="field-label">Question</label>
+                                <textarea id="question" name="question" class="form-textarea"
+                                    placeholder="Enter the question..." aria-describedby="question-help"></textarea>
+                                <div id="question-help" class="sr-only">Enter the question text for this benchmark item
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="answer" class="field-label">Answer</label>
+                                <textarea id="answer" name="answer" class="form-textarea"
+                                    placeholder="Provide the answer..." aria-describedby="answer-help"></textarea>
+                                <div id="answer-help" class="sr-only">Provide the correct answer for this question</div>
+                                <div class="field-description">
+                                    <strong>Answer Guidelines:</strong> Answers should be objective and as brief as
+                                    possible. If an objective free-form answer is impractical, convert the question to a
+                                    four-option multiple-choice format (A–D) and return only the chosen letter.
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="explanation" class="field-label">Explanation</label>
+                                <textarea id="explanation" name="explanation" class="form-textarea"
+                                    placeholder="Explain the cultural context and why this answer is correct (optional)..."
+                                    aria-describedby="explanation-help"></textarea>
+                                <div id="explanation-help" class="sr-only">Explain the cultural context and why this
+                                    answer is correct</div>
+                                <div class="field-description">
+                                    <strong>Note:</strong> Explanation can be empty if not applicable.
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success" aria-describedby="submit-help">
+                                <i class="fas fa-save" aria-hidden="true"></i>
+                                Submit Data
+                            </button>
+                            <div id="submit-help" class="sr-only">Submit the created data to the system</div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="loadingMessage">
-        <div class="loading-content">
-            <div class="spinner" aria-hidden="true"></div>
-            <div id="loadingMessage">Loading...</div>
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay hidden" role="dialog" aria-modal="true"
+            aria-labelledby="loadingMessage">
+            <div class="loading-content">
+                <div class="spinner" aria-hidden="true"></div>
+                <div id="loadingMessage">Loading...</div>
+            </div>
         </div>
-    </div>
-    <!-- Toast Container -->
-    <div id="toastContainer" role="region" aria-live="polite" aria-label="Notifications"></div>
-    <!-- Scripts -->
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <!-- Application Scripts -->
-    <script src="firebase-config.js"></script>
-    <script>
-        // Data Creation JavaScript
-        // Application state
-        let currentUser = null;
-        let isLoggedIn = false;
-        let createdItemsCount = 0;
-        // DOM elements
-        const elements = {
-            // Sections
-            loginSection: document.getElementById('loginSection'),
-            userInfoSection: document.getElementById('userInfoSection'),
-            creationSection: document.getElementById('creationSection'),
-            loadingOverlay: document.getElementById('loadingOverlay'),
-            // Login form
-            loginForm: document.getElementById('loginForm'),
-            userIdInput: document.getElementById('userId'),
-            // User info display
-            userDisplayName: document.getElementById('userDisplayName'),
-            userIdDisplay: document.getElementById('userIdDisplay'),
-            userLanguageCode: document.getElementById('userLanguageCode'),
-            userPermission: document.getElementById('userPermission'),
-            progressNumber: document.getElementById('progressNumber'),
-            logoutBtn: document.getElementById('logoutBtn'),
-            // Creation form
-            dataCreationForm: document.getElementById('dataCreationForm'),
-            topic: document.getElementById('topic'),
-            scenario: document.getElementById('scenario'),
-            question: document.getElementById('question'),
-            answer: document.getElementById('answer'),
-            explanation: document.getElementById('explanation'),
-            // Loading and messages
-            loadingMessage: document.getElementById('loadingMessage'),
-            toastContainer: document.getElementById('toastContainer')
-        };
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-        });
-        function initializeApp() {
-            // Check if Firebase is loaded
-            if (typeof firebase === 'undefined') {
-                showToast('Firebase not loaded. Please refresh the page.', 'error');
-                return;
+        <!-- Toast Container -->
+        <div id="toastContainer" role="region" aria-live="polite" aria-label="Notifications"></div>
+        <!-- Scripts -->
+        <!-- Firebase SDK -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        <!-- Application Scripts -->
+        <script src="firebase-config.js"></script>
+        <script>
+            // Data Creation JavaScript
+            // Application state
+            let currentUser = null;
+            let isLoggedIn = false;
+            let createdItemsCount = 0;
+            // DOM elements
+            const elements = {
+                // Sections
+                loginSection: document.getElementById('loginSection'),
+                userInfoSection: document.getElementById('userInfoSection'),
+                creationSection: document.getElementById('creationSection'),
+                loadingOverlay: document.getElementById('loadingOverlay'),
+                // Login form
+                loginForm: document.getElementById('loginForm'),
+                userIdInput: document.getElementById('userId'),
+                // User info display
+                userDisplayName: document.getElementById('userDisplayName'),
+                userIdDisplay: document.getElementById('userIdDisplay'),
+                userLanguageCode: document.getElementById('userLanguageCode'),
+                userPermission: document.getElementById('userPermission'),
+                progressNumber: document.getElementById('progressNumber'),
+                logoutBtn: document.getElementById('logoutBtn'),
+                // Creation form
+                dataCreationForm: document.getElementById('dataCreationForm'),
+                topic: document.getElementById('topic'),
+                scenario: document.getElementById('scenario'),
+                question: document.getElementById('question'),
+                answer: document.getElementById('answer'),
+                explanation: document.getElementById('explanation'),
+                // Loading and messages
+                loadingMessage: document.getElementById('loadingMessage'),
+                toastContainer: document.getElementById('toastContainer')
+            };
+            // Initialize the application
+            document.addEventListener('DOMContentLoaded', function () {
+                initializeApp();
+            });
+            function initializeApp() {
+                // Check if Firebase is loaded
+                if (typeof firebase === 'undefined') {
+                    showToast('Firebase not loaded. Please refresh the page.', 'error');
+                    return;
+                }
+                // Set up event listeners
+                setupEventListeners();
+                // Check for existing user session
+                checkExistingSession();
             }
-            // Set up event listeners
-            setupEventListeners();
-            // Check for existing user session
-            checkExistingSession();
-        }
-        function setupEventListeners() {
-            // Login form
-            if (elements.loginForm) {
-                elements.loginForm.addEventListener('submit', handleLogin);
+            function setupEventListeners() {
+                // Login form
+                if (elements.loginForm) {
+                    elements.loginForm.addEventListener('submit', handleLogin);
+                }
+                // Logout button
+                if (elements.logoutBtn) {
+                    elements.logoutBtn.addEventListener('click', handleLogout);
+                }
+                // Data creation form
+                if (elements.dataCreationForm) {
+                    elements.dataCreationForm.addEventListener('submit', handleDataSubmission);
+                }
             }
-            // Logout button
-            if (elements.logoutBtn) {
-                elements.logoutBtn.addEventListener('click', handleLogout);
-            }
-            // Data creation form
-            if (elements.dataCreationForm) {
-                elements.dataCreationForm.addEventListener('submit', handleDataSubmission);
-            }
-        }
-        function checkExistingSession() {
-            const storedUser = localStorage.getItem('dataCreationUser');
-            if (storedUser) {
-                try {
-                    currentUser = JSON.parse(storedUser);
-                    if (currentUser && currentUser.canCreateData) {
-                        isLoggedIn = true;
-                        updateUIAfterLogin();
-                    } else {
+            function checkExistingSession() {
+                const storedUser = localStorage.getItem('dataCreationUser');
+                if (storedUser) {
+                    try {
+                        currentUser = JSON.parse(storedUser);
+                        if (currentUser && currentUser.canCreateData) {
+                            isLoggedIn = true;
+                            updateUIAfterLogin();
+                        } else {
+                            localStorage.removeItem('dataCreationUser');
+                        }
+                    } catch (error) {
+                        console.error('Error parsing stored user:', error);
                         localStorage.removeItem('dataCreationUser');
                     }
+                }
+            }
+            async function handleLogin(event) {
+                event.preventDefault();
+                const userId = elements.userIdInput.value.trim();
+                if (!userId) {
+                    showToast('Please enter a valid User ID', 'error');
+                    return;
+                }
+                try {
+                    showLoading('Validating user...');
+                    // Validate user with permissions
+                    const validation = await FirebaseService.validateUserWithPermissions(userId);
+                    if (!validation.success) {
+                        hideLoading();
+                        showToast('User not exist', 'error');
+                        return;
+                    }
+                    if (!validation.allowed) {
+                        hideLoading();
+                        showToast(validation.message || 'Access denied', 'error');
+                        return;
+                    }
+                    // Check if user can create data (assuming similar permission structure)
+                    const canCreateData = validation.userInfo.canModifyData || validation.userInfo.role === 'admin' || validation.userInfo.role === 'annotator';
+                    if (!canCreateData) {
+                        hideLoading();
+                        showToast('No permission to create data', 'error');
+                        return;
+                    }
+                    // Set current user
+                    currentUser = {
+                        userId: validation.userInfo.userId,
+                        role: validation.userInfo.role,
+                        language_region: validation.userInfo.language_region,
+                        canCreateData: canCreateData
+                    };
+                    // Store user session
+                    localStorage.setItem('dataCreationUser', JSON.stringify(currentUser));
+                    isLoggedIn = true;
+                    updateUIAfterLogin();
+                    hideLoading();
+                    showToast('Login successful', 'success');
                 } catch (error) {
-                    console.error('Error parsing stored user:', error);
-                    localStorage.removeItem('dataCreationUser');
-                }
-            }
-        }
-        async function handleLogin(event) {
-            event.preventDefault();
-            const userId = elements.userIdInput.value.trim();
-            if (!userId) {
-                showToast('Please enter a valid User ID', 'error');
-                return;
-            }
-            try {
-                showLoading('Validating user...');
-                // Validate user with permissions
-                const validation = await FirebaseService.validateUserWithPermissions(userId);
-                if (!validation.success) {
                     hideLoading();
-                    showToast('User not exist', 'error');
-                    return;
+                    console.error('Login error:', error);
+                    showToast('Login failed: ' + error.message, 'error');
                 }
-                if (!validation.allowed) {
-                    hideLoading();
-                    showToast(validation.message || 'Access denied', 'error');
-                    return;
-                }
-                // Check if user can create data (assuming similar permission structure)
-                const canCreateData = validation.userInfo.canModifyData || validation.userInfo.role === 'admin' || validation.userInfo.role === 'annotator';
-                if (!canCreateData) {
-                    hideLoading();
-                    showToast('No permission to create data', 'error');
-                    return;
-                }
-                // Set current user
-                currentUser = {
-                    userId: validation.userInfo.userId,
-                    role: validation.userInfo.role,
-                    language_region: validation.userInfo.language_region,
-                    canCreateData: canCreateData
-                };
-                // Store user session
-                localStorage.setItem('dataCreationUser', JSON.stringify(currentUser));
-                isLoggedIn = true;
-                updateUIAfterLogin();
-                hideLoading();
-                showToast('Login successful', 'success');
-            } catch (error) {
-                hideLoading();
-                console.error('Login error:', error);
-                showToast('Login failed: ' + error.message, 'error');
             }
-        }
-        function updateUIAfterLogin() {
-            // Hide login section, show user info and creation sections
-            elements.loginSection.classList.add('hidden');
-            elements.userInfoSection.classList.remove('hidden');
-            elements.creationSection.classList.remove('hidden');
-            // Update user info display
-            elements.userDisplayName.textContent = `Welcome, ${currentUser.userId}`;
-            elements.userIdDisplay.textContent = currentUser.userId;
-            // Handle language_region display
-            let languageRegionDisplay = '';
-            if (Array.isArray(currentUser.language_region)) {
-                const codes = currentUser.language_region.filter(code => code !== 'all');
-                if (codes.length > 0) {
-                    languageRegionDisplay = codes.join(', ');
-                } else {
-                    languageRegionDisplay = 'all';
-                }
-            } else {
-                languageRegionDisplay = currentUser.language_region || 'all';
-            }
-            elements.userLanguageCode.textContent = languageRegionDisplay;
-            elements.userPermission.textContent = currentUser.canCreateData ? 'Can Create Data' : 'Read Only';
-            // Update progress
-            updateProgressDisplay();
-            // Initialize topic examples and navigation
-            initializeTopicExamples();
-        }
-        async function handleDataSubmission(event) {
-            event.preventDefault();
-            // Validate form data
-            const formData = {
-                topic: elements.topic.value.trim(),
-                scenario: elements.scenario.value.trim(),
-                question: elements.question.value.trim(),
-                answer: elements.answer.value.trim(),
-                explanation: elements.explanation.value.trim()
-            };
-            // Check if all fields are filled
-            if (!formData.topic || !formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
-                showToast('Please fill in all fields', 'error');
-                return;
-            }
-            try {
-                showLoading('Submitting data...');
-                // Prepare data for submission
-                const submissionData = {
-                    ...formData,
-                    language_region: Array.isArray(currentUser.language_region) ? currentUser.language_region[0] : currentUser.language_region,
-                    created_by: currentUser.userId,
-                    created_at: new Date().toISOString(),
-                    status: 'pending_review',
-                    creation_method: 'topic_based'
-                };
-                // Submit to Firebase
-                const result = await FirebaseService.saveAnnotation(submissionData, 'created_data');
-                if (result.success) {
-                    hideLoading();
-                    showToast('Data submitted successfully!', 'success');
-                    // Reset form
-                    elements.dataCreationForm.reset();
-                    // Update progress
-                    createdItemsCount++;
-                    updateProgressDisplay();
-                } else {
-                    throw new Error(result.error || 'Failed to submit data');
-                }
-            } catch (error) {
-                hideLoading();
-                console.error('Submission error:', error);
-                showToast('Failed to submit data: ' + error.message, 'error');
-            }
-        }
-        // Topic Navigation and Examples
-        let currentTopicIndex = 1;
-        let topicExamples = [];
-        // Sample topic data (160 topics with examples)
-        const sampleTopicData = [
-            {
-                topic: "Food",
-                scenario: "Traditional Chinese New Year dinner preparation",
-                question: "What is the most important dish that must be present at a Chinese New Year family dinner?",
-                answer: "Fish (鱼, yú)",
-                explanation: "Fish is essential because the Chinese word for fish (鱼, yú) sounds like the word for surplus or abundance (余, yú), symbolizing prosperity and abundance for the coming year."
-            },
-            {
-                topic: "Heritage",
-                scenario: "Visiting ancient temples during festivals",
-                question: "Why do people burn incense when visiting Buddhist temples?",
-                answer: "To show respect to Buddha and make prayers",
-                explanation: "Burning incense is a traditional way to purify the mind, show devotion, and create a sacred atmosphere for prayer and meditation in Buddhist culture."
-            },
-            {
-                topic: "Social",
-                scenario: "Business card exchange in professional settings",
-                question: "What is the proper way to receive a business card in Chinese business culture?",
-                answer: "Receive with both hands and read it carefully",
-                explanation: "Using both hands shows respect, and taking time to read the card demonstrates that you value the person and their position."
-            },
-            {
-                topic: "Entertainment",
-                scenario: "Traditional opera performance",
-                question: "What does the red face paint represent in Beijing Opera?",
-                answer: "Loyalty and righteousness",
-                explanation: "In Beijing Opera, different face paint colors have symbolic meanings. Red typically represents loyal, brave, and righteous characters."
-            },
-            {
-                topic: "Belief",
-                scenario: "Feng shui considerations in home decoration",
-                question: "Why do many Chinese people avoid placing mirrors directly facing the bed?",
-                answer: "It's believed to bring bad luck and disturb sleep",
-                explanation: "According to feng shui beliefs, mirrors facing the bed can reflect negative energy and disturb the peaceful qi needed for good sleep."
-            }
-        ];
-        // Generate more sample data to reach 160 topics
-        function generateTopicExamples() {
-            const topics = ["Belief", "Commerce", "Education", "Entertainment", "Finance", "Food", "Government", "Habitat", "Health", "Heritage", "Language", "Pets", "Science", "Social", "Travel", "Work"];
-            const examples = [];
-            // Add the predefined examples
-            examples.push(...sampleTopicData);
-            // Generate additional examples to reach 160
-            for (let i = sampleTopicData.length; i < 160; i++) {
-                const topic = topics[topicIndex];
-                const exampleNum = Math.floor(i / topics.length) + 1;
-                examples.push({
-                    topic: topic,
-                    scenario: `${topic} related cultural scenario example ${exampleNum}`,
-                    question: `What is an important aspect of ${topic.toLowerCase()} in Chinese culture?`,
-                    answer: `Cultural answer related to ${topic.toLowerCase()}`,
-                    explanation: `This relates to traditional Chinese ${topic.toLowerCase()} practices and cultural values.`
-                });
-            }
-            return examples;
-        }
-        // Initialize topic examples
-        function initializeTopicExamples() {
-            topicExamples = generateTopicExamples();
-            displayCurrentTopic();
-            setupTopicNavigation();
-            setupDataSourceSelector();
-            // Load Firebase data by default
-            loadFirebaseTopics();
-        }
-
-        // Data source management
-        let currentDataSource = 'firebase';
-        let firebaseTopicsData = [];
-        let firebaseAnnotatedData = [];
-
-        function setupDataSourceSelector() {
-            const sourceButtons = document.querySelectorAll('.source-btn');
-            sourceButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Update active state
-                    sourceButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    // Update current source
-                    currentDataSource = btn.dataset.source;
-                    
-                    // Load appropriate data
-                    if (currentDataSource === 'firebase') {
-                        loadFirebaseTopics();
+            function updateUIAfterLogin() {
+                // Hide login section, show user info and creation sections
+                elements.loginSection.classList.add('hidden');
+                elements.userInfoSection.classList.remove('hidden');
+                elements.creationSection.classList.remove('hidden');
+                // Update user info display
+                elements.userDisplayName.textContent = `Welcome, ${currentUser.userId}`;
+                elements.userIdDisplay.textContent = currentUser.userId;
+                // Handle language_region display
+                let languageRegionDisplay = '';
+                if (Array.isArray(currentUser.language_region)) {
+                    const codes = currentUser.language_region.filter(code => code !== 'all');
+                    if (codes.length > 0) {
+                        languageRegionDisplay = codes.join(', ');
                     } else {
-                        // Use local sample data
-                        topicExamples = generateTopicExamples();
-                        displayCurrentTopic();
-                        showFirebaseStatus('Using local sample data', 'success');
+                        languageRegionDisplay = 'all';
                     }
-                });
-            });
-        }
-
-        async function loadFirebaseTopics() {
-            try {
-                showFirebaseStatus('Loading cultural topics from Firebase...', 'loading');
-                
-                // Load cultural topics
-                const topicsResult = await FirebaseService.FirebaseService.loadFromCollection('cultural_topics')();
-                if (topicsResult.success && topicsResult.data.length > 0) {
-                    firebaseTopicsData = topicsResult.data;
-                    
-                    // Load annotated data for examples
-                    const annotatedResult = await FirebaseService.loadAnnotatedData();
-                    if (annotatedResult.success) {
-                        firebaseAnnotatedData = annotatedResult.data;
-                    }
-                    
-                    // Process and display Firebase data
-                    processFirebaseTopics();
-                    displayCurrentTopic();
-                    
-                    showFirebaseStatus(`Loaded ${firebaseTopicsData.length} cultural topics from Firebase`, 'success');
                 } else {
-                    throw new Error('No cultural topics found in Firebase');
+                    languageRegionDisplay = currentUser.language_region || 'all';
                 }
-            } catch (error) {
-                console.error('Error loading Firebase topics:', error);
-                showFirebaseStatus('Failed to load from Firebase, using local data', 'error');
-                // Fallback to local data
+                elements.userLanguageCode.textContent = languageRegionDisplay;
+                elements.userPermission.textContent = currentUser.canCreateData ? 'Can Create Data' : 'Read Only';
+                // Update progress
+                updateProgressDisplay();
+                // Initialize topic examples and navigation
+                initializeTopicExamples();
+            }
+            async function handleDataSubmission(event) {
+                event.preventDefault();
+                // Validate form data
+                const formData = {
+                    topic: elements.topic.value.trim(),
+                    scenario: elements.scenario.value.trim(),
+                    question: elements.question.value.trim(),
+                    answer: elements.answer.value.trim(),
+                    explanation: elements.explanation.value.trim()
+                };
+                // Check if all fields are filled
+                if (!formData.topic || !formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
+                    showToast('Please fill in all fields', 'error');
+                    return;
+                }
+                try {
+                    showLoading('Submitting data...');
+                    // Prepare data for submission
+                    const submissionData = {
+                        ...formData,
+                        language_region: Array.isArray(currentUser.language_region) ? currentUser.language_region[0] : currentUser.language_region,
+                        created_by: currentUser.userId,
+                        created_at: new Date().toISOString(),
+                        status: 'pending_review',
+                        creation_method: 'topic_based'
+                    };
+                    // Submit to Firebase
+                    const result = await FirebaseService.saveAnnotation(submissionData, 'created_data');
+                    if (result.success) {
+                        hideLoading();
+                        showToast('Data submitted successfully!', 'success');
+                        // Reset form
+                        elements.dataCreationForm.reset();
+                        // Update progress
+                        createdItemsCount++;
+                        updateProgressDisplay();
+                    } else {
+                        throw new Error(result.error || 'Failed to submit data');
+                    }
+                } catch (error) {
+                    hideLoading();
+                    console.error('Submission error:', error);
+                    showToast('Failed to submit data: ' + error.message, 'error');
+                }
+            }
+            // Topic Navigation and Examples
+            let currentTopicIndex = 1;
+            let topicExamples = [];
+            // Sample topic data (160 topics with examples)
+            const sampleTopicData = [
+                {
+                    topic: "Food",
+                    scenario: "Traditional Chinese New Year dinner preparation",
+                    question: "What is the most important dish that must be present at a Chinese New Year family dinner?",
+                    answer: "Fish (鱼, yú)",
+                    explanation: "Fish is essential because the Chinese word for fish (鱼, yú) sounds like the word for surplus or abundance (余, yú), symbolizing prosperity and abundance for the coming year."
+                },
+                {
+                    topic: "Heritage",
+                    scenario: "Visiting ancient temples during festivals",
+                    question: "Why do people burn incense when visiting Buddhist temples?",
+                    answer: "To show respect to Buddha and make prayers",
+                    explanation: "Burning incense is a traditional way to purify the mind, show devotion, and create a sacred atmosphere for prayer and meditation in Buddhist culture."
+                },
+                {
+                    topic: "Social",
+                    scenario: "Business card exchange in professional settings",
+                    question: "What is the proper way to receive a business card in Chinese business culture?",
+                    answer: "Receive with both hands and read it carefully",
+                    explanation: "Using both hands shows respect, and taking time to read the card demonstrates that you value the person and their position."
+                },
+                {
+                    topic: "Entertainment",
+                    scenario: "Traditional opera performance",
+                    question: "What does the red face paint represent in Beijing Opera?",
+                    answer: "Loyalty and righteousness",
+                    explanation: "In Beijing Opera, different face paint colors have symbolic meanings. Red typically represents loyal, brave, and righteous characters."
+                },
+                {
+                    topic: "Belief",
+                    scenario: "Feng shui considerations in home decoration",
+                    question: "Why do many Chinese people avoid placing mirrors directly facing the bed?",
+                    answer: "It's believed to bring bad luck and disturb sleep",
+                    explanation: "According to feng shui beliefs, mirrors facing the bed can reflect negative energy and disturb the peaceful qi needed for good sleep."
+                }
+            ];
+            // Generate more sample data to reach 160 topics
+            function generateTopicExamples() {
+                const topics = ["Belief", "Commerce", "Education", "Entertainment", "Finance", "Food", "Government", "Habitat", "Health", "Heritage", "Language", "Pets", "Science", "Social", "Travel", "Work"];
+                const examples = [];
+                // Add the predefined examples
+                examples.push(...sampleTopicData);
+                // Generate additional examples to reach 160
+                for (let i = sampleTopicData.length; i < 160; i++) {
+                    const topic = topics[topicIndex];
+                    const exampleNum = Math.floor(i / topics.length) + 1;
+                    examples.push({
+                        topic: topic,
+                        scenario: `${topic} related cultural scenario example ${exampleNum}`,
+                        question: `What is an important aspect of ${topic.toLowerCase()} in Chinese culture?`,
+                        answer: `Cultural answer related to ${topic.toLowerCase()}`,
+                        explanation: `This relates to traditional Chinese ${topic.toLowerCase()} practices and cultural values.`
+                    });
+                }
+                return examples;
+            }
+            // Initialize topic examples
+            function initializeTopicExamples() {
                 topicExamples = generateTopicExamples();
                 displayCurrentTopic();
+                setupTopicNavigation();
+                setupDataSourceSelector();
+                // Load Firebase data by default
+                loadFirebaseTopics();
             }
-        }
 
-        function processFirebaseTopics() {
-            // Convert Firebase cultural topics to topic examples format
-            topicExamples = [];
-            
-            firebaseTopicsData.forEach((topicData, index) => {
-                // Find matching annotated examples for this topic
-                const matchingAnnotations = firebaseAnnotatedData.filter(annotation => 
-                    annotation.topic && annotation.topic.toLowerCase() === topicData.topic.toLowerCase()
-                );
-                
-                // Use the first matching annotation as example, or create a generic one
-                let exampleData;
-                if (matchingAnnotations.length > 0) {
-                    const annotation = matchingAnnotations[0];
-                    exampleData = {
-                        topic: topicData.topic,
-                        scenario: annotation.scenario || topicData.example_scenario || `Cultural scenario related to ${topicData.topic}`,
-                        question: annotation.question || topicData.example_question || `What is important about ${topicData.topic} in this culture?`,
-                        answer: annotation.answer || topicData.example_answer || `Cultural answer about ${topicData.topic}`,
-                        explanation: annotation.explanation || topicData.example_explanation || `This relates to cultural practices and values regarding ${topicData.topic}.`
-                    };
-                } else {
-                    // Use topic data directly or create generic example
-                    exampleData = {
-                        topic: topicData.topic,
-                        scenario: topicData.example_scenario || `Cultural scenario related to ${topicData.topic}`,
-                        question: topicData.example_question || `What is important about ${topicData.topic} in this culture?`,
-                        answer: topicData.example_answer || `Cultural answer about ${topicData.topic}`,
-                        explanation: topicData.example_explanation || `This relates to cultural practices and values regarding ${topicData.topic}.`
-                    };
-                }
-                
-                topicExamples.push(exampleData);
-            });
-            
-            // If we have fewer than 160 examples, pad with generated ones
-            while (topicExamples.length < 160) {
-                const topics = ["Belief", "Commerce", "Education", "Entertainment", "Finance", "Food", "Government", "Habitat", "Health", "Heritage", "Language", "Pets", "Science", "Social", "Travel", "Work"];
-                const topic = topics[topicExamples.length % topics.length];
-                const exampleNum = Math.floor(topicExamples.length / topics.length) + 1;
-                
-                topicExamples.push({
-                    topic: topic,
-                    scenario: `${topic} related cultural scenario example ${exampleNum}`,
-                    question: `What is an important aspect of ${topic.toLowerCase()} in this culture?`,
-                    answer: `Cultural answer related to ${topic.toLowerCase()}`,
-                    explanation: `This relates to traditional cultural ${topic.toLowerCase()} practices and values.`
+            // Data source management
+            let currentDataSource = 'firebase';
+            let firebaseTopicsData = [];
+            let firebaseAnnotatedData = [];
+
+            function setupDataSourceSelector() {
+                const sourceButtons = document.querySelectorAll('.source-btn');
+                sourceButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Update active state
+                        sourceButtons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+
+                        // Update current source
+                        currentDataSource = btn.dataset.source;
+
+                        // Load appropriate data
+                        if (currentDataSource === 'firebase') {
+                            loadFirebaseTopics();
+                        } else {
+                            // Use local sample data
+                            topicExamples = generateTopicExamples();
+                            displayCurrentTopic();
+                            showFirebaseStatus('Using local sample data', 'success');
+                        }
+                    });
                 });
             }
-        }
 
-        function showFirebaseStatus(message, type) {
-            const statusElement = document.getElementById('firebaseStatus');
-            if (statusElement) {
-                statusElement.textContent = message;
-                statusElement.className = `firebase-status ${type}`;
-                statusElement.style.display = 'block';
-                
-                // Hide after 3 seconds for success/error messages
-                if (type === 'success' || type === 'error') {
-                    setTimeout(() => {
-                        statusElement.style.display = 'none';
-                    }, 3000);
-                }
-            }
-        }
-        // Setup topic navigation event listeners
-        function setupTopicNavigation() {
-            const topicIndexInput = document.getElementById('topicIndex');
-            const goToTopicBtn = document.getElementById('goToTopic');
-            const prevTopicBtn = document.getElementById('prevTopic');
-            const nextTopicBtn = document.getElementById('nextTopic');
-            if (goToTopicBtn) {
-                goToTopicBtn.addEventListener('click', () => {
-                    const index = parseInt(topicIndexInput.value);
-                    if (index >= 1 && index <= 160) {
-                        currentTopicIndex = index;
+            async function loadFirebaseTopics() {
+                try {
+                    showFirebaseStatus('Loading cultural topics from Firebase...', 'loading');
+
+                    // Load cultural topics
+                    const topicsResult = await FirebaseService.FirebaseService.loadFromCollection('cultural_topics')();
+                    if (topicsResult.success && topicsResult.data.length > 0) {
+                        firebaseTopicsData = topicsResult.data;
+
+                        // Load annotated data for examples
+                        const annotatedResult = await FirebaseService.loadAnnotatedData();
+                        if (annotatedResult.success) {
+                            firebaseAnnotatedData = annotatedResult.data;
+                        }
+
+                        // Process and display Firebase data
+                        processFirebaseTopics();
                         displayCurrentTopic();
+
+                        showFirebaseStatus(`Loaded ${firebaseTopicsData.length} cultural topics from Firebase`, 'success');
                     } else {
-                        showToast('Please enter a number between 1 and 160', 'error');
+                        throw new Error('No cultural topics found in Firebase');
                     }
-                });
+                } catch (error) {
+                    console.error('Error loading Firebase topics:', error);
+                    showFirebaseStatus('Failed to load from Firebase, using local data', 'error');
+                    // Fallback to local data
+                    topicExamples = generateTopicExamples();
+                    displayCurrentTopic();
+                }
             }
-            if (prevTopicBtn) {
-                prevTopicBtn.addEventListener('click', () => {
-                    if (currentTopicIndex > 1) {
-                        currentTopicIndex--;
-                        displayCurrentTopic();
-                        topicIndexInput.value = currentTopicIndex;
+
+            function processFirebaseTopics() {
+                // Convert Firebase cultural topics to topic examples format
+                topicExamples = [];
+
+                firebaseTopicsData.forEach((topicData, index) => {
+                    // Find matching annotated examples for this topic
+                    const matchingAnnotations = firebaseAnnotatedData.filter(annotation =>
+                        annotation.topic && annotation.topic.toLowerCase() === topicData.topic.toLowerCase()
+                    );
+
+                    // Use the first matching annotation as example, or create a generic one
+                    let exampleData;
+                    if (matchingAnnotations.length > 0) {
+                        const annotation = matchingAnnotations[0];
+                        exampleData = {
+                            topic: topicData.topic,
+                            scenario: annotation.scenario || topicData.example_scenario || `Cultural scenario related to ${topicData.topic}`,
+                            question: annotation.question || topicData.example_question || `What is important about ${topicData.topic} in this culture?`,
+                            answer: annotation.answer || topicData.example_answer || `Cultural answer about ${topicData.topic}`,
+                            explanation: annotation.explanation || topicData.example_explanation || `This relates to cultural practices and values regarding ${topicData.topic}.`
+                        };
+                    } else {
+                        // Use topic data directly or create generic example
+                        exampleData = {
+                            topic: topicData.topic,
+                            scenario: topicData.example_scenario || `Cultural scenario related to ${topicData.topic}`,
+                            question: topicData.example_question || `What is important about ${topicData.topic} in this culture?`,
+                            answer: topicData.example_answer || `Cultural answer about ${topicData.topic}`,
+                            explanation: topicData.example_explanation || `This relates to cultural practices and values regarding ${topicData.topic}.`
+                        };
                     }
+
+                    topicExamples.push(exampleData);
                 });
+
+                // If we have fewer than 160 examples, pad with generated ones
+                while (topicExamples.length < 160) {
+                    const topics = ["Belief", "Commerce", "Education", "Entertainment", "Finance", "Food", "Government", "Habitat", "Health", "Heritage", "Language", "Pets", "Science", "Social", "Travel", "Work"];
+                    const topic = topics[topicExamples.length % topics.length];
+                    const exampleNum = Math.floor(topicExamples.length / topics.length) + 1;
+
+                    topicExamples.push({
+                        topic: topic,
+                        scenario: `${topic} related cultural scenario example ${exampleNum}`,
+                        question: `What is an important aspect of ${topic.toLowerCase()} in this culture?`,
+                        answer: `Cultural answer related to ${topic.toLowerCase()}`,
+                        explanation: `This relates to traditional cultural ${topic.toLowerCase()} practices and values.`
+                    });
+                }
             }
-            if (nextTopicBtn) {
-                nextTopicBtn.addEventListener('click', () => {
-                    if (currentTopicIndex < 160) {
-                        currentTopicIndex++;
-                        displayCurrentTopic();
-                        topicIndexInput.value = currentTopicIndex;
+
+            function showFirebaseStatus(message, type) {
+                const statusElement = document.getElementById('firebaseStatus');
+                if (statusElement) {
+                    statusElement.textContent = message;
+                    statusElement.className = `firebase-status ${type}`;
+                    statusElement.style.display = 'block';
+
+                    // Hide after 3 seconds for success/error messages
+                    if (type === 'success' || type === 'error') {
+                        setTimeout(() => {
+                            statusElement.style.display = 'none';
+                        }, 3000);
                     }
-                });
+                }
             }
-            // Allow Enter key in input field
-            if (topicIndexInput) {
-                topicIndexInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        goToTopicBtn.click();
-                    }
-                });
+            // Setup topic navigation event listeners
+            function setupTopicNavigation() {
+                const topicIndexInput = document.getElementById('topicIndex');
+                const goToTopicBtn = document.getElementById('goToTopic');
+                const prevTopicBtn = document.getElementById('prevTopic');
+                const nextTopicBtn = document.getElementById('nextTopic');
+                if (goToTopicBtn) {
+                    goToTopicBtn.addEventListener('click', () => {
+                        const index = parseInt(topicIndexInput.value);
+                        if (index >= 1 && index <= 160) {
+                            currentTopicIndex = index;
+                            displayCurrentTopic();
+                        } else {
+                            showToast('Please enter a number between 1 and 160', 'error');
+                        }
+                    });
+                }
+                if (prevTopicBtn) {
+                    prevTopicBtn.addEventListener('click', () => {
+                        if (currentTopicIndex > 1) {
+                            currentTopicIndex--;
+                            displayCurrentTopic();
+                            topicIndexInput.value = currentTopicIndex;
+                        }
+                    });
+                }
+                if (nextTopicBtn) {
+                    nextTopicBtn.addEventListener('click', () => {
+                        if (currentTopicIndex < 160) {
+                            currentTopicIndex++;
+                            displayCurrentTopic();
+                            topicIndexInput.value = currentTopicIndex;
+                        }
+                    });
+                }
+                // Allow Enter key in input field
+                if (topicIndexInput) {
+                    topicIndexInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            goToTopicBtn.click();
+                        }
+                    });
+                }
             }
-        }
-        // Display current topic example
-        function displayCurrentTopic() {
-            if (currentTopicIndex < 1 || currentTopicIndex > topicExamples.length) {
-                return;
+            // Display current topic example
+            function displayCurrentTopic() {
+                if (currentTopicIndex < 1 || currentTopicIndex > topicExamples.length) {
+                    return;
+                }
+                const example = topicExamples[currentTopicIndex - 1];
+                // Update topic counter
+                const topicCounter = document.getElementById('topicCounter');
+                if (topicCounter) {
+                    topicCounter.textContent = `Topic ${currentTopicIndex} of 160`;
+                }
+                // Update example display
+                const currentTopicName = document.getElementById('currentTopicName');
+                const currentExampleScenario = document.getElementById('currentExampleScenario');
+                const currentExampleQuestion = document.getElementById('currentExampleQuestion');
+                const currentExampleAnswer = document.getElementById('currentExampleAnswer');
+                const currentExampleExplanation = document.getElementById('currentExampleExplanation');
+                if (currentTopicName) currentTopicName.textContent = example.topic;
+                if (currentExampleScenario) currentExampleScenario.textContent = example.scenario;
+                if (currentExampleQuestion) currentExampleQuestion.textContent = example.question;
+                if (currentExampleAnswer) currentExampleAnswer.textContent = example.answer;
+                if (currentExampleExplanation) currentExampleExplanation.textContent = example.explanation;
+                // Update navigation buttons state
+                const prevBtn = document.getElementById('prevTopic');
+                const nextBtn = document.getElementById('nextTopic');
+                if (prevBtn) {
+                    prevBtn.disabled = currentTopicIndex <= 1;
+                    prevBtn.style.opacity = currentTopicIndex <= 1 ? '0.5' : '1';
+                }
+                if (nextBtn) {
+                    nextBtn.disabled = currentTopicIndex >= 160;
+                    nextBtn.style.opacity = currentTopicIndex >= 160 ? '0.5' : '1';
+                }
             }
-            const example = topicExamples[currentTopicIndex - 1];
-            // Update topic counter
-            const topicCounter = document.getElementById('topicCounter');
-            if (topicCounter) {
-                topicCounter.textContent = `Topic ${currentTopicIndex} of 160`;
-            }
-            // Update example display
-            const currentTopicName = document.getElementById('currentTopicName');
-            const currentExampleScenario = document.getElementById('currentExampleScenario');
-            const currentExampleQuestion = document.getElementById('currentExampleQuestion');
-            const currentExampleAnswer = document.getElementById('currentExampleAnswer');
-            const currentExampleExplanation = document.getElementById('currentExampleExplanation');
-            if (currentTopicName) currentTopicName.textContent = example.topic;
-            if (currentExampleScenario) currentExampleScenario.textContent = example.scenario;
-            if (currentExampleQuestion) currentExampleQuestion.textContent = example.question;
-            if (currentExampleAnswer) currentExampleAnswer.textContent = example.answer;
-            if (currentExampleExplanation) currentExampleExplanation.textContent = example.explanation;
-            // Update navigation buttons state
-            const prevBtn = document.getElementById('prevTopic');
-            const nextBtn = document.getElementById('nextTopic');
-            if (prevBtn) {
-                prevBtn.disabled = currentTopicIndex <= 1;
-                prevBtn.style.opacity = currentTopicIndex <= 1 ? '0.5' : '1';
-            }
-            if (nextBtn) {
-                nextBtn.disabled = currentTopicIndex >= 160;
-                nextBtn.style.opacity = currentTopicIndex >= 160 ? '0.5' : '1';
-            }
-        }
 
-        // Update progress display
-        function updateProgressDisplay() {
-            if (elements.progressNumber) {
-                elements.progressNumber.textContent = createdItemsCount;
+            // Update progress display
+            function updateProgressDisplay() {
+                if (elements.progressNumber) {
+                    elements.progressNumber.textContent = createdItemsCount;
+                }
             }
-        }
 
-        // Utility functions
-        function showLoading(message) {
-            if (elements.loadingMessage) elements.loadingMessage.textContent = message;
-            if (elements.loadingOverlay) elements.loadingOverlay.classList.remove("hidden");
-        }
+            // Utility functions
+            function showLoading(message) {
+                if (elements.loadingMessage) elements.loadingMessage.textContent = message;
+                if (elements.loadingOverlay) elements.loadingOverlay.classList.remove("hidden");
+            }
 
-        function hideLoading() {
-            if (elements.loadingOverlay) elements.loadingOverlay.classList.add("hidden");
-        }
+            function hideLoading() {
+                if (elements.loadingOverlay) elements.loadingOverlay.classList.add("hidden");
+            }
 
-        function showToast(message, type = "info") {
-            const toast = document.createElement("div");
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            elements.toastContainer.appendChild(toast);
-            setTimeout(() => toast.classList.add("show"), 100);
-            setTimeout(() => {
-                toast.classList.remove("show");
-                setTimeout(() => elements.toastContainer.removeChild(toast), 300);
-            }, 3000);
-        }
+            function showToast(message, type = "info") {
+                const toast = document.createElement("div");
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                elements.toastContainer.appendChild(toast);
+                setTimeout(() => toast.classList.add("show"), 100);
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                    setTimeout(() => elements.toastContainer.removeChild(toast), 300);
+                }, 3000);
+            }
 
-        function handleLogout() {
-            localStorage.removeItem("dataCreationUser");
-            currentUser = null;
-            isLoggedIn = false;
-            elements.loginSection.classList.remove("hidden");
-            elements.userInfoSection.classList.add("hidden");
-            elements.creationSection.classList.add("hidden");
-            elements.loginForm.reset();
-        }
-    </script>
+            function handleLogout() {
+                localStorage.removeItem("dataCreationUser");
+                currentUser = null;
+                isLoggedIn = false;
+                elements.loginSection.classList.remove("hidden");
+                elements.userInfoSection.classList.add("hidden");
+                elements.creationSection.classList.add("hidden");
+                elements.loginForm.reset();
+            }
+        </script>
 </body>
+
 </html>
