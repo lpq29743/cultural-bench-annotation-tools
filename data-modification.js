@@ -41,9 +41,6 @@ const elements = {
     reviseBtn: document.getElementById('reviseBtn'),
     rejectBtn: document.getElementById('rejectBtn'),
     
-    // Rejection reason
-    rejectionReason: document.getElementById('rejectionReason'),
-    rejectionSelect: document.getElementById('rejectionSelect'),
     
     // Navigation
     prevBtn: document.getElementById('prevBtn'),
@@ -302,10 +299,6 @@ function displayCurrentItem() {
 }
 
 function resetDecisionState() {
-    // Hide rejection reason
-    elements.rejectionReason.classList.remove('show');
-    elements.rejectionSelect.value = '';
-    
     // Reset button states
     const buttons = [elements.acceptBtn, elements.reviseBtn, elements.rejectBtn];
     buttons.forEach(btn => {
@@ -342,15 +335,8 @@ async function handleDecision(decision) {
             updateData.explanation = elements.explanation.value;
             
         } else if (decision === 'reject') {
-            // Reject: Need rejection reason
-            const rejectionReason = elements.rejectionSelect.value;
-            if (!rejectionReason) {
-                elements.rejectionReason.classList.add('show');
-                showToast('Please select a rejection reason', 'error');
-                return;
-            }
+            // Reject: Simply mark as rejected
             updateData.status = 'rejected';
-            updateData.rejectionReason = rejectionReason;
         }
         
         showLoading('Saving annotation...');
