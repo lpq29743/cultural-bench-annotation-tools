@@ -627,7 +627,7 @@
 </head>
 <body>
     <div class="container">
-        <a href="main.html" class="back-link">
+        <a href="admin.html" class="back-link">
             <i class="fas fa-arrow-left"></i>
             Back to Home
         </a>
@@ -1019,7 +1019,7 @@
             if (source === 'firebase') {
                 loadFirebaseTopics();
             } else if (source === 'annotated') {
-                loadAnnotatedData();
+                FirebaseService.loadFromCollection('annotated_data')();
             } else {
                 loadDefaultTopics();
             }
@@ -1059,14 +1059,14 @@
             }
         }
 
-        async function loadAnnotatedData() {
+        async function FirebaseService.loadFromCollection('annotated_data')() {
             const statusDiv = document.getElementById('firebaseStatus');
             const materialList = document.getElementById('materialList');
             
             try {
                 showFirebaseStatus('Loading annotated data from Firebase...', 'loading');
                 
-                const result = await FirebaseService.loadAnnotatedData();
+                const result = await FirebaseService.FirebaseService.loadFromCollection('annotated_data')();
                 
                 if (result.success && result.data.length > 0) {
                     firebaseAnnotatedData = result.data;
@@ -1179,7 +1179,7 @@
                     creation_method: 'multilingual_adaptation'
                 };
                 // Submit to Firebase
-                const result = await FirebaseService.saveAnnotation(submissionData, 'cultural_annotations_created');
+                const result = await FirebaseService.saveAnnotation(submissionData, 'created_data');
                 if (result.success) {
                     hideLoading();
                     showToast('Data submitted successfully!', 'success');

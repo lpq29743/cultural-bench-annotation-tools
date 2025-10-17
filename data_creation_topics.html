@@ -557,9 +557,9 @@
 </head>
 <body>
     <div class="container">
-        <a href="main.html" class="back-link">
+        <a href="admin.html" class="back-link">
             <i class="fas fa-arrow-left"></i>
-            Back to Home
+            Back to Admin
         </a>
         <header class="header">
             <h1>Topic-Based Data Creation</h1>
@@ -990,7 +990,7 @@
                     creation_method: 'topic_based'
                 };
                 // Submit to Firebase
-                const result = await FirebaseService.saveAnnotation(submissionData, 'cultural_annotations_created');
+                const result = await FirebaseService.saveAnnotation(submissionData, 'created_data');
                 if (result.success) {
                     hideLoading();
                     showToast('Data submitted successfully!', 'success');
@@ -1113,7 +1113,7 @@
                 showFirebaseStatus('Loading cultural topics from Firebase...', 'loading');
                 
                 // Load cultural topics
-                const topicsResult = await FirebaseService.loadCulturalTopics();
+                const topicsResult = await FirebaseService.FirebaseService.loadFromCollection('cultural_topics')();
                 if (topicsResult.success && topicsResult.data.length > 0) {
                     firebaseTopicsData = topicsResult.data;
                     

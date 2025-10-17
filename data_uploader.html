@@ -546,7 +546,7 @@
 <body>
     <div class="uploader-container">
         <!-- Back Link -->
-        <a href="main.html" class="back-link" aria-label="Go back to main page">
+        <a href="admin.html" class="back-link" aria-label="Go back to main page">
             <i class="fas fa-arrow-left" aria-hidden="true"></i>
             Back to Main
         </a>
@@ -570,33 +570,17 @@
             </div>
             
             <div class="collection-selector" role="group" aria-label="Collection selection">
-                <button class="collection-btn active" data-collection="cultural_annotations_created" aria-pressed="true">
-                    <i class="fas fa-edit" aria-hidden="true"></i>
-                    Created Annotations
+                <button class="collection-btn active" data-collection="annotated_data" aria-pressed="true">
+                    <i class="fas fa-database" aria-hidden="true"></i>
+                    Annotated Data
                 </button>
-                <button class="collection-btn" data-collection="cultural_annotations_modified" aria-pressed="false">
+                <button class="collection-btn" data-collection="modified_data" aria-pressed="false">
                     <i class="fas fa-pen" aria-hidden="true"></i>
-                    Modified Annotations
+                    Modified Data
                 </button>
                 <button class="collection-btn" data-collection="cultural_topics" aria-pressed="false">
                     <i class="fas fa-globe" aria-hidden="true"></i>
                     Cultural Topics
-                </button>
-                <button class="collection-btn" data-collection="annotated_data" aria-pressed="false">
-                    <i class="fas fa-database" aria-hidden="true"></i>
-                    Annotated Data
-                </button>
-                <button class="collection-btn" data-collection="allowed_users" aria-pressed="false">
-                    <i class="fas fa-users" aria-hidden="true"></i>
-                    User Permissions
-                </button>
-                <button class="collection-btn" data-collection="annotators" aria-pressed="false">
-                    <i class="fas fa-tags" aria-hidden="true"></i>
-                    Annotators
-                </button>
-                <button class="collection-btn" data-collection="custom" aria-pressed="false">
-                    <i class="fas fa-cog" aria-hidden="true"></i>
-                    Custom Collection
                 </button>
             </div>
 
@@ -764,7 +748,7 @@
 
     <script>
         // Global variables
-        let currentCollection = 'cultural_annotations_created';
+        let currentCollection = 'annotated_data';
         let currentMethod = null;
         let uploadedData = null;
         let toastCount = 0;

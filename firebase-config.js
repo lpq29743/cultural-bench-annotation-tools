@@ -19,14 +19,17 @@ const db = firebase.firestore();
 
 // Collection names for different task modes and user management
 const COLLECTIONS = {
-    MODIFICATION: 'cultural_annotations_modified',
-    CREATION: 'cultural_annotations_created',
-    USERS: 'annotators',
+    USERS: 'users',
+    ANNOTATED_DATA: 'annotated_data',
+    CREATED_DATA: 'created_data',
+    MODIFIED_DATA: 'modified_data',
+    CULTURAL_TOPICS: 'cultural_topics',
+    // Legacy collections for backward compatibility
+    MODIFICATION: 'modified_data',
+    CREATION: 'created_data',
     ASSIGNMENTS: 'task_assignments',
     SESSIONS: 'user_sessions',
-    ALLOWED_USERS: 'allowed_users', // New collection for user permissions
-    CULTURAL_TOPICS: 'cultural_topics', // Collection for cultural topics/materials
-    ANNOTATED_DATA: 'annotated_data' // Collection for pre-annotated data
+    ALLOWED_USERS: 'users' // Use users collection for permissions
 };
 
 // Firebase service functions
