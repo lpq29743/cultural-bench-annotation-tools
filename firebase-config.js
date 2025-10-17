@@ -1012,6 +1012,16 @@ const FirebaseService = {
 
     async clearAnnotatedData() {
         return this.clearCollection(COLLECTIONS.ANNOTATED_DATA);
+    },
+
+    // Get all modified data
+    async getAllModifiedData() {
+        try {
+            return await this.loadFromCollection(COLLECTIONS.MODIFIED_DATA);
+        } catch (error) {
+            console.error('Error getting all modified data:', error);
+            return { success: false, error: error.message };
+        }
     }
 };
 
