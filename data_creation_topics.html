@@ -618,6 +618,16 @@
                         <i class="fas fa-tags"></i>
                         Topic Reference & Examples
                     </h2>
+                    
+                    <!-- Data Source Selector -->
+                    <div class="data-source-selector">
+                        <h4>Cultural Materials Source</h4>
+                        <div class="source-buttons">
+                            <button class="source-btn active" data-source="firebase">Firebase Data</button>
+                            <button class="source-btn" data-source="local">Local Files</button>
+                        </div>
+                        <div class="firebase-status" id="firebaseStatus"></div>
+                    </div>
                     <!-- Navigation Controls -->
                     <div class="data-section">
                         <h3 class="section-title">
@@ -1064,6 +1074,137 @@
             topicExamples = generateTopicExamples();
             displayCurrentTopic();
             setupTopicNavigation();
+            setupDataSourceSelector();
+            // Load Firebase data by default
+            loadFirebaseTopics();
+        }
+
+        // Data source management
+        let currentDataSource = 'firebase';
+        let firebaseTopicsData = [];
+        let firebaseAnnotatedData = [];
+
+        function setupDataSourceSelector() {
+            const sourceButtons = document.querySelectorAll('.source-btn');
+            sourceButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active state
+                    sourceButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // Update current source
+                    currentDataSource = btn.dataset.source;
+                    
+                    // Load appropriate data
+                    if (currentDataSource === 'firebase') {
+                        loadFirebaseTopics();
+                    } else {
+                        // Use local sample data
+                        topicExamples = generateTopicExamples();
+                        displayCurrentTopic();
+                        showFirebaseStatus('Using local sample data', 'success');
+                    }
+                });
+            });
+        }
+
+        async function loadFirebaseTopics() {
+            try {
+                showFirebaseStatus('Loading cultural topics from Firebase...', 'loading');
+                
+                // Load cultural topics
+                const topicsResult = await FirebaseService.loadCulturalTopics();
+                if (topicsResult.success && topicsResult.data.length > 0) {
+                    firebaseTopicsData = topicsResult.data;
+                    
+                    // Load annotated data for examples
+                    const annotatedResult = await FirebaseService.loadAnnotatedData();
+                    if (annotatedResult.success) {
+                        firebaseAnnotatedData = annotatedResult.data;
+                    }
+                    
+                    // Process and display Firebase data
+                    processFirebaseTopics();
+                    displayCurrentTopic();
+                    
+                    showFirebaseStatus(`Loaded ${firebaseTopicsData.length} cultural topics from Firebase`, 'success');
+                } else {
+                    throw new Error('No cultural topics found in Firebase');
+                }
+            } catch (error) {
+                console.error('Error loading Firebase topics:', error);
+                showFirebaseStatus('Failed to load from Firebase, using local data', 'error');
+                // Fallback to local data
+                topicExamples = generateTopicExamples();
+                displayCurrentTopic();
+            }
+        }
+
+        function processFirebaseTopics() {
+            // Convert Firebase cultural topics to topic examples format
+            topicExamples = [];
+            
+            firebaseTopicsData.forEach((topicData, index) => {
+                // Find matching annotated examples for this topic
+                const matchingAnnotations = firebaseAnnotatedData.filter(annotation => 
+                    annotation.topic && annotation.topic.toLowerCase() === topicData.topic.toLowerCase()
+                );
+                
+                // Use the first matching annotation as example, or create a generic one
+                let exampleData;
+                if (matchingAnnotations.length > 0) {
+                    const annotation = matchingAnnotations[0];
+                    exampleData = {
+                        topic: topicData.topic,
+                        scenario: annotation.scenario || topicData.example_scenario || `Cultural scenario related to ${topicData.topic}`,
+                        question: annotation.question || topicData.example_question || `What is important about ${topicData.topic} in this culture?`,
+                        answer: annotation.answer || topicData.example_answer || `Cultural answer about ${topicData.topic}`,
+                        explanation: annotation.explanation || topicData.example_explanation || `This relates to cultural practices and values regarding ${topicData.topic}.`
+                    };
+                } else {
+                    // Use topic data directly or create generic example
+                    exampleData = {
+                        topic: topicData.topic,
+                        scenario: topicData.example_scenario || `Cultural scenario related to ${topicData.topic}`,
+                        question: topicData.example_question || `What is important about ${topicData.topic} in this culture?`,
+                        answer: topicData.example_answer || `Cultural answer about ${topicData.topic}`,
+                        explanation: topicData.example_explanation || `This relates to cultural practices and values regarding ${topicData.topic}.`
+                    };
+                }
+                
+                topicExamples.push(exampleData);
+            });
+            
+            // If we have fewer than 160 examples, pad with generated ones
+            while (topicExamples.length < 160) {
+                const topics = ["Belief", "Commerce", "Education", "Entertainment", "Finance", "Food", "Government", "Habitat", "Health", "Heritage", "Language", "Pets", "Science", "Social", "Travel", "Work"];
+                const topic = topics[topicExamples.length % topics.length];
+                const exampleNum = Math.floor(topicExamples.length / topics.length) + 1;
+                
+                topicExamples.push({
+                    topic: topic,
+                    scenario: `${topic} related cultural scenario example ${exampleNum}`,
+                    question: `What is an important aspect of ${topic.toLowerCase()} in this culture?`,
+                    answer: `Cultural answer related to ${topic.toLowerCase()}`,
+                    explanation: `This relates to traditional cultural ${topic.toLowerCase()} practices and values.`
+                });
+            }
+        }
+
+        function showFirebaseStatus(message, type) {
+            const statusElement = document.getElementById('firebaseStatus');
+            if (statusElement) {
+                statusElement.textContent = message;
+                statusElement.className = `firebase-status ${type}`;
+                statusElement.style.display = 'block';
+                
+                // Hide after 3 seconds for success/error messages
+                if (type === 'success' || type === 'error') {
+                    setTimeout(() => {
+                        statusElement.style.display = 'none';
+                    }, 3000);
+                }
+            }
         }
         // Setup topic navigation event listeners
         function setupTopicNavigation() {
@@ -1135,8 +1276,12 @@
             const prevBtn = document.getElementById('prevTopic');
             const nextBtn = document.getElementById('nextTopic');
             if (prevBtn) {
-                prevBtn.disabled = =
+                prevBtn.disabled = currentTopicIndex <= 1;
                 prevBtn.style.opacity = currentTopicIndex <= 1 ? '0.5' : '1';
+            }
+            if (nextBtn) {
+                nextBtn.disabled = currentTopicIndex >= 160;
+                nextBtn.style.opacity = currentTopicIndex >= 160 ? '0.5' : '1';
             }
         }
 
