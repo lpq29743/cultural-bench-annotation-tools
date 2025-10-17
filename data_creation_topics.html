@@ -1113,7 +1113,6 @@
         // Data source management
         let currentDataSource = 'firebase';
         let firebaseTopicsData = [];
-        let firebaseAnnotatedData = [];
 
         async function loadFirebaseTopics() {
             try {
@@ -1141,27 +1140,7 @@
             } catch (error) {
                 console.error('Error loading Firebase topics:', error);
                 showFirebaseStatus('Failed to load from Firebase, using local data', 'error');
-                
-                // Use fallback data
-                generateFallbackTopics();
                 displayCurrentTopic();
-            }
-        }
-
-        function generateFallbackTopics() {
-            const topics = ["Commerce", "Food", "Heritage", "Social", "Entertainment", "Education", "Health", "Travel", "Work", "Government"];
-            topicExamples = [];
-            
-            for (let i = 0; i < 50; i++) {
-                const topic = topics[i % topics.length];
-                const exampleNum = Math.floor(i / topics.length) + 1;
-                topicExamples.push({
-                    topic: topic,
-                    scenario: `Cultural scenario example for ${topic} topic ${exampleNum}`,
-                    question: `What is the cultural significance of ${topic} in this context?`,
-                    answer: `Cultural answer related to ${topic}`,
-                    explanation: `This relates to cultural practices and values regarding ${topic}.`
-                });
             }
         }
 
@@ -1171,32 +1150,14 @@
 
             if (firebaseTopicsData && firebaseTopicsData.length > 0) {
                 firebaseTopicsData.forEach((topicData, index) => {
-                    // Find matching annotated examples for this topic
-                    const matchingAnnotations = firebaseAnnotatedData ? firebaseAnnotatedData.filter(annotation =>
-                        annotation.topic && annotation.topic.toLowerCase() === topicData.topic.toLowerCase()
-                    ) : [];
-
-                    // Use the first matching annotation as example, or create a generic one
-                    let exampleData;
-                    if (matchingAnnotations.length > 0) {
-                        const annotation = matchingAnnotations[0];
-                        exampleData = {
-                            topic: topicData.topic || topicData.name || 'Unknown Topic',
-                            scenario: annotation.scenario || topicData.example_scenario || topicData.example || `Cultural scenario related to ${topicData.topic || 'this topic'}`,
-                            question: annotation.question || topicData.example_question || `What is important about ${topicData.topic || 'this topic'} in this culture?`,
-                            answer: annotation.answer || topicData.example_answer || `Cultural answer about ${topicData.topic || 'this topic'}`,
-                            explanation: annotation.explanation || topicData.example_explanation || `This relates to cultural practices and values regarding ${topicData.topic || 'this topic'}.`
-                        };
-                    } else {
-                        // Use topic data directly or create generic example
-                        exampleData = {
-                            topic: topicData.topic || topicData.name || 'Unknown Topic',
-                            scenario: topicData.example_scenario || topicData.example || `Cultural scenario related to ${topicData.topic || 'this topic'}`,
-                            question: topicData.example_question || `What is important about ${topicData.topic || 'this topic'} in this culture?`,
-                            answer: topicData.example_answer || `Cultural answer about ${topicData.topic || 'this topic'}`,
-                            explanation: topicData.example_explanation || `This relates to cultural practices and values regarding ${topicData.topic || 'this topic'}.`
-                        };
-                    }
+                    // Use only cultural_topics data, not annotated_data
+                    const exampleData = {
+                        topic: topicData.topic || topicData.name || 'Unknown Topic',
+                        scenario: topicData.example_scenario || topicData.example || topicData.scenario || `Cultural scenario related to ${topicData.topic || 'this topic'}`,
+                        question: topicData.example_question || topicData.question || `What is important about ${topicData.topic || 'this topic'} in this culture?`,
+                        answer: topicData.example_answer || topicData.answer || `Cultural answer about ${topicData.topic || 'this topic'}`,
+                        explanation: topicData.example_explanation || topicData.explanation || `This relates to cultural practices and values regarding ${topicData.topic || 'this topic'}.`
+                    };
 
                     topicExamples.push(exampleData);
                 });
@@ -1224,7 +1185,7 @@
             const goToTopicBtn = document.getElementById('goToTopic');
             const prevTopicBtn = document.getElementById('prevTopic');
             const nextTopicBtn = document.getElementById('nextTopic');
-            
+
             if (goToTopicBtn) {
                 goToTopicBtn.addEventListener('click', () => {
                     const index = parseInt(topicIndexInput.value);
@@ -1279,10 +1240,10 @@
             if (currentTopicIndex < 1 || currentTopicIndex > topicExamples.length) {
                 return;
             }
-            
+
             const example = topicExamples[currentTopicIndex - 1];
             const maxTopics = topicExamples.length;
-            
+
             // Update topic counter
             const topicCounter = document.getElementById('topicCounter');
             if (topicCounter) {
@@ -1302,7 +1263,7 @@
             const prevBtn = document.getElementById('prevTopic');
             const nextBtn = document.getElementById('nextTopic');
             const topicIndexInput = document.getElementById('topicIndex');
-            
+
             if (prevBtn) {
                 prevBtn.disabled = currentTopicIndex <= 1;
                 prevBtn.style.opacity = currentTopicIndex <= 1 ? '0.5' : '1';
