@@ -902,13 +902,15 @@
                         Multilingual Reference Data
                     </h2>
                     
-                    <!-- Data Source Selector -->
+                    <!-- Data Source Information -->
                     <div class="data-source-selector">
                         <h4>Cultural Materials Source</h4>
-                        <div class="source-buttons">
-                            <button class="source-btn active" data-source="default">Default Topics</button>
-                            <button class="source-btn" data-source="firebase">Firebase Topics</button>
-                            <button class="source-btn" data-source="annotated">Annotated Data</button>
+                        <div class="source-info">
+                            <div class="source-active">
+                                <i class="fas fa-database"></i>
+                                <span>Firebase Annotated Data</span>
+                                <small>Using existing annotated cultural data from Firebase as the only data source</small>
+                            </div>
                         </div>
                         <div class="firebase-status" id="firebaseStatus"></div>
                     </div>
@@ -1271,63 +1273,15 @@
             initializeMultilingualData();
         }
 
-        // Data source management
-        let currentDataSource = 'default';
-        let firebaseTopics = [];
+        // Data source management - Only Firebase Annotated Data
+        let currentDataSource = 'annotated';
         let firebaseAnnotatedData = [];
 
-        function selectDataSource(source) {
-            currentDataSource = source;
-            
-            // Update button states
-            document.querySelectorAll('.source-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-source="${source}"]`).classList.add('active');
-
-            // Load data based on source
-            if (source === 'firebase') {
-                loadFirebaseTopics();
-            } else if (source === 'annotated') {
-                loadAnnotatedData();
-            } else {
-                loadDefaultTopics();
-            }
-        }
-
         function initializeDataSources() {
-            // Set up data source selector if it exists
-            const sourceButtons = document.querySelectorAll('.source-btn');
-            sourceButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    selectDataSource(btn.dataset.source);
-                });
-            });
+            // Only use Firebase annotated data as the source
+            loadAnnotatedData();
         }
 
-        async function loadFirebaseTopics() {
-            const statusDiv = document.getElementById('firebaseStatus');
-            const materialList = document.getElementById('materialList');
-            
-            try {
-                showFirebaseStatus('Loading cultural topics from Firebase...', 'loading');
-                
-                const result = await FirebaseService.loadCulturalTopics();
-                
-                if (result.success && result.data.length > 0) {
-                    firebaseTopics = result.data;
-                    displayFirebaseTopics(result.data);
-                    showFirebaseStatus(`Loaded ${result.data.length} cultural topics from Firebase`, 'success');
-                } else {
-                    showFirebaseStatus('No cultural topics found in Firebase', 'error');
-                    loadDefaultTopics();
-                }
-            } catch (error) {
-                console.error('Error loading Firebase topics:', error);
-                showFirebaseStatus('Failed to load topics from Firebase', 'error');
-                loadDefaultTopics();
-            }
-        }
 
         async function loadAnnotatedData() {
             const statusDiv = document.getElementById('firebaseStatus');
@@ -1336,52 +1290,21 @@
             try {
                 showFirebaseStatus('Loading annotated data from Firebase...', 'loading');
                 
-                const result = await FirebaseService.loadFromCollection('annotated_data');
+                const result = await FirebaseService.getAllAnnotatedData();
                 
                 if (result.success && result.data.length > 0) {
                     firebaseAnnotatedData = result.data;
                     displayAnnotatedData(result.data);
                     showFirebaseStatus(`Loaded ${result.data.length} annotated items from Firebase`, 'success');
                 } else {
-                    showFirebaseStatus('No annotated data found in Firebase', 'error');
-                    loadDefaultTopics();
+                    showFirebaseStatus('No annotated data found in Firebase. Please ensure data exists in the annotated_data collection.', 'error');
                 }
             } catch (error) {
                 console.error('Error loading annotated data:', error);
-                showFirebaseStatus('Failed to load annotated data from Firebase', 'error');
-                loadDefaultTopics();
+                showFirebaseStatus('Failed to load annotated data from Firebase: ' + error.message, 'error');
             }
         }
 
-        function loadDefaultTopics() {
-            const materialList = document.getElementById('materialList');
-            materialList.innerHTML = `
-                <li><strong>Traditional Festivals:</strong> Spring Festival, Mid-Autumn Festival, Dragon Boat Festival</li>
-                <li><strong>Cultural Symbols:</strong> Dragon, Phoenix, Great Wall, Terracotta Warriors</li>
-                <li><strong>Philosophy:</strong> Confucianism, Taoism, Buddhism concepts</li>
-                <li><strong>Arts:</strong> Calligraphy, Traditional Painting, Opera</li>
-                <li><strong>Cuisine:</strong> Regional dishes, Tea culture, Dining etiquette</li>
-                <li><strong>Social Customs:</strong> Family values, Respect for elders, Gift-giving</li>
-            `;
-            hideFirebaseStatus();
-        }
-
-        function displayFirebaseTopics(topics) {
-            const materialList = document.getElementById('materialList');
-            let html = '';
-            
-            topics.forEach((topic, index) => {
-                if (index < 10) { // Show first 10 topics
-                    html += `<li><strong>${topic.title || topic.topic || 'Topic'}:</strong> ${topic.description || topic.content || JSON.stringify(topic).substring(0, 100) + '...'}</li>`;
-                }
-            });
-            
-            if (topics.length > 10) {
-                html += `<li><em>... and ${topics.length - 10} more topics available</em></li>`;
-            }
-            
-            materialList.innerHTML = html;
-        }
 
         function displayAnnotatedData(data) {
             const materialList = document.getElementById('materialList');
@@ -1417,8 +1340,6 @@
             statusDiv.style.display = 'none';
         }
 
-        // Make selectDataSource globally available
-        window.selectDataSource = selectDataSource;
         async function handleDataSubmission(event) {
             event.preventDefault();
             // Validate form data
