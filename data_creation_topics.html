@@ -501,6 +501,22 @@
             }
         }
         
+        /* Field description styles */
+        .field-description {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #17a2b8;
+            font-size: 0.85rem;
+            color: #495057;
+            line-height: 1.4;
+        }
+        
+        .field-description strong {
+            color: #17a2b8;
+        }
+        
         /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
             .btn,
@@ -565,7 +581,7 @@
 
 <body>
     <div class="container">
-        <a href="index.html" class="back-link">
+        <a href="main.html" class="back-link">
             <i class="fas fa-arrow-left"></i>
             Back to Home
         </a>
@@ -721,6 +737,21 @@
                             <li><strong>Objective Answers:</strong> Provide factual, verifiable answers when possible</li>
                             <li><strong>Informative Explanations:</strong> Include cultural context that supports the answer</li>
                         </ul>
+                        
+                        <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                            <h4 style="margin: 0 0 10px 0; color: #856404;">
+                                <i class="fas fa-exclamation-triangle"></i> Make It Challenging!
+                            </h4>
+                            <p style="margin: 0 0 10px 0; font-size: 0.9em; color: #856404;">
+                                <strong>Create questions that are as challenging as possible for AI models:</strong>
+                            </p>
+                            <ul style="margin: 0; padding-left: 20px; font-size: 0.9em; color: #856404;">
+                                <li><strong>Long-Tail Swap:</strong> Replace common entities with rarer, more specific ones (e.g., "Hong Kong" → "MacLehose Trail")</li>
+                                <li><strong>More Context:</strong> Add situational details requiring conditional, multi-step reasoning (e.g., visa requirements with prior conditions)</li>
+                                <li><strong>Less Context:</strong> Remove unnecessary hints that could help LLMs guess the answer</li>
+                                <li><strong>Compositional Example:</strong> Combine two independent knowledge points into a single query (e.g., entry requirements for both Hong Kong and Bangkok)</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
@@ -770,12 +801,18 @@
                             <label for="answer" class="field-label">Answer</label>
                             <textarea id="answer" name="answer" class="form-textarea" placeholder="Provide the answer..." aria-describedby="answer-help"></textarea>
                             <div id="answer-help" class="sr-only">Provide the correct answer for this question</div>
+                            <div class="field-description">
+                                <strong>Answer Guidelines:</strong> Answers should be objective and as brief as possible. If an objective free-form answer is impractical, convert the question to a four-option multiple-choice format (A–D) and return only the chosen letter.
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label for="explanation" class="field-label">Explanation</label>
-                            <textarea id="explanation" name="explanation" class="form-textarea" placeholder="Explain the cultural context and why this answer is correct..." aria-describedby="explanation-help"></textarea>
+                            <textarea id="explanation" name="explanation" class="form-textarea" placeholder="Explain the cultural context and why this answer is correct (optional)..." aria-describedby="explanation-help"></textarea>
                             <div id="explanation-help" class="sr-only">Explain the cultural context and why this answer is correct</div>
+                            <div class="field-description">
+                                <strong>Note:</strong> Explanation can be empty if not applicable.
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-success" aria-describedby="submit-help">
@@ -1206,148 +1243,29 @@
             const prevBtn = document.getElementById('prevTopic');
             const nextBtn = document.getElementById('nextTopic');
             
+                       
+
             if (prevBtn) {
-                prevBtn.disabled = currentTopicIndex <= 1;
-                prevBtn.style.opacity = currentTopicIndex <= 1 ? '0.5' : '1';
+                           
+
+                prevBtn.disabled = =
+                    currentTopicIndex <= 1;
+                           
+
+                           
+
+                           
+
+                           
+
+                           
+
+                prevBtn.style.opacity = =
+                                               currentTopicIndex <= 1 ?
+                    '0.5' :
+                    '1';
             }
             
-            if (nextBtn) {
-                nextBtn.disabled = currentTopicIndex >= 160;
-                nextBtn.style.opacity = currentTopicIndex >= 160 ? '0.5' : '1';
-            }
-        }
+            
 
-        // Clear form fields after submission
-        function clearFormFields() {
-            elements.scenario.value = '';
-            elements.question.value = '';
-            elements.answer.value = '';
-            elements.explanation.value = '';
-            // Keep topic selection as it might be related to current example
-        }
-
-        // Override the original handleDataSubmission to include form clearing
-        async function handleDataSubmission(event) {
-            event.preventDefault();
-            
-            // Validate form data
-            const formData = {
-                topic: elements.topic.value.trim(),
-                scenario: elements.scenario.value.trim(),
-                question: elements.question.value.trim(),
-                answer: elements.answer.value.trim(),
-                explanation: elements.explanation.value.trim()
-            };
-            
-            // Check if all fields are filled
-            if (!formData.topic || !formData.scenario || !formData.question || !formData.answer || !formData.explanation) {
-                showToast('Please fill in all fields', 'error');
-                return;
-            }
-            
-            try {
-                showLoading('Submitting data...');
-                
-                // Prepare data for submission
-                const submissionData = {
-                    ...formData,
-                    language_region: Array.isArray(currentUser.language_region) ? currentUser.language_region[0] : currentUser.language_region,
-                    created_by: currentUser.userId,
-                    created_at: new Date().toISOString(),
-                    status: 'pending_review',
-                    creation_method: 'topic_based'
-                };
-                
-                // Submit to Firebase
-                const result = await FirebaseService.saveAnnotation(submissionData, 'cultural_annotations_created');
-                
-                if (result.success) {
-                    hideLoading();
-                    showToast('Data submitted successfully!', 'success');
-                    
-                    // Clear form fields (scenario, question, answer, explanation)
-                    clearFormFields();
-                    
-                    // Update progress
-                    createdItemsCount++;
-                    updateProgressDisplay();
-                } else {
-                    throw new Error(result.error || 'Failed to submit data');
-                }
-                
-            } catch (error) {
-                hideLoading();
-                console.error('Submission error:', error);
-                showToast('Failed to submit data: ' + error.message, 'error');
-            }
-        }
-        }
-
-        function handleLogout() {
-            localStorage.removeItem('dataCreationUser');
-            currentUser = null;
-            isLoggedIn = false;
-            createdItemsCount = 0;
-            
-            // Reset UI
-            elements.userInfoSection.classList.add('hidden');
-            elements.creationSection.classList.add('hidden');
-            elements.loginSection.classList.remove('hidden');
-            
-            // Clear form
-            elements.dataCreationForm.reset();
-            elements.userIdInput.value = '';
-            
-            showToast('Logged out successfully', 'info');
-        }
-
-        function updateProgressDisplay() {
-            elements.progressNumber.textContent = createdItemsCount;
-        }
-
-        // Utility functions
-        function showLoading(message) {
-            elements.loadingMessage.textContent = message;
-            elements.loadingOverlay.classList.remove('hidden');
-        }
-
-        function hideLoading() {
-            elements.loadingOverlay.classList.add('hidden');
-        }
-
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            
-            elements.toastContainer.appendChild(toast);
-            
-            // Trigger animation
-            setTimeout(() => toast.classList.add('show'), 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.parentNode.removeChild(toast);
-                    }
-                }, 300);
-            }, 3000);
-        }
-
-        // Debounce function for auto-save (if needed in future)
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-    </script>
-</body>
-</html>
+           
