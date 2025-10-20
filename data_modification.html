@@ -429,6 +429,232 @@
             color: #5a67d8;
         }
         
+        /* Annotation Guidelines Styles */
+        .annotation-guidelines-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .guidelines-section {
+            margin-bottom: 0;
+        }
+        
+        .guidelines-section:not(:last-child) {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .section-header i {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .section-header h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .section-content {
+            padding: 1.5rem;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .task-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .task-item i {
+            color: #667eea;
+            margin-top: 0.2rem;
+            font-size: 0.9rem;
+        }
+        
+        .task-item span {
+            flex: 1;
+            line-height: 1.5;
+            color: #374151;
+        }
+        
+        .option-item {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .option-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .accept-option {
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+            border-color: #10b981;
+        }
+        
+        .revise-option {
+            background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%);
+            border-color: #f59e0b;
+        }
+        
+        .reject-option {
+            background: linear-gradient(135deg, #fef2f2 0%, #fef1f1 100%);
+            border-color: #ef4444;
+        }
+        
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .accept-option .option-header i {
+            color: #10b981;
+            font-size: 1.2rem;
+        }
+        
+        .revise-option .option-header i {
+            color: #f59e0b;
+            font-size: 1.2rem;
+        }
+        
+        .reject-option .option-header i {
+            color: #ef4444;
+            font-size: 1.2rem;
+        }
+        
+        .option-header strong {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .accept-option .option-header strong {
+            color: #065f46;
+        }
+        
+        .revise-option .option-header strong {
+            color: #92400e;
+        }
+        
+        .reject-option .option-header strong {
+            color: #991b1b;
+        }
+        
+        .option-item p {
+            margin: 0 0 0.75rem 0;
+            line-height: 1.6;
+            color: #374151;
+        }
+        
+        .reject-reasons {
+            margin-top: 0.75rem;
+        }
+        
+        .reason-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+            border-left: 3px solid #ef4444;
+        }
+        
+        .reason-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .reason-item i {
+            color: #ef4444;
+            margin-top: 0.1rem;
+            font-size: 0.85rem;
+        }
+        
+        .reason-item span {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #374151;
+            line-height: 1.4;
+        }
+        
+        /* Tasks section specific styling */
+        .tasks-section .section-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        }
+        
+        /* Options section specific styling */
+        .options-section .section-header {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        
+        /* Hover effects */
+        .option-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .task-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Responsive adjustments for guidelines */
+        @media (max-width: 768px) {
+            .section-header {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .section-content {
+                padding: 1rem;
+            }
+            
+            .task-item {
+                padding: 0.5rem;
+                gap: 0.5rem;
+            }
+            
+            .option-item {
+                padding: 0.75rem;
+            }
+            
+            .option-header {
+                gap: 0.5rem;
+            }
+            
+            .reason-item {
+                padding: 0.4rem 0.6rem;
+                gap: 0.4rem;
+            }
+        }
+        
         /* Responsive Design */
         @media (max-width: 1024px) {
             .main-content-area {
@@ -709,26 +935,75 @@
                         
                         <!-- Annotation Guidelines -->
                         <div class="field-group">
-                            <label class="field-label">Annotation Guidelines</label>
-                            <div class="field-content">
-                                <h4>Annotation Tasks:</h4>
-                                <ul>
-                                    <li>For each example, specify whether to <strong>Accept</strong>, <strong>Revise</strong>, or <strong>Reject</strong> the item.</li>
-                                    <li>If choosing Revise, update the relevant components (scenario, question, answer, explanation) to reflect the corrections based on source_excerpt.</li>
-                                </ul>
+                            <label class="field-label">
+                                <i class="fas fa-clipboard-list" style="color: #667eea; margin-right: 0.5rem;"></i>
+                                Annotation Guidelines
+                            </label>
+                            <div class="annotation-guidelines-container">
+                                <!-- Tasks Section -->
+                                <div class="guidelines-section tasks-section">
+                                    <div class="section-header">
+                                        <i class="fas fa-tasks"></i>
+                                        <h4>Annotation Tasks</h4>
+                                    </div>
+                                    <div class="section-content">
+                                        <div class="task-item">
+                                            <i class="fas fa-dot-circle"></i>
+                                            <span>For each example, specify whether to <strong>Accept</strong>, <strong>Revise</strong>, or <strong>Reject</strong> the item.</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <i class="fas fa-edit"></i>
+                                            <span>If choosing Revise, update the relevant components (scenario, question, answer, explanation) to reflect the corrections based on source_excerpt.</span>
+                                        </div>
+                                    </div>
+                                </div>
                                 
-                                <h4>Annotation Options and Criteria:</h4>
-                                <ul>
-                                    <li><strong>Accept:</strong> Select this option if the generated sample (scenario, question, answer, explanation) is correctly transformed according to source_excerpt.</li>
-                                    <li><strong>Revise:</strong> Choose this option if the generated sample requires modifications based on source_excerpt.</li>
-                                    <li><strong>Reject:</strong> Use this option if revising is impossible for the following reasons:
-                                        <ul>
-                                            <li>source_excerpt contains incorrect information.</li>
-                                            <li>source_excerpt is subjective and not objective.</li>
-                                            <li>The generated sample or transformation cannot be reasonably revised.</li>
-                                        </ul>
-                                    </li>
-                                </ul>
+                                <!-- Options Section -->
+                                <div class="guidelines-section options-section">
+                                    <div class="section-header">
+                                        <i class="fas fa-list-ul"></i>
+                                        <h4>Annotation Options & Criteria</h4>
+                                    </div>
+                                    <div class="section-content">
+                                        <div class="option-item accept-option">
+                                            <div class="option-header">
+                                                <i class="fas fa-check-circle"></i>
+                                                <strong>Accept</strong>
+                                            </div>
+                                            <p>Select this option if the generated sample (scenario, question, answer, explanation) is correctly transformed according to source_excerpt.</p>
+                                        </div>
+                                        
+                                        <div class="option-item revise-option">
+                                            <div class="option-header">
+                                                <i class="fas fa-edit"></i>
+                                                <strong>Revise</strong>
+                                            </div>
+                                            <p>Choose this option if the generated sample requires modifications based on source_excerpt.</p>
+                                        </div>
+                                        
+                                        <div class="option-item reject-option">
+                                            <div class="option-header">
+                                                <i class="fas fa-times-circle"></i>
+                                                <strong>Reject</strong>
+                                            </div>
+                                            <p>Use this option if revising is impossible for the following reasons:</p>
+                                            <div class="reject-reasons">
+                                                <div class="reason-item">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                    <span>source_excerpt contains incorrect information</span>
+                                                </div>
+                                                <div class="reason-item">
+                                                    <i class="fas fa-user-times"></i>
+                                                    <span>source_excerpt is subjective and not objective</span>
+                                                </div>
+                                                <div class="reason-item">
+                                                    <i class="fas fa-ban"></i>
+                                                    <span>The generated sample or transformation cannot be reasonably revised</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
