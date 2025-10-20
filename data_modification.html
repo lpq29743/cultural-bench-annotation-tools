@@ -706,6 +706,31 @@
                             <label class="field-label" for="sourceExcerpt">Source Excerpt</label>
                             <div id="sourceExcerpt" class="field-content source-excerpt-content" role="textbox" aria-readonly="true" tabindex="0"></div>
                         </div>
+                        
+                        <!-- Annotation Guidelines -->
+                        <div class="field-group">
+                            <label class="field-label">Annotation Guidelines</label>
+                            <div class="field-content">
+                                <h4>Annotation Tasks:</h4>
+                                <ul>
+                                    <li>For each example, specify whether to <strong>Accept</strong>, <strong>Revise</strong>, or <strong>Reject</strong> the item.</li>
+                                    <li>If choosing Revise, update the relevant components (scenario, question, answer, explanation) to reflect the corrections based on source_excerpt.</li>
+                                </ul>
+                                
+                                <h4>Annotation Options and Criteria:</h4>
+                                <ul>
+                                    <li><strong>Accept:</strong> Select this option if the generated sample (scenario, question, answer, explanation) is correctly transformed according to source_excerpt.</li>
+                                    <li><strong>Revise:</strong> Choose this option if the generated sample requires modifications based on source_excerpt.</li>
+                                    <li><strong>Reject:</strong> Use this option if revising is impossible for the following reasons:
+                                        <ul>
+                                            <li>source_excerpt contains incorrect information.</li>
+                                            <li>source_excerpt is subjective and not objective.</li>
+                                            <li>The generated sample or transformation cannot be reasonably revised.</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Right Column: Decision Buttons and Form Fields -->
