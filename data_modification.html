@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    
+
     <style>
         /* Additional styles specific to data modification */
         .login-section {
@@ -19,12 +20,12 @@
             margin-bottom: 2rem;
             text-align: center;
         }
-        
+
         .login-form {
             max-width: 400px;
             margin: 0 auto;
         }
-        
+
         .user-info-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -40,7 +41,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         .user-details {
             display: flex;
             align-items: center;
@@ -48,25 +49,25 @@
             flex: 1;
             min-width: 0;
         }
-        
+
         .user-details h3 {
             margin: 0;
             font-size: 1.1rem;
         }
-        
+
         .user-details p {
             opacity: 0.9;
             margin: 0;
             font-size: 0.9rem;
         }
-        
+
         .user-info-items {
             display: flex;
             gap: 1.5rem;
             align-items: center;
             flex-wrap: wrap;
         }
-        
+
         .annotation-progress {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 6px;
@@ -77,18 +78,18 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .progress-number {
             font-size: 1.2rem;
             font-weight: 700;
             margin: 0;
         }
-        
+
         .progress-label {
             font-size: 0.8rem;
             opacity: 0.9;
         }
-        
+
         .annotation-item {
             background: white;
             border-radius: 12px;
@@ -97,18 +98,18 @@
             border: 1px solid #e2e8f0;
             margin-bottom: 2rem;
         }
-        
+
         .field-group {
             margin-bottom: 1.5rem;
         }
-        
+
         .field-label {
             font-weight: 600;
             color: #374151;
             margin-bottom: 0.5rem;
             display: block;
         }
-        
+
         .field-content {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -117,7 +118,7 @@
             color: #64748b;
             line-height: 1.6;
         }
-        
+
         .editable-field {
             background: white;
             border: 2px solid #e2e8f0;
@@ -126,13 +127,13 @@
             box-sizing: border-box;
             resize: vertical;
         }
-        
+
         .editable-field:focus {
             border-color: #667eea;
             outline: none;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        
+
         .meta-info-section {
             display: flex;
             justify-content: space-between;
@@ -145,7 +146,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         .meta-field {
             background: white;
             padding: 0.5rem 1rem;
@@ -153,7 +154,7 @@
             border: 1px solid #d1d5db;
             font-weight: 500;
         }
-        
+
         .item-counter-top {
             font-weight: 600;
             color: #374151;
@@ -162,7 +163,7 @@
             border-radius: 6px;
             border: 1px solid #d1d5db;
         }
-        
+
         /* Override main-content for data modification page */
         .main-content {
             display: block !important;
@@ -170,21 +171,21 @@
             max-width: none !important;
             width: 100% !important;
         }
-        
+
         .main-content-area {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin-bottom: 2rem;
         }
-        
+
         .left-column {
             background: #f8fafc;
             padding: 1.5rem;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
         }
-        
+
         .source-excerpt-content {
             background: white;
             border: 1px solid #d1d5db;
@@ -198,20 +199,20 @@
             line-height: 1.6;
             padding: 1rem;
         }
-        
+
         .right-column {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
-        
+
         .decision-buttons-top {
             display: flex;
             gap: 1rem;
             justify-content: flex-start;
             flex-wrap: wrap;
         }
-        
+
         .decision-buttons {
             display: flex;
             gap: 1rem;
@@ -219,7 +220,7 @@
             justify-content: center;
             flex-wrap: wrap;
         }
-        
+
         .btn-decision {
             padding: 0.75rem 2rem;
             border: none;
@@ -233,49 +234,49 @@
             min-width: 120px;
             justify-content: center;
         }
-        
+
         .btn-accept {
             background: #10b981;
             color: white;
         }
-        
+
         .btn-accept:hover {
             background: #059669;
         }
-        
+
         .btn-accept:focus {
             outline: 2px solid #10b981;
             outline-offset: 2px;
         }
-        
+
         .btn-revise {
             background: #f59e0b;
             color: white;
         }
-        
+
         .btn-revise:hover {
             background: #d97706;
         }
-        
+
         .btn-revise:focus {
             outline: 2px solid #f59e0b;
             outline-offset: 2px;
         }
-        
+
         .btn-reject {
             background: #ef4444;
             color: white;
         }
-        
+
         .btn-reject:hover {
             background: #dc2626;
         }
-        
+
         .btn-reject:focus {
             outline: 2px solid #ef4444;
             outline-offset: 2px;
         }
-        
+
         .upload-notice {
             background: #f0f9ff;
             border: 1px solid #0ea5e9;
@@ -284,17 +285,17 @@
             margin-top: 1rem;
             color: #0c4a6e;
         }
-        
+
         .upload-notice i {
             color: #0ea5e9;
             margin-right: 0.5rem;
         }
-        
+
         .upload-notice p {
             margin: 0;
             font-size: 0.9rem;
         }
-        
+
         .navigation-controls {
             display: flex;
             justify-content: space-between;
@@ -306,7 +307,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         .nav-btn {
             padding: 0.5rem 1rem;
             border: 1px solid #d1d5db;
@@ -315,38 +316,38 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .nav-btn:hover:not(:disabled) {
             background: #f3f4f6;
         }
-        
+
         .nav-btn:focus {
             outline: 2px solid #667eea;
             outline-offset: 2px;
         }
-        
+
         .nav-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
         .item-info {
             font-weight: 500;
             color: #374151;
         }
-        
+
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
             color: #64748b;
         }
-        
+
         .empty-state i {
             font-size: 4rem;
             margin-bottom: 1rem;
             opacity: 0.5;
         }
-        
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -359,14 +360,14 @@
             justify-content: center;
             z-index: 1000;
         }
-        
+
         .loading-content {
             background: white;
             padding: 2rem;
             border-radius: 12px;
             text-align: center;
         }
-        
+
         .spinner {
             border: 3px solid #f3f4f6;
             border-top: 3px solid #667eea;
@@ -376,12 +377,17 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         .toast {
             position: fixed;
             top: 20px;
@@ -394,27 +400,27 @@
             transform: translateX(100%);
             transition: transform 0.3s ease;
         }
-        
+
         .toast.show {
             transform: translateX(0);
         }
-        
+
         .toast.success {
             background: #10b981;
         }
-        
+
         .toast.error {
             background: #ef4444;
         }
-        
+
         .toast.info {
             background: #3b82f6;
         }
-        
+
         .hidden {
             display: none !important;
         }
-        
+
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -424,11 +430,11 @@
             margin-bottom: 2rem;
             font-weight: 500;
         }
-        
+
         .back-link:hover {
             color: #5a67d8;
         }
-        
+
         /* Annotation Guidelines Styles */
         .annotation-guidelines-container {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -438,15 +444,15 @@
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
+
         .guidelines-section {
             margin-bottom: 0;
         }
-        
+
         .guidelines-section:not(:last-child) {
             border-bottom: 1px solid #e2e8f0;
         }
-        
+
         .section-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -456,22 +462,22 @@
             gap: 0.75rem;
             font-weight: 600;
         }
-        
+
         .section-header i {
             font-size: 1.1rem;
             opacity: 0.9;
         }
-        
+
         .section-header h4 {
             margin: 0;
             font-size: 1rem;
             font-weight: 600;
         }
-        
+
         .section-content {
             padding: 1.5rem;
         }
-        
+
         .task-item {
             display: flex;
             align-items: flex-start;
@@ -483,23 +489,23 @@
             border-left: 4px solid #667eea;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
-        
+
         .task-item:last-child {
             margin-bottom: 0;
         }
-        
+
         .task-item i {
             color: #667eea;
             margin-top: 0.2rem;
             font-size: 0.9rem;
         }
-        
+
         .task-item span {
             flex: 1;
             line-height: 1.5;
             color: #374151;
         }
-        
+
         .option-item {
             margin-bottom: 1.5rem;
             padding: 1rem;
@@ -507,75 +513,75 @@
             border: 2px solid transparent;
             transition: all 0.2s ease;
         }
-        
+
         .option-item:last-child {
             margin-bottom: 0;
         }
-        
+
         .accept-option {
             background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
             border-color: #10b981;
         }
-        
+
         .revise-option {
             background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%);
             border-color: #f59e0b;
         }
-        
+
         .reject-option {
             background: linear-gradient(135deg, #fef2f2 0%, #fef1f1 100%);
             border-color: #ef4444;
         }
-        
+
         .option-header {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             margin-bottom: 0.75rem;
         }
-        
+
         .accept-option .option-header i {
             color: #10b981;
             font-size: 1.2rem;
         }
-        
+
         .revise-option .option-header i {
             color: #f59e0b;
             font-size: 1.2rem;
         }
-        
+
         .reject-option .option-header i {
             color: #ef4444;
             font-size: 1.2rem;
         }
-        
+
         .option-header strong {
             font-size: 1.1rem;
             font-weight: 700;
         }
-        
+
         .accept-option .option-header strong {
             color: #065f46;
         }
-        
+
         .revise-option .option-header strong {
             color: #92400e;
         }
-        
+
         .reject-option .option-header strong {
             color: #991b1b;
         }
-        
+
         .option-item p {
             margin: 0 0 0.75rem 0;
             line-height: 1.6;
             color: #374151;
         }
-        
+
         .reject-reasons {
             margin-top: 0.75rem;
         }
-        
+
         .reason-item {
             display: flex;
             align-items: flex-start;
@@ -586,237 +592,237 @@
             border-radius: 6px;
             border-left: 3px solid #ef4444;
         }
-        
+
         .reason-item:last-child {
             margin-bottom: 0;
         }
-        
+
         .reason-item i {
             color: #ef4444;
             margin-top: 0.1rem;
             font-size: 0.85rem;
         }
-        
+
         .reason-item span {
             flex: 1;
             font-size: 0.9rem;
             color: #374151;
             line-height: 1.4;
         }
-        
+
         /* Tasks section specific styling */
         .tasks-section .section-header {
             background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
         }
-        
+
         /* Options section specific styling */
         .options-section .section-header {
             background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
         }
-        
+
         /* Hover effects */
         .option-item:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        
+
         .task-item:hover {
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         /* Responsive adjustments for guidelines */
         @media (max-width: 768px) {
             .section-header {
                 padding: 0.75rem 1rem;
                 font-size: 0.9rem;
             }
-            
+
             .section-content {
                 padding: 1rem;
             }
-            
+
             .task-item {
                 padding: 0.5rem;
                 gap: 0.5rem;
             }
-            
+
             .option-item {
                 padding: 0.75rem;
             }
-            
+
             .option-header {
                 gap: 0.5rem;
             }
-            
+
             .reason-item {
                 padding: 0.4rem 0.6rem;
                 gap: 0.4rem;
             }
         }
-        
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .main-content-area {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
-            
+
             .user-details {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
             }
-            
+
             .user-info-items {
                 flex-direction: column;
                 gap: 0.5rem;
                 align-items: flex-start;
             }
         }
-        
+
         @media (max-width: 768px) {
             .container {
                 padding: 0 1rem;
             }
-            
+
             .header-content {
                 padding: 0 1rem;
                 flex-direction: column;
                 gap: 1rem;
             }
-            
+
             .main-content {
                 padding: 1rem !important;
             }
-            
+
             .decision-buttons-top {
                 justify-content: center;
             }
-            
+
             .btn-decision {
                 min-width: 100px;
                 padding: 0.5rem 1rem;
             }
-            
+
             .meta-info-section {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .navigation-controls {
                 flex-direction: column;
                 gap: 1rem;
             }
         }
-        
+
         @media (max-width: 480px) {
             .main-content {
                 padding: 0.5rem !important;
             }
-            
+
             .login-section,
             .annotation-item {
                 padding: 1rem;
             }
-            
+
             .decision-buttons-top {
                 flex-direction: column;
             }
-            
+
             .btn-decision {
                 width: 100%;
             }
         }
-        
+
         .back-link:focus {
             outline: 2px solid #667eea;
             outline-offset: 2px;
         }
-        
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .main-content-area {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
-            
+
             .user-details {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
             }
-            
+
             .user-info-items {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 0.5rem;
             }
         }
-        
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
             }
-            
+
             .user-info-section {
                 flex-direction: column;
                 align-items: stretch;
                 text-align: center;
             }
-            
+
             .user-details {
                 justify-content: center;
                 text-align: center;
             }
-            
+
             .decision-buttons-top {
                 justify-content: center;
             }
-            
+
             .btn-decision {
                 flex: 1;
                 min-width: auto;
             }
-            
+
             .navigation-controls {
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             .meta-info-section {
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             .annotation-item {
                 padding: 1.5rem;
             }
-            
+
             .left-column {
                 padding: 1rem;
             }
         }
-        
+
         @media (max-width: 480px) {
             .decision-buttons-top {
                 flex-direction: column;
             }
-            
+
             .btn-decision {
                 width: 100%;
             }
-            
+
             .user-info-items {
                 width: 100%;
             }
-            
+
             .annotation-progress {
                 width: 100%;
                 justify-content: center;
             }
         }
-        
+
         /* Accessibility improvements */
         .sr-only {
             position: absolute;
@@ -829,33 +835,35 @@
             white-space: nowrap;
             border: 0;
         }
-        
+
         /* High contrast mode support */
         @media (prefers-contrast: high) {
             .btn-decision {
                 border: 2px solid currentColor;
             }
-            
+
             .field-content {
                 border: 2px solid #000;
             }
         }
-        
+
         /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
+
             .btn-decision,
             .nav-btn,
             .back-link,
             .toast {
                 transition: none;
             }
-            
+
             .spinner {
                 animation: none;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -870,7 +878,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- User Info Section (Hidden initially) - Moved to top -->
         <div id="userInfoSection" class="user-info-section hidden" role="banner" aria-label="User information">
             <div class="user-details">
@@ -895,12 +903,14 @@
         <div id="loginSection" class="login-section" role="main">
             <h2><i class="fas fa-user-check" aria-hidden="true"></i> User Authentication</h2>
             <p>Please enter your User ID to access the data modification tool.</p>
-            
+
             <form id="loginForm" class="login-form" role="form" aria-label="Login form">
                 <div class="form-group">
                     <label for="userId">User ID</label>
-                    <input type="text" id="userId" class="form-input" placeholder="Enter your User ID" required aria-describedby="userId-help">
-                    <div id="userId-help" class="sr-only">Enter your assigned user ID to access the data modification tool</div>
+                    <input type="text" id="userId" class="form-input" placeholder="Enter your User ID" required
+                        aria-describedby="userId-help">
+                    <div id="userId-help" class="sr-only">Enter your assigned user ID to access the data modification
+                        tool</div>
                 </div>
                 <button type="submit" class="btn btn-primary" aria-describedby="login-help">
                     <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
@@ -909,7 +919,7 @@
                 <div id="login-help" class="sr-only">Click to authenticate and access the annotation interface</div>
             </form>
         </div>
-        
+
         <!-- Annotation Section (Hidden initially) -->
         <div class="main-content">
             <div id="annotationSection" class="hidden" role="main" aria-label="Annotation interface">
@@ -923,22 +933,36 @@
                         Item <span id="currentItemIndexTop">1</span> of <span id="totalItemsTop">0</span>
                     </div>
                 </div>
-                
+
                 <!-- Main Content Area with Two Columns -->
                 <div class="main-content-area">
                     <!-- Left Column: Source Excerpt -->
                     <div class="left-column">
                         <div class="field-group">
                             <label class="field-label" for="sourceExcerpt">Source Excerpt</label>
-                            <div id="sourceExcerpt" class="field-content source-excerpt-content" role="textbox" aria-readonly="true" tabindex="0"></div>
+                            <div id="sourceExcerpt" class="field-content source-excerpt-content" role="textbox"
+                                aria-readonly="true" tabindex="0"></div>
                         </div>
-                        
+
                         <!-- Annotation Guidelines -->
                         <div class="field-group">
-                            <label class="field-label">
-                                <i class="fas fa-clipboard-list" style="color: #667eea; margin-right: 0.5rem;"></i>
+                            <div
+                                style="margin-bottom: 1.5rem; padding: 1rem; background: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                                <h3 style="margin: 0 0 0.5rem 0; color: #991b1b; font-size: 1.1rem;">
+                                    <i class="fas fa-exclamation-triangle"></i> Important: Please read this first before
+                                    creating data
+                                </h3>
+                                <p style="margin: 0; color: #7f1d1d; font-size: 0.9rem; line-height: 1.4;">
+                                    Before creating any data, please carefully review all guidelines below to ensure
+                                    your
+                                    annotations meet the quality standards and cultural authenticity requirements.
+                                </p>
+                            </div>
+
+                            <h2 class="panel-title">
+                                <i class="fas fa-lightbulb"></i>
                                 Annotation Guidelines
-                            </label>
+                            </h2>
                             <div class="annotation-guidelines-container">
                                 <!-- Tasks Section -->
                                 <div class="guidelines-section tasks-section">
@@ -949,15 +973,18 @@
                                     <div class="section-content">
                                         <div class="task-item">
                                             <i class="fas fa-dot-circle"></i>
-                                            <span>For each example, specify whether to <strong>Accept</strong>, <strong>Revise</strong>, or <strong>Reject</strong> the item.</span>
+                                            <span>For each example, specify whether to <strong>Accept</strong>,
+                                                <strong>Revise</strong>, or <strong>Reject</strong> the item.</span>
                                         </div>
                                         <div class="task-item">
                                             <i class="fas fa-edit"></i>
-                                            <span>If choosing Revise, update the relevant components (scenario, question, answer, explanation) to reflect the corrections based on source_excerpt.</span>
+                                            <span>If choosing Revise, update the relevant components (scenario,
+                                                question, answer, explanation) to reflect the corrections based on
+                                                source_excerpt.</span>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Options Section -->
                                 <div class="guidelines-section options-section">
                                     <div class="section-header">
@@ -970,17 +997,19 @@
                                                 <i class="fas fa-check-circle"></i>
                                                 <strong>Accept</strong>
                                             </div>
-                                            <p>Select this option if the generated sample (scenario, question, answer, explanation) is correctly transformed according to source_excerpt.</p>
+                                            <p>Select this option if the generated sample (scenario, question, answer,
+                                                explanation) is correctly transformed according to source_excerpt.</p>
                                         </div>
-                                        
+
                                         <div class="option-item revise-option">
                                             <div class="option-header">
                                                 <i class="fas fa-edit"></i>
                                                 <strong>Revise</strong>
                                             </div>
-                                            <p>Choose this option if the generated sample requires modifications based on source_excerpt.</p>
+                                            <p>Choose this option if the generated sample requires modifications based
+                                                on source_excerpt.</p>
                                         </div>
-                                        
+
                                         <div class="option-item reject-option">
                                             <div class="option-header">
                                                 <i class="fas fa-times-circle"></i>
@@ -998,7 +1027,8 @@
                                                 </div>
                                                 <div class="reason-item">
                                                     <i class="fas fa-ban"></i>
-                                                    <span>The generated sample or transformation cannot be reasonably revised</span>
+                                                    <span>The generated sample or transformation cannot be reasonably
+                                                        revised</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1007,7 +1037,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Right Column: Decision Buttons and Form Fields -->
                     <div class="right-column">
                         <!-- Decision Buttons at the top right -->
@@ -1017,54 +1047,65 @@
                                 Accept
                             </button>
                             <div id="accept-help" class="sr-only">Accept the current annotation as correct</div>
-                            
+
                             <button id="reviseBtn" class="btn-decision btn-revise" aria-describedby="revise-help">
                                 <i class="fas fa-edit" aria-hidden="true"></i>
                                 Revise
                             </button>
                             <div id="revise-help" class="sr-only">Mark for revision and edit the content</div>
-                            
+
                             <button id="rejectBtn" class="btn-decision btn-reject" aria-describedby="reject-help">
                                 <i class="fas fa-times" aria-hidden="true"></i>
                                 Reject
                             </button>
                             <div id="reject-help" class="sr-only">Reject the annotation with a reason</div>
                         </div>
-                        
+
                         <!-- Upload Notice -->
                         <div class="upload-notice" role="region" aria-label="Upload information">
-                            <p><i class="fas fa-info-circle" aria-hidden="true"></i> <strong>Note:</strong> After clicking Accept, Revise, or Reject, it may take a few seconds to upload your changes to the server.</p>
+                            <p><i class="fas fa-info-circle" aria-hidden="true"></i> <strong>Note:</strong> After
+                                clicking Accept, Revise, or Reject, it may take a few seconds to upload your changes to
+                                the server.</p>
                         </div>
-                        
+
                         <!-- Form Fields -->
                         <div class="form-fields" role="region" aria-label="Editable annotation fields">
                             <div class="field-group">
                                 <label class="field-label" for="scenario">Scenario</label>
-                                <textarea id="scenario" class="field-content editable-field" rows="3" aria-describedby="scenario-help"></textarea>
-                                <div id="scenario-help" class="sr-only">Edit the scenario description for this cultural benchmark item</div>
+                                <textarea id="scenario" class="field-content editable-field" rows="3"
+                                    aria-describedby="scenario-help"></textarea>
+                                <div id="scenario-help" class="sr-only">Edit the scenario description for this cultural
+                                    benchmark item</div>
                             </div>
-                            
+
                             <div class="field-group">
                                 <label class="field-label" for="question">Question</label>
-                                <textarea id="question" class="field-content editable-field" rows="2" aria-describedby="question-help"></textarea>
-                                <div id="question-help" class="sr-only">Edit the question text for this benchmark item</div>
+                                <textarea id="question" class="field-content editable-field" rows="2"
+                                    aria-describedby="question-help"></textarea>
+                                <div id="question-help" class="sr-only">Edit the question text for this benchmark item
+                                </div>
                             </div>
-                            
+
                             <div class="field-group">
-                                <label class="field-label" for="answer">Answer (should be objective and as brief as possible)</label>
-                                <textarea id="answer" class="field-content editable-field" rows="2" aria-describedby="answer-help"></textarea>
+                                <label class="field-label" for="answer">Answer (should be objective and as brief as
+                                    possible)</label>
+                                <textarea id="answer" class="field-content editable-field" rows="2"
+                                    aria-describedby="answer-help"></textarea>
                                 <div id="answer-help" class="sr-only">Edit the correct answer for this question</div>
                             </div>
-                            
+
                             <div class="field-group">
-                                <label class="field-label" for="explanation">Explanation (can be in native language or English)</label>
-                                <textarea id="explanation" class="field-content editable-field" rows="3" aria-describedby="explanation-help"></textarea>
-                                <div id="explanation-help" class="sr-only">Edit the explanation for why this answer is correct</div>
+                                <label class="field-label" for="explanation">Explanation (can be in native language or
+                                    English)</label>
+                                <textarea id="explanation" class="field-content editable-field" rows="3"
+                                    aria-describedby="explanation-help"></textarea>
+                                <div id="explanation-help" class="sr-only">Edit the explanation for why this answer is
+                                    correct</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Navigation Controls -->
                 <div class="navigation-controls" role="navigation" aria-label="Item navigation">
                     <button id="prevBtn" class="nav-btn" aria-label="Go to previous item">
@@ -1080,7 +1121,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Empty State -->
             <div id="emptyState" class="empty-state hidden" role="status">
                 <i class="fas fa-inbox" aria-hidden="true"></i>
@@ -1089,25 +1130,27 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="loadingMessage">
+    <div id="loadingOverlay" class="loading-overlay hidden" role="dialog" aria-modal="true"
+        aria-labelledby="loadingMessage">
         <div class="loading-content">
             <div class="spinner" aria-hidden="true"></div>
             <div id="loadingMessage">Loading...</div>
         </div>
     </div>
-    
+
     <!-- Toast Container -->
     <div id="toastContainer" role="region" aria-live="polite" aria-label="Notifications"></div>
-    
+
     <!-- Scripts -->
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
+
     <!-- Application Scripts -->
     <script src="firebase-config.js"></script>
     <script src="data-modification.js"></script>
 </body>
+
 </html>
