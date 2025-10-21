@@ -497,7 +497,7 @@
             
             let data;
             if (selectedCollection === 'annotated_data') {
-                const result = await FirebaseService.getAllAnnotatedData();
+                const result = await FirebaseService.getAllCreatedData();
                 if (!result.success) {
                     throw new Error(result.error || 'Failed to fetch annotated data');
                 }
