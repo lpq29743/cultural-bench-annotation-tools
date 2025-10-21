@@ -29,6 +29,8 @@
   arc=2mm,                    % corner roundness
   left=4pt,right=4pt,top=4pt,bottom=4pt  % padding
 }
+\usepackage{hyperref}
+\usepackage{enumitem}
 
 \def\SampleNum{1000\xspace}
 \def\TopicNum{16\xspace}
@@ -44,7 +46,7 @@
 %
 % and set <dim> to something 5cm or larger.
 
-\title{Cultural Benchmark Annotation Guideline}
+\title{Cultural Benchmark Annotation Tools: Comprehensive Guidelines}
 
 % Author information can be set in various styles:
 % For several authors from the same institution:
@@ -62,7 +64,7 @@
 %         Author 2 \\ Address line \\ ... \\ Address line \And
 %         Author 3 \\ Address line \\ ... \\ Address line}
 
-\author{XXX}
+\author{Cultural Benchmark Research Team}
 
 %\author{
 %  \textbf{First Author\textsuperscript{1}},
@@ -312,57 +314,74 @@ Additional situational details are introduced, requiring the answer to hinge on 
 \paragraph{Compositional Example}
 Two independent knowledge points are combined into a single query—for example, merging the entry requirements for both Hong Kong and Bangkok—forcing the model to engage in compositional reasoning.
 
-\section{Start Annotation}
 
-% Copy the xlsx file your are working on and add your id to the xlsx to make sure we know this document is annotated, e.g., ar\_ma\_gpt4o to ar\_ma\_gpt4o\_linpq. For each row, your job is to \textbf{accept}, \textbf{revise}, or \textbf{reject} the item, by modifying COLUMN M.
-% If the generated sample (scenario, question, answer, explanation) is correctly transformed by \texttt{source\_excerpt}, \textbf{accept} it. Otherwise try to \textbf{revise} the generated sample (scenario, question, answer, explanation) based on \texttt{source\_excerpt}. If impossible, e.g., \texttt{source\_excerpt} is wrong or not objective and is not possible to revise it, \textbf{reject} it.
+\section{Overview}
 
-\subsection{Data Creation}
+The Cultural Benchmark Annotation Tools (\url{https://lpq29743.github.io/cultural-bench-annotation-tools/main.html}) is a web-based platform for creating and modifying cultural benchmark datasets. The system provides four main tools:
 
-Some important fields and their descriptions are listed below:
+\begin{enumerate}[itemsep=0.3em]
+\item \textbf{Data Modification} - Review and modify existing cultural benchmark data
+\item \textbf{Personal Experience Creation} - Create data based on personal cultural experiences
+\item \textbf{Topic-Based Creation} - Create data following predefined cultural topics
+\item \textbf{Multilingual Adaptation} - Adapt annotations across different languages and cultures
+\end{enumerate}
 
-\begin{table}[h]
-\centering
-\resizebox{\textwidth}{!}{
-\begin{tabular}{l|p{13cm}}
-\hline
-\textbf{Field} & \textbf{Description} \\ \hline
-\texttt{topic}            & One of the \TopicNum\ predefined cultural topics \\ \hline
-\texttt{scenario}         & A narrative context in which the question is framed or asked \\ \hline
-\texttt{question}         & The formulated question corresponding to the scenario \\ \hline
-\texttt{answer}           & The correct answer or answer key to the question \\ \hline
-\texttt{explanation}      & A concise justification or reasoning for the answer \\ \hline
-% \texttt{data\_creator}    & ID of the author (human or LLM) of the first draft \\ \hline
-% \texttt{data\_verifier}   & ID of the human reviewer (must differ from \texttt{data\_creator}) \\ \hline
-\end{tabular}
-}
-\caption{Metadata fields for each dataset item. These fields ensure consistency and adherence to predefined schemas.}
-\label{tab:metadata_fields}
-\end{table}
+\section{Annotation Process}
 
-\vspace{0.5cm}
+\subsection{Data Modification}
+The modification process uses a three-option decision framework:
 
-\noindent You can create the data inspired by the following sources:
-\begin{itemize}
-    \item \textbf{Personal experience:} Draw examples from your own perspective or cultural knowledge.
-    \item \textbf{Local online forums:} Use credible forums or community discussions as inspiration.
-    \item \textbf{Topic list with examples:} Refer to the predefined topics and examples provided in \texttt{data\_creation/cultural\_topics.xlsx}.
-    \item \textbf{Multilingual data:} Leverage annotated data from other languages available in \texttt{data\_creation/annotated\_data.csv}.
+\begin{tcolorbox}[colback=blue!5, colframe=blue!80, sharp corners]
+\textbf{Accept:} Generated sample is correctly transformed according to source excerpt.
+
+\textbf{Revise:} Generated sample requires modifications based on source excerpt.
+
+\textbf{Reject:} Revising is impossible due to:
+\begin{itemize}[itemsep=0.2em]
+\item Source excerpt contains incorrect information
+\item Source excerpt is subjective rather than objective
+\item Source excerpt is not in the native language
+\item Generated sample cannot be reasonably revised
+\end{itemize}
+\end{tcolorbox}
+
+\subsection{Personal Experience Creation}
+
+This tool allows annotators to create cultural benchmark data based on their personal cultural experiences and knowledge. The interface provides:
+
+\begin{itemize}[itemsep=0.2em]
+\item \textbf{Experience-Based Input}: Annotators draw from their own cultural background, personal observations, and lived experiences within their culture
+\item \textbf{Authentic Scenarios}: Create realistic situations that reflect genuine cultural practices, norms, and knowledge from the annotator's cultural context
+\item \textbf{Personal Validation}: Leverage first-hand cultural knowledge to ensure accuracy and cultural authenticity of the created samples
+\item \textbf{Cultural Nuances}: Capture subtle cultural details that might be missed by external observers or automated systems
 \end{itemize}
 
-\noindent When creating your own dataset:
-\begin{itemize}
-    \item Save the file as a \texttt{.xlsx} and name it using the format: \texttt{LanguageCode\_CountryCode\_Id.xlsx}. 
-    \item For example: \texttt{zh\_cn\_linpq.xlsx}.
+The tool guides annotators through creating samples where they can contribute cultural knowledge they personally possess, ensuring high-quality, culturally authentic benchmark data.
+
+\subsection{Topic-Based Creation}
+
+This systematic approach allows annotators to create cultural benchmark data following the predefined 16 cultural topics (see Table~\ref{tab:cultural_topics}). The interface features:
+
+\begin{itemize}[itemsep=0.2em]
+\item \textbf{Structured Topic Selection}: Navigate through the comprehensive list of cultural domains including Belief, Commerce, Education, Entertainment, Finance, Food, Government, Habitat, Health, Heritage, Language, Pets, Science, Social, Travel, and Work
+\item \textbf{Topic-Specific Guidance}: Each topic provides examples and descriptions to help annotators understand the scope and create relevant cultural scenarios
+\item \textbf{Systematic Coverage}: Ensures comprehensive coverage across different cultural domains and prevents gaps in the benchmark dataset
+\item \textbf{Consistency Framework}: Maintains consistent quality and format across different cultural topics and annotators
 \end{itemize}
 
-\noindent Keep in mind the following guidelines when creating samples:
-\begin{itemize}
-    \item Ensure the samples adhere to the specified requirements (\S\ref{sec:req}).
-    \item Focus on creating challenging examples to test model performance effectively.
-    \item It is not necessary to maintain a balanced distribution across topics.
+This approach helps create a balanced and comprehensive cultural benchmark that covers all major aspects of cultural knowledge systematically.
+
+\subsection{Multilingual Adaptation}
+
+This tool facilitates the adaptation and translation of cultural benchmark data across different languages and cultural contexts. Key features include:
+
+\begin{itemize}[itemsep=0.2em]
+\item \textbf{Cross-Cultural Adaptation}: Adapt existing cultural samples to different cultural contexts while maintaining the core assessment objectives
+\item \textbf{Language-Specific Nuances}: Ensure that translated content captures language-specific cultural elements and maintains cultural authenticity
+\item \textbf{Cultural Equivalence}: Find culturally equivalent scenarios, practices, or knowledge when direct translation is not culturally appropriate
+\item \textbf{Localization Support}: Adapt cultural references, examples, and contexts to be relevant and accurate for the target culture and language
 \end{itemize}
 
-% \bibliography{custom}
+This tool is essential for creating truly multilingual and multicultural benchmark datasets that can effectively evaluate cultural knowledge across different linguistic and cultural communities.
 
 \end{document}
