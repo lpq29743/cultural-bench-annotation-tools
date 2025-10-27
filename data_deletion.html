@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Deletion - Cultural Benchmark Annotation Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-5px);
+        }
+        
+        .main-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+        
+        .warning-banner {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .warning-banner i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .warning-banner h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #dc3545;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 300px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #dc3545;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+        
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-left: 4px solid;
+            max-width: 350px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.success {
+            border-left-color: #28a745;
+        }
+        
+        .toast.error {
+            border-left-color: #dc3545;
+        }
+        
+        .toast.warning {
+            border-left-color: #ffc107;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .stats-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #dc3545;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .confirmation-section {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .confirmation-section h4 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .confirmation-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .confirmation-checkbox input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-card {
+                padding: 25px;
+            }
+            
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 20px;
+                display: inline-flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="admin.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Back to Admin
+    </a>
+    
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-trash-alt"></i> Data Deletion</h1>
+            <p>Delete modified data samples by language region. This action is irreversible and requires administrator privileges.</p>
+        </div>
+        
+        <!-- Login Section -->
+        <div id="loginSection" class="main-card">
+            <div class="warning-banner">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Administrator Access Required</h3>
+                <p>This tool requires administrator privileges to delete data from the system.</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="userId">Administrator User ID:</label>
+                    <input type="text" id="userId" name="userId" required placeholder="Enter your administrator user ID">
+                </div>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-sign-in-alt"></i> Verify Access
+                </button>
+            </form>
+        </div>
+        
+        <!-- Main Deletion Interface -->
+        <div id="deletionSection" class="main-card hidden">
+            <div class="warning-banner">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>DANGER: Data Deletion</h3>
+                <p>This action will permanently delete all modified_data samples for the specified language region. This cannot be undone!</p>
+            </div>
+            
+            <!-- User Info -->
+            <div id="userInfo" class="stats-section">
+                <h3>Administrator Information</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">User ID</span>
+                        <span id="userIdDisplay" class="stat-number">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Role</span>
+                        <span id="userRoleDisplay" class="stat-number">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Language Region Selection -->
+            <div class="form-group">
+                <label for="languageRegion">Language Region to Delete:</label>
+                <input type="text" id="languageRegion" name="languageRegion" required 
+                       placeholder="e.g., zh_cn, en_us, ja_jp, etc.">
+                <small style="color: #666; margin-top: 5px; display: block;">
+                    Enter the exact language_region code. All modified_data samples with this language_region will be deleted.
+                </small>
+            </div>
+            
+            <button type="button" id="previewBtn" class="btn btn-secondary">
+                <i class="fas fa-search"></i> Preview Data to Delete
+            </button>
+            
+            <!-- Preview Section -->
+            <div id="previewSection" class="stats-section hidden">
+                <h4>Preview: Data to be Deleted</h4>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span id="previewCount" class="stat-number">0</span>
+                        <span class="stat-label">Records Found</span>
+                    </div>
+                    <div class="stat-item">
+                        <span id="previewLanguage" class="stat-number">-</span>
+                        <span class="stat-label">Language Region</span>
+                    </div>
+                </div>
+                <div id="previewList" style="margin-top: 15px; max-height: 200px; overflow-y: auto; background: white; padding: 15px; border-radius: 8px;">
+                    <!-- Preview items will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Confirmation Section -->
+            <div id="confirmationSection" class="confirmation-section hidden">
+                <h4>Confirmation Required</h4>
+                <div class="confirmation-checkbox">
+                    <input type="checkbox" id="confirmDeletion" name="confirmDeletion">
+                    <label for="confirmDeletion">I understand that this action will permanently delete all selected data and cannot be undone.</label>
+                </div>
+                <div class="confirmation-checkbox">
+                    <input type="checkbox" id="confirmLanguageRegion" name="confirmLanguageRegion">
+                    <label for="confirmLanguageRegion">I have verified that the language region is correct.</label>
+                </div>
+                
+                <button type="button" id="deleteBtn" class="btn btn-danger" disabled>
+                    <i class="fas fa-trash-alt"></i> DELETE DATA PERMANENTLY
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p id="loadingMessage">Loading...</p>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        // Application state
+        let currentUser = null;
+        let previewData = [];
+        let isLoggedIn = false;
+        
+        // DOM elements
+        const elements = {
+            loginSection: document.getElementById('loginSection'),
+            deletionSection: document.getElementById('deletionSection'),
+            loginForm: document.getElementById('loginForm'),
+            userIdInput: document.getElementById('userId'),
+            userIdDisplay: document.getElementById('userIdDisplay'),
+            userRoleDisplay: document.getElementById('userRoleDisplay'),
+            languageRegion: document.getElementById('languageRegion'),
+            previewBtn: document.getElementById('previewBtn'),
+            previewSection: document.getElementById('previewSection'),
+            previewCount: document.getElementById('previewCount'),
+            previewLanguage: document.getElementById('previewLanguage'),
+            previewList: document.getElementById('previewList'),
+            confirmationSection: document.getElementById('confirmationSection'),
+            confirmDeletion: document.getElementById('confirmDeletion'),
+            confirmLanguageRegion: document.getElementById('confirmLanguageRegion'),
+            deleteBtn: document.getElementById('deleteBtn'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            loadingMessage: document.getElementById('loadingMessage'),
+            toastContainer: document.getElementById('toastContainer')
+        };
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+        
+        function initializeApp() {
+            // Check if Firebase is loaded
+            if (typeof firebase === 'undefined') {
+                showToast('Firebase not loaded. Please refresh the page.', 'error');
+                return;
+            }
+            
+            // Set up event listeners
+            setupEventListeners();
+        }
+        
+        function setupEventListeners() {
+            // Login form
+            elements.loginForm.addEventListener('submit', handleLogin);
+            
+            // Preview button
+            elements.previewBtn.addEventListener('click', handlePreview);
+            
+            // Delete button
+            elements.deleteBtn.addEventListener('click', handleDelete);
+            
+            // Confirmation checkboxes
+            elements.confirmDeletion.addEventListener('change', updateDeleteButton);
+            elements.confirmLanguageRegion.addEventListener('change', updateDeleteButton);
+            
+            // Language region input
+            elements.languageRegion.addEventListener('input', resetPreview);
+        }
+        
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const userId = elements.userIdInput.value.trim();
+            if (!userId) {
+                showToast('Please enter a valid User ID', 'error');
+                return;
+            }
+            
+            try {
+                showLoading('Validating administrator access...');
+                
+                // Validate user with permissions
+                const validation = await FirebaseService.validateUserWithPermissions(userId);
+                
+                if (!validation.success) {
+                    hideLoading();
+                    showToast('User not found', 'error');
+                    return;
+                }
+                
+                if (!validation.allowed) {
+                    hideLoading();
+                    showToast(validation.message || 'Access denied', 'error');
+                    return;
+                }
+                
+                // Check if user has admin privileges (assuming admin role or special permission)
+                if (validation.userInfo.role !== 'admin' && !validation.userInfo.canModifyData) {
+                    hideLoading();
+                    showToast('Administrator privileges required', 'error');
+                    return;
+                }
+                
+                currentUser = validation.userInfo;
+                isLoggedIn = true;
+                
+                updateUIAfterLogin();
+                hideLoading();
+                showToast('Administrator access verified', 'success');
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Login error:', error);
+                showToast('Login failed: ' + error.message, 'error');
+            }
+        }
+        
+        function updateUIAfterLogin() {
+            elements.loginSection.classList.add('hidden');
+            elements.deletionSection.classList.remove('hidden');
+            
+            elements.userIdDisplay.textContent = currentUser.userId;
+            elements.userRoleDisplay.textContent = currentUser.role || 'Admin';
+        }
+        
+        async function handlePreview() {
+            const languageRegion = elements.languageRegion.value.trim();
+            if (!languageRegion) {
+                showToast('Please enter a language region', 'error');
+                return;
+            }
+            
+            try {
+                showLoading('Loading data preview...');
+                
+                // Load all modified_data
+                const result = await FirebaseService.loadFromCollection('modified_data');
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to load data');
+                }
+                
+                // Filter by language_region
+                previewData = result.data.filter(item => item.language_region === languageRegion);
+                
+                // Update preview display
+                elements.previewCount.textContent = previewData.length;
+                elements.previewLanguage.textContent = languageRegion;
+                
+                // Show preview list
+                if (previewData.length > 0) {
+                    let previewHTML = '<h5>Sample Records (showing first 10):</h5>';
+                    previewData.slice(0, 10).forEach((item, index) => {
+                        previewHTML += `
+                            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                                <strong>Record ${index + 1}:</strong> ${item.id || 'No ID'}<br>
+                                <small>Topic: ${item.topic || 'N/A'} | Question: ${(item.question || '').substring(0, 100)}${item.question && item.question.length > 100 ? '...' : ''}</small>
+                            </div>
+                        `;
+                    });
+                    if (previewData.length > 10) {
+                        previewHTML += `<p><em>... and ${previewData.length - 10} more records</em></p>`;
+                    }
+                    elements.previewList.innerHTML = previewHTML;
+                } else {
+                    elements.previewList.innerHTML = '<p style="color: #666; text-align: center;">No records found for this language region.</p>';
+                }
+                
+                elements.previewSection.classList.remove('hidden');
+                
+                if (previewData.length > 0) {
+                    elements.confirmationSection.classList.remove('hidden');
+                } else {
+                    elements.confirmationSection.classList.add('hidden');
+                }
+                
+                hideLoading();
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Preview error:', error);
+                showToast('Failed to load preview: ' + error.message, 'error');
+            }
+        }
+        
+        function resetPreview() {
+            elements.previewSection.classList.add('hidden');
+            elements.confirmationSection.classList.add('hidden');
+            elements.confirmDeletion.checked = false;
+            elements.confirmLanguageRegion.checked = false;
+            updateDeleteButton();
+        }
+        
+        function updateDeleteButton() {
+            const bothChecked = elements.confirmDeletion.checked && elements.confirmLanguageRegion.checked;
+            elements.deleteBtn.disabled = !bothChecked || previewData.length === 0;
+        }
+        
+        async function handleDelete() {
+            if (previewData.length === 0) {
+                showToast('No data to delete', 'error');
+                return;
+            }
+            
+            const languageRegion = elements.languageRegion.value.trim();
+            
+            // Final confirmation
+            const confirmed = confirm(
+                `Are you absolutely sure you want to delete ${previewData.length} records with language_region "${languageRegion}"?\n\n` +
+                'This action cannot be undone!\n\n' +
+                'Type "DELETE" in the next prompt to confirm.'
+            );
+            
+            if (!confirmed) {
+                return;
+            }
+            
+            const finalConfirm = prompt('Type "DELETE" to confirm the deletion:');
+            if (finalConfirm !== 'DELETE') {
+                showToast('Deletion cancelled - confirmation text did not match', 'warning');
+                return;
+            }
+            
+            try {
+                showLoading(`Deleting ${previewData.length} records...`);
+                
+                // Delete records in batches
+                const batchSize = 10;
+                let deletedCount = 0;
+                
+                for (let i = 0; i < previewData.length; i += batchSize) {
+                    const batch = previewData.slice(i, i + batchSize);
+                    
+                    // Delete each record in the batch
+                    const deletePromises = batch.map(record => 
+                        FirebaseService.deleteAnnotation(record.id, 'modified_data')
+                    );
+                    
+                    const results = await Promise.all(deletePromises);
+                    
+                    // Count successful deletions
+                    results.forEach(result => {
+                        if (result.success) {
+                            deletedCount++;
+                        }
+                    });
+                    
+                    // Update loading message
+                    elements.loadingMessage.textContent = `Deleted ${deletedCount} of ${previewData.length} records...`;
+                }
+                
+                hideLoading();
+                
+                if (deletedCount === previewData.length) {
+                    showToast(`Successfully deleted ${deletedCount} records with language_region "${languageRegion}"`, 'success');
+                } else {
+                    showToast(`Deleted ${deletedCount} of ${previewData.length} records. Some deletions may have failed.`, 'warning');
+                }
+                
+                // Reset the form
+                elements.languageRegion.value = '';
+                resetPreview();
+                
+            } catch (error) {
+                hideLoading();
+                console.error('Deletion error:', error);
+                showToast('Deletion failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Utility functions
+        function showLoading(message) {
+            elements.loadingMessage.textContent = message;
+            elements.loadingOverlay.classList.remove('hidden');
+        }
+        
+        function hideLoading() {
+            elements.loadingOverlay.classList.add('hidden');
+        }
+        
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            elements.toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 5000);
+        }
+        
+        // Add debounce utility function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>

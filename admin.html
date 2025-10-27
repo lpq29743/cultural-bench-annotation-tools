@@ -127,6 +127,10 @@
             background: linear-gradient(135deg, #20c997, #17a2b8);
         }
         
+        .data-deletion .admin-icon {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+        
         .admin-card h3 {
             font-size: 1.5rem;
             font-weight: 600;
@@ -315,6 +319,23 @@
                     <li>Scheduled exports</li>
                 </ul>
                 <span class="btn btn-info">Download Data</span>
+            </a>
+            
+            <!-- Data Deletion Tool -->
+            <a href="data_deletion.html" class="admin-card data-deletion">
+                <div class="admin-icon">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h3>Data Deletion</h3>
+                <p>Delete modified data samples by language region. Use with caution as this action is irreversible.</p>
+                <ul class="admin-features">
+                    <li>Delete by language region</li>
+                    <li>Batch deletion operations</li>
+                    <li>Confirmation required</li>
+                    <li>Audit trail logging</li>
+                    <li>Admin access only</li>
+                </ul>
+                <span class="btn btn-danger">Delete Data</span>
             </a>
         </div>
         
